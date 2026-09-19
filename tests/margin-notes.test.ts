@@ -20,7 +20,7 @@ describe('margin notes from footnotes (tests/fixtures/notes.md)', async () => {
 
   it('puts both notes of a paragraph in one aside right after it', () => {
     expect(blocks[0]).toMatch(/^<p>Me inspiré/);
-    expect(blocks[1]).toMatch(/^<aside class="note" aria-label="Notas"><p id="nota-1">/);
+    expect(blocks[1]).toMatch(/^<aside class="note" aria-label="Notas 1 y 2"><p id="nota-1">/);
     expect(blocks[1]).toContain('<p id="nota-2">');
     expect(blocks[1]).toContain('href="https://stephango.com/file-over-app"');
   });
@@ -30,7 +30,7 @@ describe('margin notes from footnotes (tests/fixtures/notes.md)', async () => {
   });
 
   it('keeps a multi-paragraph note together', () => {
-    expect(blocks[4]).toMatch(/^<aside class="note" aria-label="Nota"><p id="nota-3">/);
+    expect(blocks[4]).toMatch(/^<aside class="note" aria-label="Nota 3"><p id="nota-3">/);
     expect(blocks[4]).toContain('Un segundo párrafo dentro de la nota.');
   });
 
