@@ -25,7 +25,6 @@ const { post, next } = Astro.props;
 const { Content, headings } = await render(post.entry);
 // ## headings are chapters; the index appears from three on.
 const chapters = headings.filter((h) => h.depth === 2);
-const words = new Intl.NumberFormat('es').format(post.words);
 const version = versionLine(postVersion(post.file, post.date));
 const source = await readFile(post.file, 'utf8');
 const filename = `${post.id}.md`;
@@ -37,7 +36,7 @@ const filename = `${post.id}.md`;
       {version && <p class="ver">{version}</p>}
       <p class="meta">
         <span class="hue-dot" aria-hidden="true" style={`view-transition-name: dot-${post.slug}`}></span>
-        <time datetime={post.date}>{formatDateEs(post.date)}</time> · {post.minutes} min de lectura · {words} palabras
+        <time datetime={post.date}>{formatDateEs(post.date)}</time> · {post.minutes} min de lectura
         {post.draft && <span> · borrador</span>}
       </p>
       <h1 style={`view-transition-name: t-${post.slug}`}>{post.title}</h1>
@@ -67,7 +66,7 @@ const filename = `${post.id}.md`;
         <p class="file"><a href={`/escritos/${post.slug}.md`}>{filename}</a></p>
         <pre>{source}</pre>
       </div>
-      <p class="sig"><Net name="mark" /><span>David Aragort</span></p>
+      <p class="sig"><a href="/sobre-mi/"><Net name="mark" /><span>David Aragort</span></a></p>
       <aside class="done-card" data-done aria-label="Fin del texto">
         {next && (
           <p class="dc-next"><span class="dc-label">{next.label}</span> <a href={`/escritos/${next.slug}/`}>{next.title}</a></p>
