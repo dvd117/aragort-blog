@@ -56,9 +56,16 @@
 [data-pane][hidden] { display: none; }
 
 .source { max-width: 46rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 1.1rem 1rem; }
-.source .file { display: flex; align-items: center; justify-content: space-between; gap: 1rem; font: 500 .875rem/1.4 var(--mono); margin: 0 0 1rem; padding-bottom: .6rem; border-bottom: 1px solid var(--rule); }
-.source .copy { flex: none; min-height: 44px; font: 500 .875rem/1 var(--mono); color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 6px; padding: 0 .9rem; cursor: pointer; }
+.source .file { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; font: 500 .875rem/1.4 var(--mono); margin: 0 0 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--rule); min-width: 0; }
+.source .file a { min-width: 0; overflow-wrap: anywhere; }
+/* Copiar: an icon that turns into a check, with its word; the hue marks the done state. */
+.source .copy { flex: none; display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; font: 500 .875rem/1 var(--ui); color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 8px; padding: 0 1rem 0 .85rem; cursor: pointer; transition: border-color 140ms ease, color 140ms ease; }
 .source .copy:hover { border-color: var(--fg-2); }
+.source .copy svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.source .copy .i-done { display: none; }
+.source .copy[data-state="done"] { color: var(--hue); border-color: var(--hue-ui); }
+.source .copy[data-state="done"] .i-copy { display: none; }
+.source .copy[data-state="done"] .i-done { display: block; }
 .source .file a { color: var(--link); text-underline-offset: .2em; }
 .source pre { margin: 0; font: 400 1rem/1.7 var(--mono); color: var(--fg); white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
 @media (min-width: 900px) { .source { padding: 1.75rem 2rem; } .source pre { font-size: 1.0625rem; } }

@@ -70,7 +70,7 @@ const filename = `${post.id}.md`;
         <Content />
       </div>
       <div class="source" data-pane="md" hidden>
-        <p class="file"><a href={`/escritos/${post.slug}.md`}>{filename}</a><button type="button" class="copy" data-copy aria-live="polite">Copiar</button></p>
+        <p class="file"><a href={`/escritos/${post.slug}.md`}>{filename}</a><button type="button" class="copy" data-copy><svg class="i-copy" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" /><path d="M10.5 3.5v-.5a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 3v5A1.5 1.5 0 0 0 4 9.5h.5" /></svg><svg class="i-done" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" /></svg><span aria-live="polite">Copiar</span></button></p>
         <pre>{source}</pre>
       </div>
       <p class="sig"><a href="/sobre-mi/"><Net name="mark" /><span>David Aragort</span></a></p>
@@ -108,9 +108,11 @@ const filename = `${post.id}.md`;
   let reset = 0;
   copy?.addEventListener('click', async () => {
     try { await navigator.clipboard.writeText(text); } catch { return; }
-    copy.textContent = 'Copiado';
+    const label = copy.querySelector('span')!;
+    copy.dataset.state = 'done';
+    label.textContent = 'Copiado';
     clearTimeout(reset);
-    reset = window.setTimeout(() => { copy.textContent = 'Copiar'; }, 2000);
+    reset = window.setTimeout(() => { delete copy.dataset.state; label.textContent = 'Copiar'; }, 2000);
   });
 </script>
 
