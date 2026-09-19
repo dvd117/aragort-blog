@@ -29,7 +29,9 @@
 .prose em { font-style: var(--em-style); font-weight: var(--em-weight); }
 
 .sig .net { width: 44px; height: 33px; }
-.sig { display: flex; align-items: center; gap: .8rem; font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.6rem; line-height: 1; margin: 2.5rem 0 0; }
+.sig { font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.6rem; line-height: 1; margin: 2.5rem 0 0; }
+.sig a { display: inline-flex; align-items: center; gap: .8rem; color: inherit; text-decoration: none; min-height: 44px; }
+.sig a:hover span { text-decoration: underline; text-decoration-color: var(--hue); text-decoration-thickness: 2px; text-underline-offset: .12em; }
 
 /* E's layer: version line, view switch, Markdown source, margin notes. */
 .ver { font: 500 .875rem/1.4 var(--mono); color: var(--fg-2); margin: 0 0 .6rem; }
