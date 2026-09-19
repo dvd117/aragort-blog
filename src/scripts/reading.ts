@@ -43,6 +43,7 @@ export function initReading(minutes: number): void {
     railWires.forEach((l) => l.classList.add('on'));
     if (!reduced()) nets.forEach((n) => { n.classList.add('pulse'); setTimeout(() => n.classList.remove('pulse'), 400); });
     card?.classList.add('show');
+    chapterOf(1); // every notch past, the last chapter current
     if (left) left.textContent = 'terminado';
   };
 
@@ -78,6 +79,7 @@ export function initReading(minutes: number): void {
   const heads = [...prose.querySelectorAll<HTMLElement>(':scope > h2')];
   const siteHeader = document.querySelector<HTMLElement>('header.site');
   let marks_: number[] = [];
+  const tocLinks = [...document.querySelectorAll<HTMLAnchorElement>('.rail-toc a')];
   let ticks: HTMLElement[] = [];
   if (heads.length >= 3 && siteHeader) {
     const host = document.createElement('div');
@@ -90,6 +92,7 @@ export function initReading(minutes: number): void {
       marks_ = heads.map((h) => (h.getBoundingClientRect().top - g.top) / g.height);
       // A chapter that opens the text needs no notch at 0%.
       ticks.forEach((t, i) => { t.style.left = `${(marks_[i]! * 100).toFixed(2)}%`; t.hidden = marks_[i]! < 0.02; });
+      tocLinks.forEach((a, i) => { (a.parentElement as HTMLElement).style.top = `${(marks_[i]! * 100).toFixed(2)}%`; });
       update();
     };
     addEventListener('resize', place);
@@ -100,6 +103,8 @@ export function initReading(minutes: number): void {
     if (!marks_.length) return '';
     const n = marks_.filter((m) => m <= p + 0.001).length;
     ticks.forEach((t, i) => t.classList.toggle('past', marks_[i]! <= p + 0.001));
+    const current = marks_.filter((m) => m <= p + 0.001).length - 1;
+    tocLinks.forEach((a, i) => { a.classList.toggle('now', i === current); if (i === current) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current'); });
     return n ? `${n}/${marks_.length} · ` : '';
   };
 

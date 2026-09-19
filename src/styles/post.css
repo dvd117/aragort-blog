@@ -6,10 +6,19 @@
 .rail { display: none; }
 @media (min-width: 1000px) {
   .post-head { padding-top: 6rem; padding-bottom: 4.5rem; }
-  .post-grid { grid-template-columns: 150px minmax(0, 1fr); column-gap: 4.5rem; }
+  .post-grid { grid-template-columns: 220px minmax(0, 1fr); column-gap: 3.5rem; }
   .post-grid > .prose, .post-grid > .source, .post-grid > .sig, .post-grid > .done-card { grid-column: 2; }
-  .rail { display: block; position: sticky; top: 10vh; align-self: start; grid-column: 1; grid-row: 1 / span 3; }
-  .rail .net { height: 78vh; width: auto; max-width: 150px; }
+  .rail { display: block; position: sticky; top: 10vh; align-self: start; grid-column: 1; grid-row: 1 / span 3; height: 78vh; }
+  .rail .net { height: 78vh; width: auto; max-width: 88px; }
+  /* The chapters sit beside the net, each at the height where it begins (set by reading.ts). */
+  .rail-toc { position: absolute; top: 0; left: 100px; right: 0; height: 100%; }
+  .rail-toc ol { list-style: none; margin: 0; padding: 0; }
+  .rail-toc li { position: absolute; left: 0; right: 0; transform: translateY(-50%); }
+  .rail-toc a { display: block; font: 500 .8125rem/1.25 var(--ui); color: var(--fg-2); text-decoration: none; padding: .2rem 0; }
+  .rail-toc a:hover { color: var(--fg); }
+  .rail-toc a.now { color: var(--fg); }
+  .rail-toc .num { display: block; font: 600 .6875rem/1 var(--mono); color: var(--hue); margin-bottom: .15rem; }
+  .post[data-has-rail-toc] .toc { display: none; }
 }
 
 /* Long-form in Geist: 18px on a phone (line-height 1.65 from the family tokens), 20px on
@@ -148,6 +157,13 @@
 .toc a:hover { text-decoration: underline; text-decoration-color: var(--hue); }
 /* ## chapters. */
 .prose h2 { font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.45em; line-height: 1.12; color: var(--fg); margin: 2.2em 0 .7em; scroll-margin-top: 80px; }
+/* Chapter numbers: 01, 02… in the hue. The number is decoration: hidden from screen readers. */
+.prose { counter-reset: chapter; }
+.prose > h2 { counter-increment: chapter; position: relative; }
+.prose > h2::before { content: counter(chapter, decimal-leading-zero) / ""; display: block; width: max-content; margin-bottom: .45em; padding-bottom: .3em; border-bottom: 2px solid var(--hue-ui); font: 600 .5em/1 var(--mono); letter-spacing: .02em; color: var(--hue); }
+@media (min-width: 1000px) {
+  .prose > h2::before { position: absolute; right: calc(100% + 1rem); top: .5em; margin: 0; padding: 0; border: 0; }
+}
 .prose > h2:first-child { margin-top: .4em; }
 /* > quote: a pull quote, large, in the post's hue. */
 .prose blockquote { margin: 1.6em 0 1.8em; padding: 0; border: 0; font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.55em; line-height: 1.15; color: var(--hue); }
