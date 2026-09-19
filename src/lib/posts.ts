@@ -52,6 +52,11 @@ export function countWords(markdown: string): number {
   return text.match(/[\p{L}\p{N}]+(?:['’.-][\p{L}\p{N}]+)*/gu)?.length ?? 0;
 }
 
+/** Drafts render in `astro dev` only, never in a production build. */
+export function isVisible(data: { draft?: boolean }, dev: boolean): boolean {
+  return dev || !data.draft;
+}
+
 /** Minutes at 220 words per minute, never less than one. */
 export function readingMinutes(words: number): number {
   return Math.max(1, Math.round(words / 220));
