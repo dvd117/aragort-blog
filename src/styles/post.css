@@ -158,7 +158,11 @@
 .encorto h2 { font: 600 .8125rem/1.2 var(--ui); color: var(--fg-2); margin: 0 0 .5rem; letter-spacing: .01em; }
 .encorto ul { margin: 0; padding: 0 0 0 1.1rem; font: 500 1.0625rem/1.45 var(--ui); color: var(--fg); }
 .encorto li + li { margin-top: .35rem; }
-.encorto li::marker { color: var(--hue-ui); }
+/* Three bullets, three bands: "En corto" is the flag in miniature and stays those three
+   under every post. */
+.encorto li:nth-child(1)::marker { color: var(--hu-amarillo); }
+.encorto li:nth-child(2)::marker { color: var(--hu-azul); }
+.encorto li:nth-child(3)::marker { color: var(--hu-rojo); }
 /* En este texto: the chapters, collapsible, from three ## headings on. */
 .toc { margin: 1rem 0 0; max-width: 40rem; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .toc summary { display: flex; align-items: center; min-height: 44px; font: 600 .9375rem/1 var(--ui); cursor: pointer; list-style: none; }
@@ -193,12 +197,18 @@
 /* **bold**: the skim path, a quiet highlight in the post's hue. */
 .prose strong { font-weight: 600; color: var(--fg); box-shadow: inset 0 -.38em 0 var(--hue-band); }
 :root[data-theme="contrast"] .prose strong { box-shadow: none; text-decoration: none; font-weight: 700; }
-/* --- : a small net fragment. */
+/* --- : a small net fragment, and it has exactly three nodes -- so it is the flag on its
+   side, amarillo to rojo, left to right. It stays those three under every post: the
+   breaks between sections are the site's, not the post's. */
 .net-hr { display: flex; justify-content: center; margin: 2.2em 0; }
 .net-hr svg { width: 96px; height: 16px; overflow: visible; }
-.net-hr line { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
-.net-hr circle { fill: var(--bg); stroke: var(--net); stroke-width: 1; }
-.net-hr circle.on { fill: var(--hue-ui); stroke: var(--hue-ui); }
+.net-hr line, .net-hr circle { stroke-width: 1; }
+.net-hr circle { fill: var(--bg); }
+.net-hr :is(line, circle)[data-band="0"] { stroke: var(--hu-amarillo); }
+.net-hr :is(line, circle)[data-band="1"] { stroke: var(--hu-azul); }
+.net-hr :is(line, circle)[data-band="2"] { stroke: var(--hu-rojo); }
+/* The middle node is solid, as it always was: the rule has a centre. */
+.net-hr circle.on[data-band="1"] { fill: var(--hu-azul); }
 
 @media (max-width: 899px) and (max-height: 500px) and (orientation: landscape) { .post-head { padding-top: 1.5rem; padding-bottom: 1.5rem; } .post-head h1 { font-size: clamp(2.2rem, 13vh, 4rem); max-width: 18ch; } }
 /* On desktop posts the hero goes to the rail, not to the header mark. */

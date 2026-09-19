@@ -18,8 +18,12 @@ const posts = defineCollection({
     title: z.string().min(1),
     description: z.string().optional(),
     draft: z.boolean().optional(),
-    /** "En corto": two or three short lines shown under the title. */
-    resumen: z.array(z.string().min(1)).min(1).max(5).optional(),
+    /**
+     * "En corto": three short lines under the title. Exactly three, because three is the
+     * flag -- the bullets are amarillo, azul, rojo, in order, on the post and on the
+     * landing alike. A post either has the three or has none.
+     */
+    resumen: z.array(z.string().min(1)).length(3).optional(),
   }),
 });
 

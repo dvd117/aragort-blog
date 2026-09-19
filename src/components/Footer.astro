@@ -4,26 +4,31 @@
  * net: thin strokes, hollow rings, currentColor. Each carries its words for screen readers
  * and as a tooltip, so nothing is lost by dropping the labels. GitHub keeps its own solid
  * mark, which does not read as a wire drawing.
+ *
+ * There are exactly three of them, so they are the flag: amarillo, azul, rojo, in the
+ * order they sit in. They keep those three whatever hue the page owns -- the footer is
+ * the same footer under every post.
  */
 import Net from './Net.astro';
 import { LICENCE, REPO } from '../lib/licence';
 
 const links = [
-  { href: REPO, label: 'Código de este sitio en GitHub', ext: true, icon: 'github' },
-  { href: LICENCE.url, label: `Licencia ${LICENCE.name}`, ext: true, icon: 'cc', rel: 'license' },
-  { href: '/rss.xml', label: 'Suscríbete por RSS', ext: false, icon: 'rss' },
+  { href: REPO, label: 'Código de este sitio en GitHub', ext: true, icon: 'github', band: '0' },
+  { href: LICENCE.url, label: `Licencia ${LICENCE.name}`, ext: true, icon: 'cc', rel: 'license', band: '1' },
+  { href: '/rss.xml', label: 'Suscríbete por RSS', ext: false, icon: 'rss', band: '2' },
 ] as const;
 ---
 <footer class="site-foot wrap">
-  <span class="foot-mark"><Net name="mark" flag /></span>
+  <span class="foot-mark"><Net name="mark" /></span>
   <div class="foot-text">
     <p>David Aragort</p>
     <ul class="foot-links">
-      {links.map(({ href, label, ext, icon, ...rest }) => (
+      {links.map(({ href, label, ext, icon, band, ...rest }) => (
         <li>
           <a
             href={href}
             title={label}
+            data-band={band}
             rel={[...(ext ? ['noopener', 'noreferrer'] : []), ...('rel' in rest ? [rest.rel] : [])].join(' ') || undefined}
             target={ext ? '_blank' : undefined}
           >
@@ -60,8 +65,13 @@ const links = [
 
   .foot-links { display: flex; align-items: center; gap: .35rem; list-style: none; margin: 0; padding: 0; }
   /* 44px tap targets that still look like small marks. */
-  .foot-links a { display: inline-flex; align-items: center; justify-content: center; min-width: var(--foot-row); min-height: var(--foot-row); color: var(--fg-2); }
-  .foot-links a:hover { color: var(--hue); }
+  .foot-links a { display: inline-flex; align-items: center; justify-content: center; min-width: var(--foot-row); min-height: var(--foot-row); color: var(--fg-2); transition: color 140ms ease; }
+  .foot-links a[data-band="0"] { color: var(--hu-amarillo); }
+  .foot-links a[data-band="1"] { color: var(--hu-azul); }
+  .foot-links a[data-band="2"] { color: var(--hu-rojo); }
+  .foot-links a[data-band="0"]:hover { color: var(--hl-amarillo); }
+  .foot-links a[data-band="1"]:hover { color: var(--hl-azul); }
+  .foot-links a[data-band="2"]:hover { color: var(--hl-rojo); }
   .cc { display: inline-flex; align-items: center; gap: .22rem; }
   /* Drawn like the net: hairlines that do not thicken with the icon's size. */
   .i { display: block; width: var(--foot-icon); height: var(--foot-icon); fill: none; stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: color 140ms ease; }
