@@ -12,7 +12,7 @@
 .entry { display: grid; gap: .35rem; padding: 1.75rem 0 1.9rem; border-bottom: 1px solid var(--rule); }
 .entry .d { font-size: .9375rem; color: var(--fg-2); }
 .entry .t { font-family: var(--display); font-size: clamp(2.1rem, 7.5vw, 3.9rem); line-height: .98; letter-spacing: -.02em; text-decoration: none; }
-.entry .t:hover { text-decoration: underline; text-decoration-color: var(--ochre); text-decoration-thickness: 2px; text-underline-offset: .12em; }
+.entry .t:hover { text-decoration: underline; text-decoration-color: var(--fg-2); text-decoration-thickness: 2px; text-underline-offset: .12em; }
 .entry .ex { font-family: var(--read); font-size: 1.1875rem; color: var(--fg-2); margin: .35rem 0 0; }
 .entry.draft .t { color: var(--fg-2); }
 .tag { font-size: .9375rem; color: var(--fg-2); }
@@ -21,3 +21,5 @@
   .entry .ex, .entry .tag { grid-column: 2; }
 }
 .empty { font-family: var(--read); font-size: 1.1875rem; color: var(--fg-2); }
+.entry .d { margin: 0; }
+.hue-dot { display: inline-block; width: .6em; height: .6em; border-radius: 50%; background: var(--hue); margin-right: .5em; vertical-align: .05em; }

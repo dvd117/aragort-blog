@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { countWords, isVisible, parsePostFilename, readingMinutes } from './posts';
+import { hueFor, type Hue } from './hue';
 
 export interface Post {
   entry: CollectionEntry<'posts'>;
@@ -9,6 +10,7 @@ export interface Post {
   title: string;
   description?: string;
   draft: boolean;
+  hue: Hue;
   words: number;
   minutes: number;
   /** Path of the source file, relative to the project root. */
@@ -30,6 +32,7 @@ export async function getPosts(): Promise<Post[]> {
         title: entry.data.title,
         description: entry.data.description,
         draft: entry.data.draft ?? false,
+        hue: hueFor(slug, entry.data.hue),
         words,
         minutes: readingMinutes(words),
         file: entry.filePath ?? `src/content/posts/${entry.id}.md`,

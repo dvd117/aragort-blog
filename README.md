@@ -42,6 +42,21 @@ A post is **v1 when published**. Each commit to its file **after the filename da
 
 **Dokploy must build with full git history.** In a shallow clone (depth 1, the usual CI default), or with no git at all, the history is incomplete. The site then shows **no version line at all**, never a wrong number. For the deploy step: set the Dokploy application's clone to full depth, or run `git fetch --unshallow` before `npm run build`. The Docker build keeps `.git` in its context for this reason (see `.dockerignore`) and installs `git` in the build stage.
 
+
+### A hue per post
+
+Each post owns one of five muted hues: `ochre` (the brand), `teal`, `brick`, `sky`, `moss`. Set it with `hue:` in the frontmatter, or leave it out: it is then assigned from the slug by a hash (`src/lib/hue.ts`), stable across builds and independent of post order. The hue colours the post's reading rail, progress line, footnote markers, margin-note edge and link highlight, and a small dot beside the date on the index and the post. Ochre stays for the wordmark node and global UI.
+
+Each value is the colour used as text and UI in that theme: ratio on the page / on the note panel (needs 4.5, and 7 in alto contraste). Text on each hue's highlight band stays at 8.6 or more.
+
+| Hue | Light | Dark | Sepia | Alto contraste |
+|---|---|---|---|---|
+| ochre | `#8b6114` 5.09 / 4.66 | `#e2a638` 8.97 / 8.26 | `#805a13` 5.18 / 4.64 | `#ffd166` 14.56 / 12.78 |
+| teal | `#2f7472` 5.03 / 4.6 | `#43a3a0` 6.43 / 5.92 | `#2c6b69` 5.14 / 4.6 | `#48b0ac` 8.08 / 7.09 |
+| brick | `#aa4e3c` 5.03 / 4.6 | `#c36855` 5.0 / 4.61 | `#9d4837` 5.14 / 4.6 | `#d39082` 8.08 / 7.09 |
+| sky | `#386e97` 5.05 / 4.62 | `#4587ba` 5.0 / 4.6 | `#34658c` 5.18 / 4.64 | `#75a6cc` 8.08 / 7.09 |
+| moss | `#567138` 5.09 / 4.66 | `#759a4c` 5.97 / 5.5 | `#506833` 5.21 / 4.67 | `#84ac56` 8.02 / 7.03 |
+
 ## Development
 
 ```sh

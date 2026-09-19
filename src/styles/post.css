@@ -4,7 +4,7 @@
 
 .post-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
 .rail { display: none; }
-.progress { position: fixed; inset: 0 0 auto 0; height: 3px; background: var(--ochre); transform-origin: 0 50%; transform: scaleX(0); z-index: 10; pointer-events: none; }
+.progress { position: fixed; inset: 0 0 auto 0; height: 3px; background: var(--hue); transform-origin: 0 50%; transform: scaleX(0); z-index: 10; pointer-events: none; }
 @media (min-width: 1000px) {
   .post-head { padding-top: 6rem; padding-bottom: 4.5rem; }
   .post-grid { grid-template-columns: 150px minmax(0, 1fr); column-gap: 4.5rem; }
@@ -17,7 +17,7 @@
 .prose { font-family: var(--read-font); font-size: calc(clamp(1.125rem, 1rem + .45vw, 1.3125rem) * var(--scale)); line-height: var(--leading); letter-spacing: var(--tracking); color: var(--fg-read); max-width: var(--measure); }
 .prose p { margin: 0 0 1.1em; }
 /* E's highlighter, in D's palette: a band plus a 1px underline, so links never rely on the band alone. */
-.prose a { color: var(--fg); text-decoration: underline var(--underline) var(--link); text-underline-offset: .2em; box-shadow: inset 0 -.42em 0 var(--mark); }
+.prose a { color: var(--fg); text-decoration: underline var(--underline) var(--hue); text-underline-offset: .2em; box-shadow: inset 0 -.42em 0 var(--hue-band); }
 .prose a:hover { box-shadow: inset 0 -.42em 0 var(--mark-hover); }
 .prose hr { border: 0; height: 1px; background: var(--rule); margin: 2.4em 0; }
 .prose em { font-style: italic; }
@@ -40,12 +40,12 @@
 .source pre { margin: 0; font: 400 1rem/1.7 var(--mono); color: var(--fg); white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
 @media (min-width: 900px) { .source { padding: 1.75rem 2rem; } .source pre { font-size: 1.0625rem; } }
 
-.nref { font: 600 .75em/1 var(--mono); vertical-align: .45em; margin-left: .1em; color: var(--link); text-decoration: none; box-shadow: none; }
-.prose .nref { color: var(--link); box-shadow: none; text-decoration: none; }
-.note { font-family: var(--ui); font-size: 1rem; line-height: 1.5; color: var(--fg-2); margin: -.3em 0 1.4em; padding: .7rem .9rem; border-left: 3px solid var(--ochre); background: var(--panel); border-radius: 0 6px 6px 0; }
+.nref { font: 600 .75em/1 var(--mono); vertical-align: .45em; margin-left: .1em; color: var(--hue); text-decoration: none; box-shadow: none; }
+.prose .nref { color: var(--hue); box-shadow: none; text-decoration: none; }
+.note { font-family: var(--ui); font-size: 1rem; line-height: 1.5; color: var(--fg-2); margin: -.3em 0 1.4em; padding: .7rem .9rem; border-left: 3px solid var(--hue); background: var(--panel); border-radius: 0 6px 6px 0; }
 .note p { margin: 0; }
 .note p + p { margin-top: .5rem; }
-.note .n { font: 600 .875rem/1 var(--mono); color: var(--link); margin-right: .2rem; }
+.note .n { font: 600 .875rem/1 var(--mono); color: var(--hue); margin-right: .2rem; }
 @media (min-width: 1100px) {
   .prose { display: grid; grid-template-columns: minmax(0, var(--measure)) 14rem; column-gap: 3rem; max-width: none; align-content: start; }
   .prose > * { grid-column: 1; }
@@ -61,3 +61,8 @@
 /* Leer en voz alta: the sentence being read. */
 ::highlight(voz) { background-color: var(--mark-hover); color: inherit; }
 .prose .is-speaking { background: var(--panel); box-shadow: -.5rem 0 0 var(--panel), .5rem 0 0 var(--panel); }
+
+/* The post's hue: rail nodes, a dot beside the date (shared with the index for the title morph). */
+.rail .net .on { stroke: var(--hue); }
+.rail .net circle.on { fill: var(--hue); }
+.hue-dot { display: inline-block; width: .6em; height: .6em; border-radius: 50%; background: var(--hue); margin-right: .5em; vertical-align: .05em; }
