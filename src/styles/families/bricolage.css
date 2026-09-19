@@ -1,0 +1,12 @@
+/* A. Bricolage Grotesque: optical sizes (the browser picks opsz from the size), wide and warm.
+   No italic exists: emphasis is a weight step, never a synthesized slant. */
+@font-face { font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 400 800; font-display: swap; src: url("/fonts/bricolage.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("/fonts/jetbrains-mono.woff2") format("woff2"); }
+:root[data-family="bricolage"] {
+  --sans: "Bricolage Grotesque", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --display-weight: 780; --display-tracking: -.045em; --display-leading: .9;
+  --title-weight: 680; --title-tracking: -.028em; --title-leading: 1.02;
+  --lh: 1.6; --trk: 0em; --body-weight: 400;
+  --em-style: normal; --em-weight: 620;
+}

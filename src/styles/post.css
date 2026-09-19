@@ -1,6 +1,6 @@
 .post-head { padding-top: 3.5rem; padding-bottom: 3rem; }
 .post-head .meta { font-size: .9375rem; color: var(--fg-2); margin: 0; }
-.post-head h1 { font-family: var(--display); font-weight: 400; font-size: clamp(3.2rem, 13vw, 9rem); line-height: .88; letter-spacing: -.035em; margin: 1.25rem 0 0; max-width: 11ch; }
+.post-head h1 { font-family: var(--display); font-weight: var(--display-weight); font-size: clamp(2.6rem, 11vw, 6.5rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); margin: 1.25rem 0 0; max-width: 11ch; }
 
 .post-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); }
 .rail { display: none; }
@@ -20,10 +20,11 @@
 .prose a { color: var(--fg); text-decoration: underline var(--underline) var(--hue); text-underline-offset: .2em; box-shadow: inset 0 -.42em 0 var(--hue-band); }
 .prose a:hover { box-shadow: inset 0 -.42em 0 var(--mark-hover); }
 .prose hr { border: 0; height: 1px; background: var(--rule); margin: 2.4em 0; }
-.prose em { font-style: italic; }
+/* Emphasis: a true italic where the family has one; a weight step where it has not (never synthesized). */
+.prose em { font-style: var(--em-style); font-weight: var(--em-weight); }
 
 .sig .net { width: 44px; height: 33px; }
-.sig { display: flex; align-items: center; gap: .8rem; font-family: var(--display); font-style: italic; font-size: 2.1rem; line-height: 1; margin: 2.5rem 0 0; }
+.sig { display: flex; align-items: center; gap: .8rem; font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.6rem; line-height: 1; margin: 2.5rem 0 0; }
 
 /* E's layer: version line, view switch, Markdown source, margin notes. */
 .ver { font: 500 .875rem/1.4 var(--mono); color: var(--fg-2); margin: 0 0 .6rem; }
@@ -102,7 +103,7 @@
 .minibar { position: fixed; inset: 0 0 auto 0; z-index: 20; display: flex; align-items: center; gap: .75rem; padding: .55rem var(--gutter); background: var(--bg); border-bottom: 1px solid var(--rule); transform: translateY(-105%); transition: transform 200ms cubic-bezier(.2, 0, 0, 1); }
 .minibar.show { transform: none; }
 .mb-mark .net { width: 34px; height: 26px; }
-.mb-title { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: 400 1.25rem/1.1 var(--display); }
+.mb-title { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: var(--title-weight) 1.1rem/1.1 var(--display); letter-spacing: var(--title-tracking); }
 .mb-left { font: 500 .875rem/1 var(--ui); color: var(--fg-2); white-space: nowrap; }
 
 /* End card: quiet, after the signature. Visible without JS; fades in at the end with it. */
@@ -110,7 +111,7 @@
 .done-card p { margin: 0; }
 .done-card p + p { margin-top: .6rem; }
 .dc-label { display: block; font-size: .8125rem; color: var(--fg-2); }
-.dc-next a { font: 400 1.6rem/1.1 var(--display); color: var(--fg); text-decoration: none; }
+.dc-next a { font: var(--title-weight) 1.4rem/1.1 var(--display); letter-spacing: var(--title-tracking); color: var(--fg); text-decoration: none; }
 .dc-next a:hover { text-decoration: underline; text-decoration-color: var(--hue); }
 .dc-mail a { font-weight: 600; color: var(--fg); text-decoration: underline var(--underline) var(--hue); text-underline-offset: .2em; }
 .dc-mail span { color: var(--fg-2); margin-left: .35rem; }

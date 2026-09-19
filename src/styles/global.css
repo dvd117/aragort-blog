@@ -1,9 +1,6 @@
 /* Fonts: SIL OFL, self-hosted, Latin subset (licences in /fonts). */
-@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/instrument-serif.woff2") format("woff2"); }
-@font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/instrument-serif-italic.woff2") format("woff2"); }
 @font-face { font-family: "Newsreader"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("/fonts/newsreader.woff2") format("woff2"); }
 @font-face { font-family: "Newsreader"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/newsreader-italic.woff2") format("woff2"); }
-@font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("/fonts/instrument-sans.woff2") format("woff2"); }
 @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800; font-display: swap; src: url("/fonts/jetbrains-mono.woff2") format("woff2"); }
 
 /* Atkinson Hyperlegible: declared here, downloaded only when a reader picks it. */
@@ -27,10 +24,18 @@
   --mark: rgba(226, 166, 56, .38);
   --mark-hover: rgba(226, 166, 56, .6);
   --underline: 1px;
-  --display: "Instrument Serif", "Times New Roman", serif;
-  --read: "Newsreader", Georgia, serif;
-  --ui: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  /* Type: one sans family for display, UI and body (src/styles/families/*.css sets
+     --sans, --mono and the per-family weights, tracking and line-heights). */
+  --sans: system-ui, sans-serif;
+  --mono: ui-monospace, Menlo, Consolas, monospace;
+  --display: var(--sans);
+  --read: var(--sans);
+  --ui: var(--sans);
+  --serif: "Newsreader", Georgia, serif;
+  --display-weight: 700; --display-tracking: -.04em; --display-leading: .92;
+  --title-weight: 650; --title-tracking: -.03em; --title-leading: 1.04;
+  --lh: 1.62; --trk: 0em; --body-weight: 400;
+  --em-style: italic; --em-weight: 400;
   --gutter: 16px;
   color-scheme: light;
 }
@@ -78,18 +83,18 @@
 [data-hue="moss"] { --hue: var(--h-moss); --hue-band: var(--hb-moss); }
 
 /* Reading settings: one attribute each on <html>, read by the prose. */
-:root { --scale: 1; --leading: 1.62; --tracking: 0; --measure: 66ch; --read-font: var(--read); }
+:root { --scale: 1; --lh-step: 1; --trk-step: 0em; --leading: calc(var(--lh) * var(--lh-step)); --tracking: calc(var(--trk) + var(--trk-step)); --measure: 66ch; --read-font: var(--sans); }
 :root[data-size="1"] { --scale: .9; }
 :root[data-size="2"] { --scale: .95; }
 :root[data-size="4"] { --scale: 1.12; }
 :root[data-size="5"] { --scale: 1.25; }
-:root[data-leading="1"] { --leading: 1.45; }
-:root[data-leading="3"] { --leading: 1.9; }
-:root[data-tracking="2"] { --tracking: .04em; }
+:root[data-leading="1"] { --lh-step: .9; }
+:root[data-leading="3"] { --lh-step: 1.17; }
+:root[data-tracking="2"] { --trk-step: .04em; }
 :root[data-measure="1"] { --measure: 56ch; }
 :root[data-measure="3"] { --measure: 76ch; }
-:root[data-font="sans"] { --read-font: var(--ui); }
-:root[data-font="atkinson"] { --read-font: "Atkinson Hyperlegible", var(--ui); }
+:root[data-font="serif"] { --read-font: var(--serif); --lh: 1.62; --trk: 0em; --em-style: italic; --em-weight: 400; }
+:root[data-font="atkinson"] { --read-font: "Atkinson Hyperlegible", var(--sans); --em-style: italic; --em-weight: 400; }
 :root[data-links="all"] a { text-decoration-line: underline; text-decoration-thickness: max(1px, var(--underline)); text-underline-offset: .2em; }
 
 @media (min-width: 900px) { :root { --gutter: 40px; } }

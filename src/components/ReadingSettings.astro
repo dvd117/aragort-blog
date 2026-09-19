@@ -11,7 +11,7 @@ const text = [
   group('Espacio entre letras', 'tracking', [['1', 'Normal'], ['2', 'Amplio']]),
   group('Ancho de columna', 'measure', [['1', 'Estrecho'], ['2', 'Normal'], ['3', 'Ancho']]),
 ];
-const font = group('Tipografía', 'font', [['news', 'Newsreader'], ['sans', 'Instrument Sans'], ['atkinson', 'Atkinson Hyperlegible']]);
+const font = group('Tipografía', 'font', [['sans', 'Sans'], ['serif', 'Serif'], ['atkinson', 'Atkinson Hyperlegible']]);
 const theme = group('Tema', 'theme', [['system', 'Sistema'], ['light', 'Claro'], ['dark', 'Oscuro'], ['sepia', 'Sepia'], ['contrast', 'Alto contraste']]);
 ---
 <button class="ajustes-btn" type="button" aria-expanded="false" aria-controls="ajustes" data-ajustes-open>
@@ -85,7 +85,7 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['light', 'Claro'],
   .ajustes-btn { display: inline-flex; align-items: center; gap: .45rem; font: 500 .9375rem/1 var(--ui); color: var(--fg); background: none; border: 1px solid var(--rule); border-radius: 999px; padding: .6rem .9rem; min-height: 44px; cursor: pointer; }
   .ajustes-btn:hover { border-color: var(--fg-2); }
   .ajustes-btn[aria-expanded="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
-  .aa { font-family: var(--display); font-size: 1.25rem; line-height: .8; }
+  .aa { font-family: var(--display); font-weight: var(--display-weight); letter-spacing: -.04em; font-size: 1.1rem; line-height: .8; }
 
   /* Phone first: a bottom sheet. */
   .ajustes {
@@ -97,7 +97,7 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['light', 'Claro'],
   .ajustes[hidden] { display: none; }
   .ajustes::before { content: ""; display: block; width: 40px; height: 4px; border-radius: 2px; background: var(--rule); margin: .25rem auto .5rem; }
   .ajustes-head { display: flex; align-items: center; justify-content: space-between; position: sticky; top: -.5rem; background: var(--bg); padding: .5rem 0; z-index: 1; }
-  h2 { font: 400 1.75rem/1 var(--display); margin: 0; }
+  h2 { font: var(--title-weight) 1.4rem/1 var(--display); letter-spacing: var(--title-tracking); margin: 0; }
   h2:focus { outline: none; }
   h2:focus-visible { outline: 2px solid var(--ochre); }
   h3 { font: 600 .8125rem/1.2 var(--ui); color: var(--fg-2); margin: 1.25rem 0 .5rem; }
@@ -115,7 +115,7 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['light', 'Claro'],
   .opts label:first-child span { border-left: 0; }
   .opts input:checked + span { background: var(--fg); color: var(--bg); }
   .opts input:focus-visible + span { outline: 2px solid var(--ochre); outline-offset: -4px; }
-  .sz { font-family: var(--display) !important; font-weight: 400 !important; }
+  .sz { font-family: var(--display) !important; font-weight: var(--title-weight) !important; }
   .sz-1 { font-size: .95rem !important; } .sz-2 { font-size: 1.1rem !important; } .sz-3 { font-size: 1.3rem !important; }
   .sz-4 { font-size: 1.55rem !important; } .sz-5 { font-size: 1.8rem !important; }
 

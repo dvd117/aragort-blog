@@ -16,7 +16,7 @@ export const SCHEMA = {
   leading: { attr: 'data-leading', values: ['1', '2', '3'], default: '2' },
   tracking: { attr: 'data-tracking', values: ['1', '2'], default: '1' },
   measure: { attr: 'data-measure', values: ['1', '2', '3'], default: '2' },
-  font: { attr: 'data-font', values: ['news', 'sans', 'atkinson'], default: 'news' },
+  font: { attr: 'data-font', values: ['sans', 'serif', 'atkinson'], default: 'sans' },
   focus: { attr: 'data-focus', values: ['off', 'on'], default: 'off' },
   links: { attr: 'data-links', values: ['off', 'all'], default: 'off' },
   motion: { attr: 'data-motion', values: ['auto', 'reduce'], default: 'auto' },
