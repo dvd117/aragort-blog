@@ -49,19 +49,19 @@ A post is **v1 when published**. Each commit to its file **after the filename da
 
 ### A hue per post
 
-Each post owns one of five muted hues: `ochre` (the brand), `teal`, `brick`, `sky`, `moss`. Set it with `hue:` in the frontmatter, or leave it out: it is then assigned from the slug by a hash (`src/lib/hue.ts`), stable across builds and independent of post order. The hue colours the post's reading rail, progress line, footnote markers, margin-note edge and link highlight, and a small dot beside the date on the index and the post. Only one hue rules a page at a time. It sits on `<html>`, and everything reads it — links, dots, rules and every net on the page (header mark, hero, rail, portrait, footer mark). A post wears its own; the landing takes the hue of whichever entry is under the cursor, so a post's colour stays hidden until you reach for it and then takes the whole page. The landing and Sobre mí open in the hue of the last post read on this device. Ochre is only the focus ring, the favicon and where the order starts.
+Each post owns one of the three colours of the Venezuelan flag, in the order they appear on it: `amarillo`, `azul`, `rojo`. They are muted to the page's palette — a quiet reference, not a flag drawn on the screen. Set one with `hue:` in the frontmatter, or leave it out: it is then assigned from the slug by a hash (`src/lib/hue.ts`), stable across builds and independent of post order. The order never shuffles.
 
-The hue in the frontmatter or from the slug is a **base**. Each visit draws one offset (kept in `sessionStorage` for the tab) and rolls every base forward by it: the five hues keep their order, only the starting point moves, so a post is teal one visit and sky the next while neighbours stay neighbours. `<html data-hue-base>` carries the base, `data-hue` the rolled hue; one inline script writes both before first paint (`src/lib/lasthue.ts`). Links are set in the hue (text); dots, nodes, rails and rules use a more saturated UI variant in the light themes (3:1).
+Only one hue rules a page at a time. It sits on `<html>`, and everything reads it — links, dots, rules, the reading rail, the progress line, footnote markers, the margin-note edge, and every net on the page (header mark, hero, rail, portrait, footer mark). A post wears its own; the landing takes the hue of whichever entry is under the cursor, so a post's colour stays hidden until you reach for it and then takes the whole page. The landing and Sobre mí open in the hue of the last post read on this device, applied inline before first paint (`src/lib/lasthue.ts`). `--focus` is the one mark that never changes hue: the focus ring, and the favicon.
+
+Links are set in the hue (text); dots, nodes, rails and rules use a more saturated UI variant in the light themes (3:1).
 
 Each value is the colour used as text and UI in that theme: ratio on the page / on the note panel (needs 4.5, and 7 in alto contraste). Text on each hue's highlight band stays at 8.6 or more.
 
 | Hue | Light | Dark | Sepia | Alto contraste |
 |---|---|---|---|---|
-| ochre | `#8b6114` 5.09 / 4.66 | `#e2a638` 9.75 / 8.77 | `#805a13` 5.18 / 4.64 | `#ffd166` 14.56 / 12.78 |
-| teal | `#2f7472` 5.03 / 4.6 | `#43a3a0` 6.99 / 6.28 | `#2c6b69` 5.14 / 4.6 | `#48b0ac` 8.08 / 7.09 |
-| brick | `#aa4e3c` 5.03 / 4.6 | `#d4735f` 6.42 / 5.77 | `#9d4837` 5.14 / 4.6 | `#d39082` 8.08 / 7.09 |
-| sky | `#386e97` 5.05 / 4.62 | `#5b9bd0` 7.04 / 6.34 | `#34658c` 5.18 / 4.64 | `#75a6cc` 8.08 / 7.09 |
-| moss | `#567138` 5.09 / 4.66 | `#759a4c` 6.48 / 5.83 | `#506833` 5.21 / 4.67 | `#84ac56` 8.02 / 7.03 |
+| amarillo | `#8b6114` 5.09 / 4.66 | `#e2a638` 9.75 / 8.77 | `#805a13` 5.18 / 4.64 | `#ffd166` 14.56 / 12.78 |
+| azul | `#2e5c9c` 6.21 / 5.68 | `#6298dd` 7.05 / 6.35 | `#305a94` 5.82 / 5.21 | `#88b4e6` 9.72 / 8.53 |
+| rojo | `#b23a35` 5.47 / 5.01 | `#e0705e` 6.65 / 5.98 | `#a83731` 5.39 / 4.83 | `#e89a90` 9.46 / 8.3 |
 
 
 ## Reading settings, motion and the preview
@@ -84,7 +84,7 @@ Each setting is one `data-*` attribute on `<html>`, applied before first paint b
 - At the end of a post, the net completes with one pulse and a card offers the next post and "Escríbeme".
 - "Sigue donde quedaste" offers to jump back to the last paragraph read. It is stored on the device only and forgotten after 30 days.
 
-**Filtrar escritos.** A box between the hero and the list narrows it as you type, over the title, description, En corto and date the landing already shows — accent- and case-insensitive, Escape to clear (`src/scripts/filter.ts`). It is built in JS, so it never appears without something to drive it, and it ships no search index: post bodies are not searched.
+**Buscar.** A box between the hero and the list, hard against its right edge and clear of the net, narrows the list as you type, over the title, description, En corto and date the landing already shows — accent- and case-insensitive, Escape to clear (`src/scripts/filter.ts`). It is built in JS, so it never appears without something to drive it, and it ships no search index: post bodies are not searched.
 
 **Preview.** `node scripts/preview.mjs` writes `preview/`, a small multi-page build with relative links that works from any subpath. It includes the labelled test posts in `tests/fixtures/posts` so hues and navigation can be judged; add `--real` for real content only.
 
@@ -129,20 +129,20 @@ The Dockerfile has two stages: Node builds the site (with `git`, for versions), 
 | Light | Body text (`fg` on `bg`) | 16.61 | 4.5 |
 | Light | Muted text (`fg-2` on `bg`) | 5.95 | 4.5 |
 | Light | Muted on panel (notes, toggle) (`fg-2` on `panel`) | 5.45 | 4.5 |
-| Light | Ochre text (source link, note numbers) (`link` on `bg`) | 5.09 | 4.5 |
-| Light | Ochre text on panel (`link` on `panel`) | 4.66 | 4.5 |
+| Light | Accent text (source link, note numbers) (`link` on `bg`) | 5.09 | 4.5 |
+| Light | Accent text on panel (`link` on `panel`) | 4.66 | 4.5 |
 | Light | Link text on highlighter band (`fg` on `band .38`) | 12.90 | 4.5 |
 | Light | Link text on hover band (`fg` on `band .60`) | 11.03 | 4.5 |
-| Light | Net nodes, focus ring, progress (UI) (`ochre` on `bg`) | 3.16 | 3 |
+| Light | Net nodes, focus ring, progress (UI) (`focus` on `bg`) | 3.16 | 3 |
 | Light | Pressed toggle label (`bg` on `fg`) | 16.61 | 4.5 |
 | Dark | Body text (reading) (`fg-read` on `bg`) | 13.09 | 4.5 |
 | Dark | Titles (`fg` on `bg`) | 17.31 | 4.5 |
 | Dark | Muted text (`fg-2` on `bg`) | 8.27 | 4.5 |
 | Dark | Muted on panel (`fg-2` on `panel`) | 7.44 | 4.5 |
-| Dark | Ochre text (`link` on `bg`) | 9.75 | 4.5 |
-| Dark | Ochre text on panel (`link` on `panel`) | 8.77 | 4.5 |
+| Dark | Accent text (`link` on `bg`) | 9.75 | 4.5 |
+| Dark | Accent text on panel (`link` on `panel`) | 8.77 | 4.5 |
 | Dark | Link text on highlighter band (`fg` on `band .28`) | 10.75 | 4.5 |
 | Dark | Link text on hover band (`fg` on `band .45`) | 6.69 | 4.5 |
-| Dark | Net nodes, focus ring, progress (UI) (`ochre` on `bg`) | 9.75 | 3 |
+| Dark | Net nodes, focus ring, progress (UI) (`focus` on `bg`) | 9.75 | 3 |
 
-Band pairs are the ochre highlight composited over the page background before the ratio is taken.
+Band pairs are the amarillo highlight composited over the page background before the ratio is taken.

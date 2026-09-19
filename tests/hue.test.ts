@@ -9,14 +9,14 @@ describe('hue per post', () => {
   });
 
   it('pins known slugs, so a refactor cannot silently recolour published posts', () => {
-    expect(hueFor('por-que-deje-los-chatbots')).toBe('ochre');
+    expect(hueFor('por-que-deje-los-chatbots')).toBe('azul');
   });
 
   it('respects the frontmatter choice', () => {
     for (const h of HUES) expect(hueFor('por-que-deje-los-chatbots', h)).toBe(h);
   });
 
-  it('always returns one of the five hues and uses all of them', () => {
+  it('always returns one of the flag\'s three hues and uses all of them', () => {
     const seen = new Set<string>();
     for (let i = 0; i < 200; i++) {
       const h = hueFor(`texto-${i}`);

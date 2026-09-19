@@ -3,7 +3,9 @@
    stays AA over it), a wire leaves its bottom-left node and becomes the thread
    down the left gutter, and every entry hangs on the thread by its hue node. */
 .index { position: relative; overflow-x: clip; padding-top: 1rem; }
-.hero { position: relative; isolation: isolate; padding: 1.5rem 0 3rem; min-height: 15rem; }
+/* Tall enough to hold the net it carries (96vw wide, so 64vw tall), with room under it,
+   so nothing below the hero ever lands on top of a node or a wire. */
+.hero { position: relative; isolation: isolate; padding: 1.5rem 0 3rem; min-height: max(15rem, calc(64vw + 1rem)); }
 .hero-title { position: relative; z-index: 1; }
 /* Knockout: a halo in the page colour keeps every glyph on the background, so the
    net under the title never touches the letters (title and lede keep their AA ratios). */
@@ -16,15 +18,18 @@
 .net-wrap { --net-alpha: .26; }
 .net-wrap .net circle { stroke-opacity: .5; }
 
-/* Filtrar escritos: one box between the hero and the list, built by filter.ts so it is
-   never there without JS to drive it. It sits on the thread's left edge, like an entry. */
-.filter { position: relative; margin: 0 0 .5rem; padding-left: 1.75rem; }
-.filter input { -webkit-appearance: none; appearance: none; width: 100%; max-width: 26rem; padding: .7rem .9rem; min-height: 44px; font: 1rem/1.3 var(--ui); color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 2px; }
-.filter input::placeholder { color: var(--fg-2); }
+/* Buscar: one box between the hero and the list, built by filter.ts so it is never there
+   without JS to drive it. It sits hard against the right edge, out of the way of the wire
+   that leaves the net for the thread down the left gutter -- on a phone too, where the net
+   bleeds off the right. Filled rather than outlined, so it reads as a control and not as
+   one more hairline in a page full of them. */
+.filter { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-end; margin: 0 0 1rem; }
+.filter input { -webkit-appearance: none; appearance: none; width: 100%; max-width: 20rem; padding: .7rem .9rem; min-height: 44px; font: 1rem/1.3 var(--ui); color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; transition: border-color 140ms ease, background-color 140ms ease; }
+.filter input::placeholder { color: var(--fg-2); opacity: 1; }
 .filter input:hover { border-color: var(--fg-2); }
-.filter input:focus-visible { border-color: var(--hue-ui); }
+.filter input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--hue-ui); }
 .filter input::-webkit-search-cancel-button { filter: grayscale(1) opacity(.6); cursor: pointer; }
-.filter-n { margin: .5rem 0 0; font-size: .875rem; color: var(--fg-2); min-height: 1.2em; }
+.filter-n { margin: .5rem 0 0; font-size: .875rem; color: var(--fg-2); text-align: right; }
 .filter-n:empty { display: none; }
 /* A filtered list closes the gaps the hidden entries leave. */
 .entries.is-filtered .entry { padding-top: .6rem; }
@@ -61,7 +66,7 @@
   .net-wrap { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .5; }
   .net-wrap .net circle { stroke-opacity: 1; }
   .entries { padding-left: 2.25rem; max-width: 60rem; }
-  .filter { padding-left: 2.25rem; margin-bottom: 1rem; }
+  .filter { max-width: 60rem; margin-bottom: 1.5rem; }
   .node { left: calc(-2.25rem + 5.5px - 6px); }
   .entry { grid-template-columns: 13rem 1fr; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
   .entry .ex, .entry .tag { grid-column: 2; }
@@ -86,7 +91,9 @@
 .who a { color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
 /* The thread ends at the footer mark's top-left node. */
 body:has(.index .who) .site-foot { position: relative; }
-body:has(.index .who) .site-foot::before { content: ""; position: absolute; left: calc(var(--gutter) + 5px); top: 0; height: calc(4rem + 2.4px); width: 1px; background: var(--net); opacity: var(--net-alpha); }
+/* Down to the mark's top-left node: the footer's padding, the mark's offset inside its
+   row (centred in --foot-row), and the node's own 2.4px inside the 29px mark. */
+body:has(.index .who) .site-foot::before { content: ""; position: absolute; left: calc(var(--gutter) + 5px); top: 0; height: calc(4rem + (var(--foot-row) - 29px) / 2 + 2.4px); width: 1px; background: var(--net); opacity: var(--net-alpha); }
 body:has(.index .who) .site-foot .net { margin-left: 3.1px; }
 @media (min-width: 900px) {
   .entry.feature .teaser, .entry.feature .more { grid-column: 2; }

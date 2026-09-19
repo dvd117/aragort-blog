@@ -7,7 +7,7 @@
  * - a click or a tap sends a ring outward from that point, and the nodes spring back;
  * - on a phone, scrolling swings the net against its motion (near nodes more), then it settles.
  * Nets with data-respond (hero, portrait) also glow under the cursor, and the first page
- * of a session opens with one pulse from the ochre node. One rAF loop per page at 30fps,
+ * of a session opens with one pulse from the net's lit node. One rAF loop per page at 30fps,
  * stopped off screen, in a hidden tab and under reduced motion. On posts the amplitude
  * is halved and the net holds still while you scroll.
  */
@@ -178,7 +178,7 @@ function frame(now: number): void {
   }
 }
 
-/** Light a node and its wires in ochre; the glow fades on its own (CSS, 600ms). */
+/** Light a node and its wires in the ruling hue; the glow fades on its own (CSS, 600ms). */
 function glow(n: Live, i: number): void {
   const els = [n.circles[i], ...n.lines.filter((l) => l.a === i || l.b === i).map((l) => l.el)];
   for (const el of els) {
@@ -309,7 +309,7 @@ export function initNetLive(): void {
   document.addEventListener('visibilitychange', schedule);
   document.addEventListener('ajustes:change', schedule);
 
-  // One pulse of light from the ochre node on the first page of a session.
+  // One pulse of light from the net's lit node on the first page of a session.
   let pulsed = true;
   try { pulsed = sessionStorage.getItem(SESSION_KEY) === '1'; sessionStorage.setItem(SESSION_KEY, '1'); } catch { /* storage off: skip it */ }
   if (!pulsed && !reduced()) {

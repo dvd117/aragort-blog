@@ -9,7 +9,7 @@ import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import { nets } from '../assets/net/geometry';
 
-const DARK = { bg: '#000000', fg: '#ece9e1', muted: '#9ea3aa', ochre: '#e2a638' };
+const DARK = { bg: '#000000', fg: '#ece9e1', muted: '#9ea3aa', accent: '#e2a638' };
 
 function markSvg(): string {
   const g = nets.mark;
@@ -17,11 +17,11 @@ function markSvg(): string {
   const lines = g.edges
     .map(([a, b]) => {
       const on = lit.has(a) && lit.has(b);
-      return `<line x1="${g.nodes[a]![0]}" y1="${g.nodes[a]![1]}" x2="${g.nodes[b]![0]}" y2="${g.nodes[b]![1]}" stroke="${on ? DARK.ochre : DARK.fg}" stroke-opacity="${on ? 1 : 0.6}" stroke-width="0.6"/>`;
+      return `<line x1="${g.nodes[a]![0]}" y1="${g.nodes[a]![1]}" x2="${g.nodes[b]![0]}" y2="${g.nodes[b]![1]}" stroke="${on ? DARK.accent : DARK.fg}" stroke-opacity="${on ? 1 : 0.6}" stroke-width="0.6"/>`;
     })
     .join('');
   const dots = g.nodes
-    .map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${g.r}" fill="${lit.has(i) ? DARK.ochre : DARK.bg}" stroke="${lit.has(i) ? DARK.ochre : DARK.fg}" stroke-width="0.6"/>`)
+    .map(([x, y], i) => `<circle cx="${x}" cy="${y}" r="${g.r}" fill="${lit.has(i) ? DARK.accent : DARK.bg}" stroke="${lit.has(i) ? DARK.accent : DARK.fg}" stroke-width="0.6"/>`)
     .join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 ${g.w + 4} ${g.h + 4}">${lines}${dots}</svg>`;
 }
@@ -56,7 +56,7 @@ export async function renderOgImage(title: string, subtitle?: string): Promise<U
     ]),
     el('div', { display: 'flex', justifyContent: 'space-between', fontFamily: 'Geist', fontWeight: 700, fontSize: 30, color: DARK.muted }, [
       el('span', {}, title === 'David Aragort' ? '' : 'David Aragort'), // no name twice on the landing card
-      el('span', { color: DARK.ochre }, 'aragort.com'),
+      el('span', { color: DARK.accent }, 'aragort.com'),
     ]),
   ]);
   const svg = await satori(tree as Parameters<typeof satori>[0], {

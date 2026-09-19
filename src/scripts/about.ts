@@ -12,7 +12,7 @@ export function initAbout(): void {
   const portrait = document.querySelector<HTMLElement>('.portrait-net');
   if (!thread || items.length === 0) return;
 
-  // Portrait: light the path from the ochre node to the exit node.
+  // Portrait: light the path from the net's lit node to the exit node.
   const path = (portrait?.dataset.path ?? '').split(',').filter(Boolean).map(Number);
   const svg = portrait?.querySelector('svg');
   if (svg) {

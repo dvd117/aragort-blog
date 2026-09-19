@@ -18,7 +18,7 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
   <div class="row wrap">
     <a class="brand" href="/">
       <span class:list={['mark', { 'vt-net': netMark }]}><Net name="mark" /></span>
-      <span class="name">David Aragort</span>
+      <span class="name"><span>David</span> <span>Aragort</span></span>
     </a>
     {minutes && (
       <span class="doc" aria-hidden="true">
@@ -38,8 +38,14 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
 <style>
   .site { position: sticky; top: 0; z-index: 30; background: var(--bg); border-bottom: 1px solid var(--rule); }
   .row { position: relative; display: flex; align-items: center; gap: .9rem; min-height: 55px; padding-top: 3px; padding-bottom: 3px; }
-  .brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; font-weight: 600; font-size: 1rem; letter-spacing: -.01em; min-height: 44px; }
-  .mark { display: block; }
+  /* The name may shrink and break at its space, so a narrow phone gets "David" over
+     "Aragort" instead of a clipped or vanished wordmark. */
+  .brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; font-weight: 600; font-size: 1rem; letter-spacing: -.01em; min-height: 44px; flex: 0 1 auto; min-width: 0; }
+  /* Each word stays whole, so a narrow phone gets "David" over "Aragort" rather than a
+     clipped or vanished wordmark. No min-width here: min-content keeps the longer word. */
+  .name { display: flex; flex-wrap: wrap; column-gap: .28em; line-height: 1.12; }
+  .name > span { white-space: nowrap; }
+  .mark { display: block; flex: none; }
   .brand :global(.net) { width: 38px; height: 28.5px; }
   /* While reading (the post's own title out of view) the header carries it, as the
      minibar did: title over the time left. */
@@ -55,9 +61,16 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
   nav a:hover { color: var(--fg); }
   nav a[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -2px 0 var(--fg); view-transition-name: nav-current; }
   .progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--hue-ui); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
-  /* Phone: the name gives its room to the nav; the mark still says who it is. */
+  /* Phone: the name stacks instead of stepping aside -- "David" over "Aragort" -- so the
+     wordmark is still a name and the nav still gets its room. */
   @media (max-width: 519px) {
-    .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .brand { gap: .45rem; }
+    .name { font-size: .9375rem; }
+    .name > span { flex: 0 0 100%; }
+  }
+  /* Reading on a phone the header carries the post's title, and the name does step aside. */
+  @media (max-width: 519px) {
+    .site.reading .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   }
   /* Reading on a phone: mark (home) · title and time left · Aa. The nav steps aside. */
   @media (max-width: 899px) { .site.reading nav { display: none; } }

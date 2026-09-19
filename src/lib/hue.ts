@@ -1,12 +1,14 @@
 /**
- * Each post owns one hue: `hue` in its frontmatter, or one assigned from the
- * slug. The assignment is a hash, so it never changes between builds and does
- * not depend on the order of posts.
+ * Each post owns one hue: `hue` in its frontmatter, or one assigned from the slug.
+ * The three are the flag's, in the order they appear on it -- amarillo, azul, rojo --
+ * muted to the page's palette: a quiet reference, not a flag drawn on the screen.
+ * The assignment is a hash, so it never changes between builds and does not depend on
+ * the order of posts.
  */
-export const HUES = ['ochre', 'teal', 'brick', 'sky', 'moss'] as const;
+export const HUES = ['amarillo', 'azul', 'rojo'] as const;
 export type Hue = (typeof HUES)[number];
 
-/** FNV-1a, 32-bit. Small, stable, good enough to spread slugs over five hues. */
+/** FNV-1a, 32-bit. Small, stable, good enough to spread slugs over the three hues. */
 function fnv1a(text: string): number {
   let h = 0x811c9dc5;
   for (const byte of new TextEncoder().encode(text)) {
