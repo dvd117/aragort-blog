@@ -94,7 +94,7 @@ npm run build     # static site in dist/
 npm test          # vitest
 ```
 
-Requires Node 22.12 or later. Markdown uses Astro's `unified()` processor (remark/rehype) rather than the default Sätteri pipeline, because the margin-note plugin is a standard rehype plugin.
+Requires Node 22.12 or later. After changing a Markdown plugin (`src/lib/rehype-*.ts`), delete `node_modules/.astro`: Astro caches rendered posts and does not notice plugin changes. Markdown uses Astro's `unified()` processor (remark/rehype) rather than the default Sätteri pipeline, because the margin-note plugin is a standard rehype plugin.
 
 ## The net
 
