@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Sobre mí" current="sobre-mi">
+  <section class="wrap about">
+    <h1>Sobre mí</h1>
+    <!-- TODO(david): write this page. The placeholder below is visible on purpose. -->
+    <p class="todo">TODO(david): esta página está pendiente.</p>
+  </section>
+</Base>
+
+<style>
+  .about { padding-top: 5rem; padding-bottom: 4rem; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: clamp(3.2rem, 13vw, 8rem); line-height: .88; letter-spacing: -.035em; margin: 0; }
+  .todo { font-family: var(--mono); font-size: 1rem; color: var(--fg-2); border-left: 3px solid var(--ochre); padding: .6rem .9rem; background: var(--panel); max-width: 36rem; margin: 2.5rem 0 0; }
+</style>
