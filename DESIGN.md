@@ -242,9 +242,9 @@ decoration that means nothing.
   footer mark: net, wire, posts, strip and footer are one line. From 3 posts the list
   returns, decided at build time.
 - **Post:** a single column on a phone, with a progress hairline and a closed "En este
-  texto". From 1000px, a 150px sticky rail. At rest it is only the net, with a dot beside
-  the current chapter's node; hovering or focusing it opens a dock: each chapter as a pill
-  beside its node, the ones near the pointer magnified, the current one in the hue. From 1100px, footnotes
+  texto". From 1000px, a 150px sticky rail. At rest the chapter numbers sit beside their nodes,
+  the current one in the hue with a dot beside its node; hovering or focusing the rail opens
+  a dock: each number grows into a pill with its title, the ones near the pointer magnified. From 1100px, footnotes
   move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
 - **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
   sticky on the left and the thread runs on the right.
@@ -315,5 +315,6 @@ Ambient motion is allowed for the net only, for impact. It is bounded:
    scripting at 4× CPU throttling). No library.
 3. **Bounded amplitude:** drift 2.5°, cursor tilt 1°; gravity up to 20px within 160px of
    the pointer; a ring kick of 9px within 280px; nothing strays more than 30px from its
-   drifting place. Wires never enter the text halo.
+   drifting place. Those figures are for the hero; smaller nets get them in proportion to
+   their width (the 42px mark moves under 2px). Wires never enter the text halo.
 4. Everything else stays functional: 120–360ms, no loops.
