@@ -1,7 +1,8 @@
 ---
+import Net from './Net.astro';
 ---
 <footer class="site-foot wrap">
-  <slot name="mark" />
+  <Net name="mark" />
   <p>© 2026 David Aragort</p>
   <p><a href="/rss.xml">RSS</a></p>
 </footer>
@@ -9,6 +10,7 @@
 <style>
   .site-foot { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; color: var(--fg-2); font-size: .9375rem; padding-top: 4rem; padding-bottom: 3rem; }
   .site-foot p { margin: 0; }
+  .site-foot :global(.net) { width: 38px; height: 29px; }
   a { color: var(--fg-2); text-underline-offset: .2em; }
   a:hover { color: var(--fg); }
 </style>

@@ -1,11 +1,12 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
+import Net from './Net.astro';
 
 interface Props { current?: 'escritos' | 'sobre-mi'; }
 const { current } = Astro.props;
 ---
 <header class="site wrap">
-  <a class="brand" href="/"><slot name="mark" />David Aragort</a>
+  <a class="brand" href="/"><Net name="mark" />David Aragort</a>
   <nav aria-label="Principal">
     <a href="/" aria-current={current === 'escritos' ? 'page' : undefined}>Escritos</a>
     <a href="/sobre-mi/" aria-current={current === 'sobre-mi' ? 'page' : undefined}>Sobre mí</a>
@@ -16,6 +17,7 @@ const { current } = Astro.props;
 <style>
   .site { display: flex; align-items: center; gap: 1rem 1.5rem; flex-wrap: wrap; padding-top: 1.25rem; padding-bottom: 1.25rem; }
   .brand { display: inline-flex; align-items: center; gap: .7rem; text-decoration: none; font-weight: 600; font-size: 1.0625rem; letter-spacing: -.01em; margin-right: auto; }
+  .brand :global(.net) { width: 38px; height: 29px; }
   nav { display: flex; gap: 1.25rem; }
   nav a { text-decoration: none; color: var(--fg-2); padding: .35rem 0; }
   nav a:hover { color: var(--fg); }
