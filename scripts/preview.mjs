@@ -24,7 +24,7 @@ const real = process.argv.includes('--real');
 
 rmSync(out, { recursive: true, force: true });
 rmSync(build, { recursive: true, force: true });
-const env = { ...process.env };
+const env = { ...process.env, ARAGORT_SPECIMEN: '1' }; // all four families + the Tipo switcher
 if (!real) env.ARAGORT_POSTS_DIR = 'tests/fixtures/posts';
 execFileSync('npx', ['astro', 'build', '--outDir', build], { cwd: root, env, stdio: 'inherit' });
 

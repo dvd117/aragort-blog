@@ -8,7 +8,7 @@ import { buildFamily, FAMILIES } from '../lib/families';
 
 // One family ships; the preview ships all four so they can be compared.
 const familyCss = import.meta.glob<string>('../styles/families/*.css', { query: '?raw', import: 'default', eager: true });
-const preview = process.env.ARAGORT_PREVIEW === '1';
+const preview = process.env.ARAGORT_SPECIMEN === '1';
 const family = buildFamily();
 const css = Object.entries(familyCss)
   .filter(([path]) => preview || path.endsWith(`/${family}.css`))

@@ -1,7 +1,7 @@
 /**
  * Type families under consideration (v3 specimen). The site ships ONE family,
  * chosen at build time with ARAGORT_FAMILY (default below). The preview build
- * (ARAGORT_PREVIEW=1) ships all four plus a switcher.
+ * (ARAGORT_SPECIMEN=1) ships all four plus a switcher.
  */
 export const FAMILIES = {
   bricolage: { key: 'A', name: 'Bricolage Grotesque', preload: 'bricolage.woff2', fonts: ['bricolage.woff2', 'jetbrains-mono.woff2', 'bricolagegrotesque-OFL.txt', 'jetbrainsmono-OFL.txt'], og: 'bricolage-700.ttf' },
