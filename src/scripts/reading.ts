@@ -9,10 +9,10 @@
  *   left to right. Its notches are the chapters, and on a phone they are the dock --
  *   tap one to go there, press or hover to open its number and title;
  * - the header mark: the rail in miniature, with "quedan N min" beside it;
- * - the prose takes the flag by section: every top-level block is given the band of the
- *   third of the text it sits in, and its links, bold, quote, markers and notes follow.
- *   A block, never a line: a paragraph is one colour throughout, so the change always
- *   lands at a paragraph seam -- which is also where the rail beside it is turning;
+ * - every top-level block of the prose is given the band of the third of the text it
+ *   sits in. The text itself does not take it -- links, bold, quotes and notes are the
+ *   post's one hue -- but the rail's dock and the header's notch for a chapter read the
+ *   band of the block it starts at, so the flag stays on the drawing and off the page;
  * - at the end: every net completes with one short pulse, and the end card appears.
  */
 import { reduced } from './motion';
@@ -67,9 +67,9 @@ export function initReading(minutes: number): void {
   };
 
   /**
-   * The flag, by section. A block takes the band of its own middle, measured against the
-   * same box the rail and the header's line are measured against -- so a paragraph two
-   * thirds down is rojo and so is the rail beside it.
+   * The band of each block. A block takes the band of its own middle, measured against
+   * the same box the rail and the header's line are measured against -- so a chapter two
+   * thirds down is rojo in the dock, and so is the rail beside it.
    *
    * It is measured rather than counted because the text's height is the reader's: the
    * size, the measure and the leading in Ajustes all move where a paragraph falls. It

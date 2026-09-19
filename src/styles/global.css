@@ -285,3 +285,11 @@ main:focus { outline: none; }
   .site .tick .tt { display: none; }
 }
 .site .mark.vt-net { view-transition-name: net; }
+
+/* The wordmark as progress: reading brightens it, it does not fill it in. The mark is a
+   38px drawing of hollow rings, and painting each ring solid in the post's hue turned it
+   into a gauge that changed colour from post to post. Its lit nodes keep the page behind
+   them and only gain strength -- full-strength bone against the resting half -- so the
+   mark still reads as the mark at every scroll position. */
+.site .brand .net :is(line, circle).p { stroke: var(--net); stroke-opacity: 1; }
+.site .brand .net circle.p { fill: var(--bg); }
