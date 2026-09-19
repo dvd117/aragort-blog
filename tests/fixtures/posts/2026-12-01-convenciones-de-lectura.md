@@ -1,7 +1,6 @@
 ---
 title: "Convenciones de lectura"
 description: "Entrada de prueba: muestra cada convención de Markdown que el sitio sabe mostrar."
-hue: sky
 resumen:
   - "Texto de prueba, no es contenido real."
   - "Cada ## es un capítulo; con tres o más aparece el índice."

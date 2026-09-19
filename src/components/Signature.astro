@@ -1,0 +1,25 @@
+---
+/*
+ * Who writes this. The same block ends the landing and every post: the wordmark -- the
+ * mark beside David's name, the lockup the site signs with -- and under it the sentence
+ * and the way through to "Sobre mí".
+ *
+ * The name is in the lockup now, so the sentence no longer opens with "Soy David Aragort,
+ * caraqueño": it would be saying it twice, once in display type and once in prose.
+ *
+ * On the landing the thread runs down its left edge and on to the footer mark; on a post
+ * there is no thread to carry, so the rule is left off.
+ */
+import Net from './Net.astro';
+import { WHO } from '../lib/site';
+
+interface Props {
+  /** The landing's copy of the block carries the thread down its left edge. */
+  thread?: boolean;
+}
+const { thread = false } = Astro.props;
+---
+<aside class:list={['who', { 'who-thread': thread }]} aria-label="Quién escribe">
+  <p class="who-name"><Net name="mark" flag /><span>David Aragort</span></p>
+  <p class="who-text">{WHO} <a href="/sobre-mi/">Sobre mí</a></p>
+</aside>

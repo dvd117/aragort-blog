@@ -1,0 +1,64 @@
+---
+/*
+ * "Sobre mí" as a column that slides in from the right over what you are reading, so
+ * closing it puts you back on the same line instead of costing a page load. It comes from
+ * the right because that is the side the button that opens it lives on: the panel arrives
+ * from under your thumb rather than from the far edge. The URL does not change: the panel
+ * is a view of this page, not a place.
+ *
+ * It is a <dialog>, so Escape, the focus trap and the backdrop are the browser's. Without
+ * JS it never opens and the header's link goes to /sobre-mi/ as it always did.
+ */
+import AboutContent from './AboutContent.astro';
+---
+<dialog id="sobre-mi" class="drawer" aria-label="Sobre mí">
+  <div class="drawer-inner">
+    <div class="drawer-top">
+      <button type="button" class="drawer-close" data-drawer-close>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3l-5 5 5 5" /></svg>
+        <span>Volver</span>
+      </button>
+    </div>
+    <div class="drawer-body">
+      <AboutContent compact />
+    </div>
+  </div>
+</dialog>
+
+<style>
+  /* The panel is a column at the right edge, full height. On a phone there is no room for
+     a column beside the text, so it takes the whole screen as a sheet. */
+  .drawer { width: min(30rem, 100vw); max-width: none; height: 100dvh; max-height: none; margin: 0 0 0 auto; padding: 0; border: 0; border-left: 1px solid var(--rule); background: var(--bg); color: var(--fg); overflow: hidden; }
+  .drawer::backdrop { background: color-mix(in srgb, var(--bg) 72%, transparent); }
+  /* Two rows: "Volver" is outside the scroller, so it sits still at the top instead of
+     being sticky and sliding under the panel's own padding. */
+  .drawer-inner { display: flex; flex-direction: column; height: 100%; }
+  /* The same space from the top as from either side: one --gutter, all round. */
+  .drawer-top { flex: none; padding: var(--gutter) var(--gutter) .75rem; }
+  .drawer-body { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 var(--gutter) 3rem; }
+  /* Back to the text in one press, at the top of the panel where the reader's eye is. Its
+     box starts at the gutter -- no negative margin pulling it out of line with the text
+     under it -- and its padding is even, so the word sits centred in the button. */
+  .drawer-close { display: inline-flex; align-items: center; gap: .45rem; min-height: 40px; margin: 0; padding: 0 .85rem; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--fg-2); font: 500 .9375rem/1 var(--ui); cursor: pointer; transition: color 140ms ease, border-color 140ms ease; }
+  .drawer-close:hover { color: var(--fg); border-color: var(--fg-2); }
+  .drawer-close svg { width: 15px; height: 15px; margin-left: -.15rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* It slides; it does not appear. Both directions, so closing reads as putting it back. */
+  @media (prefers-reduced-motion: no-preference) {
+    .drawer[open] { animation: drawer-in 260ms cubic-bezier(.2, 0, 0, 1); }
+    .drawer[open]::backdrop { animation: drawer-fade 260ms ease; }
+    /* Its own name, not drawer-in reversed: re-declaring the same animation name on an
+       element that has already run it does not restart it, so animationend never fires
+       and the panel never closes. */
+    .drawer.is-closing { animation: drawer-out 200ms cubic-bezier(.4, 0, 1, 1) forwards; }
+    .drawer.is-closing::backdrop { animation: drawer-fade-out 200ms ease forwards; }
+  }
+  @keyframes drawer-in { from { transform: translateX(100%); } }
+  @keyframes drawer-out { to { transform: translateX(100%); } }
+  @keyframes drawer-fade { from { opacity: 0; } }
+  @keyframes drawer-fade-out { to { opacity: 0; } }
+
+  @media (max-width: 599px) {
+    .drawer { width: 100vw; border-left: 0; }
+  }
+</style>

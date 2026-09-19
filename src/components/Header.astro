@@ -17,7 +17,7 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
 <header class="site">
   <div class="row wrap">
     <a class="brand" href="/">
-      <span class:list={['mark', { 'vt-net': netMark }]}><Net name="mark" /></span>
+      <span class:list={['mark', { 'vt-net': netMark }]}><Net name="mark" flag /></span>
       <span class="name"><span>David</span> <span>Aragort</span></span>
     </a>
     {minutes && (
@@ -27,8 +27,15 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
       </span>
     )}
     <nav aria-label="Principal">
-      <a href="/" aria-current={current === 'escritos' ? 'page' : undefined}>Escritos</a>
-      <a href="/sobre-mi/" aria-current={current === 'sobre-mi' ? 'page' : undefined}>Sobre mí</a>
+      <a href="/sobre-mi/" data-drawer-open aria-current={current === 'sobre-mi' ? 'page' : undefined}>
+        <!-- Drawn in the same hand as the footer's marks: a hairline ring, a head and a
+             pair of shoulders. On a phone it is the whole button; from 600px the words
+             come back and the glyph steps out. -->
+        <svg class="nav-i" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <circle cx="8" cy="8" r="6.9" /><circle class="solid" cx="8" cy="5" r="1.25" /><path d="M5.2 12.6v-2.1a2.8 2.8 0 0 1 5.6 0v2.1" />
+        </svg>
+        <span class="nav-t">Sobre mí</span>
+      </a>
     </nav>
     <ReadingSettings />
   </div>
@@ -48,23 +55,40 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
   .mark { display: block; flex: none; }
   .brand :global(.net) { width: 38px; height: 28.5px; }
   /* While reading (the post's own title out of view) the header carries it, as the
-     minibar did: title over the time left. */
-  .doc { display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: 3px; }
+     minibar did: title over the time left.
+     It takes the room between the wordmark and the nav and clips inside it: without
+     `overflow`, "quedan N min" is `nowrap` and simply ran on under the nav's pill. */
+  .doc { display: flex; flex-direction: column; justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; gap: 3px; }
   .doc-title { display: none; font: var(--title-weight) .9375rem/1.15 var(--display); letter-spacing: -.01em; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .site.reading .doc { flex: 1 1 auto; }
   .site.reading .doc-title { display: block; animation: doc-in 160ms ease both; }
   @keyframes doc-in { from { opacity: 0; transform: translateY(3px); } }
-  .left { font: 500 .8125rem/1 var(--ui); color: var(--fg-2); white-space: nowrap; }
+  .left { font: 500 .8125rem/1 var(--ui); color: var(--fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .site.reading .left { font-size: .75rem; }
-  /* A segmented control, the same shape as the post's Formato/Markdown toggle: one pill
-     on a panel, and the current page is the raised tab. The pill carries
-     view-transition-name, so moving between the two slides it across instead of
-     snapping -- the transition does the sliding, no script. */
-  nav { display: inline-flex; gap: 2px; margin-left: auto; padding: 2px; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); }
-  nav a { display: inline-flex; align-items: center; min-height: 38px; padding: 0 .7rem; border-radius: 6px; text-decoration: none; color: var(--fg-2); font-size: .9375rem; white-space: nowrap; transition: color 140ms ease, background-color 140ms ease; }
+  /* The post's Formato/Markdown toggle, with one segment: a pill on a panel that raises
+     while "Sobre mí" is open or is the page you are on. "Escritos" is gone from here --
+     the wordmark is already the way home, and on the landing the tab only repeated the
+     title under it. No transition: the tab swaps the way the toggle's buttons do, at once. */
+  nav { display: inline-flex; gap: 2px; margin-left: auto; padding: 2px; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); flex: none; }
+  nav a { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 0 .7rem; border-radius: 6px; text-decoration: none; color: var(--fg-2); font-size: .9375rem; white-space: nowrap; }
   nav a:hover { color: var(--fg); }
-  nav a[aria-current="page"] { color: var(--fg); background: var(--bg); box-shadow: 0 0 0 1px var(--rule); view-transition-name: nav-current; }
-  .progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--hue-ui); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
+  nav a[aria-current="page"], nav a[aria-expanded="true"] { color: var(--fg); background: var(--bg); box-shadow: 0 0 0 1px var(--rule); }
+  .nav-i { display: none; width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+  .nav-i :global(.solid), .nav-i .solid { fill: currentColor; stroke: none; }
+  .progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none;
+    /* The flag, laid along the text: the bar is the whole three bands and reading uncovers
+       it left to right, so a post is read amarillo, then azul, then rojo. A transform
+       would squash the gradient instead of revealing it, so the reveal is a clip. */
+    background: linear-gradient(90deg, var(--hl-amarillo) 0 33.333%, var(--hl-azul) 33.333% 66.667%, var(--hl-rojo) 66.667% 100%);
+    clip-path: inset(0 100% 0 0);
+  }
+  /* Phone: "Sobre mí" was a pill of words competing with the title and the time left for a
+     row that has none to spare. It becomes one mark beside "Aa" -- the same size, the same
+     chrome -- and keeps its words for screen readers. */
+  @media (max-width: 599px) {
+    nav a { width: 38px; padding: 0; }
+    .nav-i { display: block; }
+    .nav-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  }
   /* Phone: the name stacks instead of stepping aside -- "David" over "Aragort" -- so the
      wordmark is still a name and the nav still gets its room. */
   @media (max-width: 519px) {
@@ -76,8 +100,9 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
   @media (max-width: 519px) {
     .site.reading .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   }
-  /* Reading on a phone: mark (home) · title and time left · Aa. The nav steps aside. */
-  @media (max-width: 899px) { .site.reading nav { display: none; } }
+  /* Reading on a phone: mark (home) · title and time left · Sobre mí · Aa. The nav used to
+     step aside here, when it was two items competing with the title; one short pill fits,
+     and it is now the only way to "Sobre mí" from a post. */
   @media (min-width: 900px) {
     .row { gap: 1.5rem; min-height: 57px; }
     .brand :global(.net) { width: 42px; height: 31.5px; }

@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import AboutDrawer from '../components/AboutDrawer.astro';
 import { headScript } from '../lib/settings';
 import { hueScript } from '../lib/lasthue';
 
@@ -71,12 +72,16 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
     <slot />
   </main>
   <Footer />
+  <!-- Not on "Sobre mí" itself: there the content is the page. -->
+  {current !== 'sobre-mi' && <AboutDrawer />}
   <button type="button" class="to-top" data-to-top aria-label="Volver arriba" hidden><span aria-hidden="true">↑</span></button>
   <script>
     import { initToTop } from '../scripts/totop';
     import { initNetLive } from '../scripts/netlive';
+    import { initDrawer } from '../scripts/drawer';
     import { whenActive } from '../scripts/active';
     initToTop();
+    initDrawer();
     whenActive(initNetLive);
   </script>
 </body>

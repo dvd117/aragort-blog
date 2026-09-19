@@ -1,6 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { countWords, isVisible, parsePostFilename, readingMinutes } from './posts';
-import { hueFor, type Hue } from './hue';
+import { hueAt, type Hue } from './hue';
 
 export interface Post {
   entry: CollectionEntry<'posts'>;
@@ -10,6 +10,9 @@ export interface Post {
   title: string;
   description?: string;
   draft: boolean;
+  /** Position in the list, newest first. */
+  index: number;
+  /** The flag's three, in order, by that position. */
   hue: Hue;
   resumen?: string[];
   words: number;
@@ -33,14 +36,14 @@ export async function getPosts(): Promise<Post[]> {
         title: entry.data.title,
         description: entry.data.description,
         draft: entry.data.draft ?? false,
-        hue: hueFor(slug, entry.data.hue),
         resumen: entry.data.resumen,
         words,
         minutes: readingMinutes(words),
         file: entry.filePath ?? `src/content/posts/${entry.id}.md`,
       };
     })
-    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.slug.localeCompare(b.slug)));
+    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.slug.localeCompare(b.slug)))
+    .map((p, index) => ({ ...p, index, hue: hueAt(index) }));
   // Two files with the same slug and different dates would fight over one URL.
   const seen = new Map<string, string>();
   for (const p of posts) {

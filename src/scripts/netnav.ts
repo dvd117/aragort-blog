@@ -75,8 +75,12 @@ export function initNetNav(): void {
     if (!entry) { lit.removeAttribute('d'); return; }
     // The trail recolours at once; only the nodes new to this entry draw in, one by one.
     for (const el of [...circles, ...lines]) el.style.removeProperty('--i');
-    // One hue rules the whole page: the net, the entries, the links. Never a mix.
-    document.documentElement.setAttribute('data-hue', entry.dataset.postHue ?? 'amarillo');
+    // Hovering no longer repaints the page in the entry's hue. The flag's bands keep
+    // their own three colours; what an entry does is send power along its route, and each
+    // band turns its own colour up where the light arrives (--hl-* in global.css). Only
+    // the trail itself -- the wire and the thread segment -- is drawn in the entry's hue,
+    // because it is the one line that belongs to that entry alone.
+    wire.style.setProperty('--trail', `var(--hl-${entry.dataset.postHue ?? 'amarillo'})`);
     const region = (entry.dataset.region ?? '').split(',').filter(Boolean).map(Number);
     (region.length ? region : exit).forEach((n, i) => {
       if (!on.has(n)) { on.add(n); circles[n]?.style.setProperty('--i', String(i)); }

@@ -7,7 +7,7 @@
 @media (min-width: 1000px) {
   .post-head { padding-top: 6rem; padding-bottom: 4.5rem; }
   .post-grid { grid-template-columns: 150px minmax(0, 1fr); column-gap: 4.5rem; }
-  .post-grid > .prose, .post-grid > .source, .post-grid > .sig, .post-grid > .done-card { grid-column: 2; }
+  .post-grid > .prose, .post-grid > .source, .post-grid > .who, .post-grid > .done-card { grid-column: 2; }
   .rail { display: block; position: sticky; top: 10vh; align-self: start; grid-column: 1; grid-row: 1 / span 3; height: 78vh; }
   .rail .net { height: 78vh; width: auto; max-width: 150px; }
   /* The chapters sit beside the net, each at the height where it begins (set by reading.ts). */
@@ -51,10 +51,6 @@
 /* Emphasis: a true italic where the family has one; a weight step where it has not (never synthesized). */
 .prose em { font-style: var(--em-style); font-weight: var(--em-weight); }
 
-.sig .net { width: 44px; height: 33px; }
-.sig { font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.6rem; line-height: 1; margin: 2.5rem 0 0; }
-.sig a { display: inline-flex; align-items: center; gap: .8rem; color: inherit; text-decoration: none; min-height: 44px; }
-.sig a:hover span { text-decoration: underline; text-decoration-color: var(--hue); text-decoration-thickness: 2px; text-underline-offset: .12em; }
 
 /* E's layer: version line, view switch, Markdown source, margin notes. */
 .ver { font: 500 .875rem/1.4 var(--mono); color: var(--fg-2); margin: 0 0 .6rem; }
@@ -77,7 +73,8 @@
 .source .copy[data-state="done"] { color: var(--hue); border-color: var(--hue-ui); }
 .source .copy[data-state="done"] .i-copy { display: none; }
 .source .copy[data-state="done"] .i-done { display: block; }
-.source .file a { color: var(--link); text-underline-offset: .2em; }
+/* The source link takes the post's hue, like every other accent on the page. */
+.source .file a { color: var(--hue-ui); text-underline-offset: .2em; }
 .source pre { margin: 0; font: 400 1rem/1.7 var(--mono); color: var(--fg); white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
 @media (min-width: 900px) { .source { padding: 1.75rem 2rem; } .source pre { font-size: 1.0625rem; } }
 
@@ -103,9 +100,8 @@
 ::highlight(voz) { background-color: var(--mark-hover); color: inherit; }
 .prose .is-speaking { background: var(--panel); box-shadow: -.5rem 0 0 var(--panel), .5rem 0 0 var(--panel); }
 
-/* The post's hue: rail nodes, a dot beside the date (shared with the index for the title morph). */
-.rail .net .on { stroke: var(--hue-ui); }
-.rail .net circle.on { fill: var(--hue-ui); }
+/* Rail nodes take their own band's colour as reading reaches them (global.css); the dot
+   beside the date is the post's own hue (shared with the index for the title morph). */
 .hue-dot { display: inline-block; width: .6em; height: .6em; border-radius: 50%; background: var(--hue-ui); margin-right: .5em; vertical-align: .05em; }
 
 /* Note threads. Phone: notes rest on one line until their marker is tapped. */
@@ -131,9 +127,8 @@
 .resume button:focus-visible { outline: 2px solid var(--hue); outline-offset: 2px; }
 @media (min-width: 900px) { .resume { left: var(--gutter); right: auto; bottom: 1.5rem; } }
 
-/* The mark as progress: its nodes light in the post's hue as you read. */
-.net .p { stroke: var(--hue-ui); stroke-opacity: 1; transition: stroke 140ms ease, fill 140ms ease; }
-.net circle.p { fill: var(--hue-ui); }
+/* The mark as progress: its nodes take their band's colour as you read (global.css). */
+.net .p { transition: stroke 140ms ease, fill 140ms ease, stroke-opacity 140ms ease; }
 /* The end: every net completes with one short pulse, once. */
 @keyframes net-pulse { 50% { transform: scale(1.08); } }
 .net.pulse { animation: net-pulse 360ms cubic-bezier(.2, 0, 0, 1) 1; transform-origin: 50% 50%; }
@@ -175,6 +170,13 @@
 .toc li::marker { color: var(--hue-ui); font-variant-numeric: tabular-nums; }
 .toc a { color: var(--fg); text-decoration: none; }
 .toc a:hover { text-decoration: underline; text-decoration-color: var(--hue); }
+/* The chapters walk the flag. A heading's number takes the band of the third of the text
+   it opens -- amarillo, then azul, then rojo -- in the text, in the rail's dock and in the
+   header's notches (reading.ts sets data-band from its position). The prose itself keeps
+   the post's one hue: links and bold never change colour under the reader. */
+.prose > h2[data-band="0"], .rail-toc a[data-band="0"] { --hue: var(--h-amarillo); --hue-ui: var(--hu-amarillo); }
+.prose > h2[data-band="1"], .rail-toc a[data-band="1"] { --hue: var(--h-azul); --hue-ui: var(--hu-azul); }
+.prose > h2[data-band="2"], .rail-toc a[data-band="2"] { --hue: var(--h-rojo); --hue-ui: var(--hu-rojo); }
 /* ## chapters. */
 .prose h2 { font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.45em; line-height: 1.12; color: var(--fg); margin: 2.2em 0 .7em; scroll-margin-top: 80px; }
 /* Chapter numbers: 01, 02… in the hue. The number is decoration: hidden from screen readers. */

@@ -1,7 +1,6 @@
 ---
 title: "Lo que todavía no funciona"
 description: "Entrada de prueba para ver los colores del índice."
-hue: moss
 ---
 
 Texto de prueba. No es contenido real: vive en tests/fixtures y solo se usa para capturas.

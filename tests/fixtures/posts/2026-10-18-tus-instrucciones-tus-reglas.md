@@ -1,7 +1,6 @@
 ---
 title: "Tus instrucciones, tus reglas"
 description: "Entrada de prueba para ver los colores del índice."
-hue: brick
 ---
 
 Texto de prueba. No es contenido real: vive en tests/fixtures y solo se usa para capturas.
