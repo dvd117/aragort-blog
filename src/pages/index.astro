@@ -17,7 +17,7 @@ const mode = landingMode(posts.length);
   <div class="index wrap" data-netnav-root>
     <section class="hero">
       <div class="hero-title">
-        <h1 style="view-transition-name: page-title">Escritos</h1>
+        <h1 style="view-transition-name: page-title; view-transition-class: title">Escritos</h1>
         <p class="lede">{LEDE}</p>
       </div>
       <div class="net-wrap" data-netnav data-exit={exit}>
@@ -35,7 +35,7 @@ const mode = landingMode(posts.length);
             return (
               <li class:list={['entry', { draft: p.draft, feature }]} data-hue={p.hue}>
                 <p class="d"><span class="node" aria-hidden="true" style={`view-transition-name: dot-${p.slug}`}></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
-                <a class="t" href={`/escritos/${p.slug}/`} style={`view-transition-name: t-${p.slug}`}>{p.title}</a>
+                <a class="t" href={`/escritos/${p.slug}/`} style={`view-transition-name: t-${p.slug}; view-transition-class: title`}>{p.title}</a>
                 {p.description && <p class="ex">{p.description}</p>}
                 {feature && p.resumen && <ul class="teaser">{p.resumen.map((r) => <li>{r}</li>)}</ul>}
                 {feature && <a class="more" href={`/escritos/${p.slug}/`}>Leer · {p.minutes} min</a>}

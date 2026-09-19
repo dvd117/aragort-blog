@@ -57,6 +57,8 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
   <script is:inline set:html={headScript()} />
   <!-- JS-only controls take their final layout before first paint (no layout shift). -->
   <script is:inline>document.documentElement.classList.add('js')</script>
+  <!-- Prerender same-origin pages on hover, pointerdown or focus (Chromium). Other browsers ignore it. -->
+  <script type="speculationrules" is:inline set:html={JSON.stringify({ prerender: [{ where: { and: [{ href_matches: '/*' }, { not: { href_matches: '/*.md' } }, { not: { href_matches: '/rss.xml' } }] }, eagerness: 'moderate' }] })} />
   <slot name="head" />
 </head>
 <body>
