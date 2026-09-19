@@ -1,0 +1,47 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  current?: 'escritos' | 'sobre-mi';
+  ogImage?: string;
+  type?: 'website' | 'article';
+}
+const { title, description = 'Escritos de David Aragort.', current, ogImage, type = 'website' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort`;
+---
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <link rel="alternate" type="application/rss+xml" title="David Aragort" href="/rss.xml" />
+  <link rel="preload" href="/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin />
+  <meta property="og:type" content={type} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:locale" content="es_VE" />
+  {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
+  {ogImage && <meta name="twitter:card" content="summary_large_image" />}
+  <!-- Theme before first paint: no flash. -->
+  <script is:inline>try{var t=localStorage.getItem('aragort-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+  <slot name="head" />
+</head>
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <Header current={current}><slot name="mark" slot="mark" /></Header>
+  <main id="contenido">
+    <slot />
+  </main>
+  <Footer><slot name="footer-mark" slot="mark" /></Footer>
+</body>
+</html>

@@ -1,0 +1,68 @@
+/* Fonts: SIL OFL, self-hosted, Latin subset (licences in /fonts). */
+@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/instrument-serif.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/instrument-serif-italic.woff2") format("woff2"); }
+@font-face { font-family: "Newsreader"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("/fonts/newsreader.woff2") format("woff2"); }
+@font-face { font-family: "Newsreader"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/newsreader-italic.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("/fonts/instrument-sans.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800; font-display: swap; src: url("/fonts/jetbrains-mono.woff2") format("woff2"); }
+
+/* Light: bright off-white, graphite net. Ratios in README. */
+:root {
+  --bg: #f7f6f2;
+  --panel: #eeece6;
+  --fg: #15171a;
+  --fg-read: #15171a;
+  --fg-2: #5a5f66;
+  --rule: #dcdad3;
+  --net: #15171a;
+  --net-alpha: .55;
+  --ochre: #b8801b;               /* UI marks: net nodes, focus, progress (3:1) */
+  --link: #926615;                /* ochre as text (4.5:1) */
+  --mark: rgba(226, 166, 56, .38);
+  --mark-hover: rgba(226, 166, 56, .6);
+  --display: "Instrument Serif", "Times New Roman", serif;
+  --read: "Newsreader", Georgia, serif;
+  --ui: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --gutter: 16px;
+  color-scheme: light;
+}
+/* Dark: near-black with a cool cast, bone net. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c0e11; --panel: #15181c; --fg: #ece9e1; --fg-read: #d9d6ce; --fg-2: #9ea3aa; --rule: #23272d;
+    --net: #ece9e1; --net-alpha: .5; --ochre: #e2a638; --link: #e2a638;
+    --mark: rgba(226, 166, 56, .28); --mark-hover: rgba(226, 166, 56, .45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c0e11; --panel: #15181c; --fg: #ece9e1; --fg-read: #d9d6ce; --fg-2: #9ea3aa; --rule: #23272d;
+  --net: #ece9e1; --net-alpha: .5; --ochre: #e2a638; --link: #e2a638;
+  --mark: rgba(226, 166, 56, .28); --mark-hover: rgba(226, 166, 56, .45);
+  color-scheme: dark;
+}
+@media (min-width: 900px) { :root { --gutter: 40px; } }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--ui);
+  font-size: 1rem;
+  line-height: 1.5;
+  font-synthesis: none;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 2px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip { position: absolute; left: var(--gutter); top: -3rem; background: var(--fg); color: var(--bg); padding: .5rem .8rem; z-index: 20; }
+.skip:focus { top: .5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
