@@ -30,7 +30,7 @@ const source = await servedMarkdown(post.file, post.date.slice(0, 4));
 const filename = `${post.id}.md`;
 ---
 <Base title={post.title} description={post.description} current="escritos" type="article" ogImage={`/og/${post.slug}.png`} hue={post.hue} minutes={post.minutes} postTitle={post.title}>
-  <article class="wrap post" data-slug={post.slug} data-minutes={post.minutes}>
+  <article class="wrap post" data-slug={post.slug} data-minutes={post.minutes} data-has-rail-toc={chapters.length >= 3 ? '' : undefined}>
     <header class="post-head">
       <a class="back" href="/">← Escritos</a>
       {version && <p class="ver">{version}</p>}
@@ -58,7 +58,14 @@ const filename = `${post.id}.md`;
       </div>
     </header>
     <div class="post-grid">
-      <div class="rail" aria-hidden="true"><Net name="rail" progress /></div>
+      <div class="rail">
+        <div class="rail-net" aria-hidden="true"><Net name="rail" progress /></div>
+        {chapters.length >= 3 && (
+          <nav class="rail-toc" aria-label="Capítulos">
+            <ol>{chapters.map((c, i) => <li><a href={`#${c.slug}`} data-chapter={i}><span class="num">{String(i + 1).padStart(2, '0')}</span>{c.text}</a></li>)}</ol>
+          </nav>
+        )}
+      </div>
       <div class="prose" data-pane="read">
         <Content />
       </div>
