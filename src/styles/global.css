@@ -6,7 +6,13 @@
 @font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("/fonts/instrument-sans.woff2") format("woff2"); }
 @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800; font-display: swap; src: url("/fonts/jetbrains-mono.woff2") format("woff2"); }
 
-/* Light: bright off-white, graphite net. Ratios in README. */
+/* Atkinson Hyperlegible: declared here, downloaded only when a reader picks it. */
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/atkinson-hyperlegible-regular.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/atkinson-hyperlegible-italic.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/atkinson-hyperlegible-bold.woff2") format("woff2"); }
+
+/* Themes. No data-theme = follow the system. Ratios in README. */
+/* Light: bright off-white, graphite net. */
 :root {
   --bg: #f7f6f2;
   --panel: #eeece6;
@@ -16,10 +22,11 @@
   --rule: #dcdad3;
   --net: #15171a;
   --net-alpha: .55;
-  --ochre: #b8801b;               /* UI marks: net nodes, focus, progress (3:1) */
+  --ochre: #b8801b;               /* UI marks: wordmark node, focus ring (3:1) */
   --link: #8b6114;                /* ochre as text: 5.09 on bg, 4.66 on panel */
   --mark: rgba(226, 166, 56, .38);
   --mark-hover: rgba(226, 166, 56, .6);
+  --underline: 1px;
   --display: "Instrument Serif", "Times New Roman", serif;
   --read: "Newsreader", Georgia, serif;
   --ui: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
@@ -29,7 +36,7 @@
 }
 /* Dark: near-black with a cool cast, bone net. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme]) {
     --bg: #0c0e11; --panel: #15181c; --fg: #ece9e1; --fg-read: #d9d6ce; --fg-2: #9ea3aa; --rule: #23272d;
     --net: #ece9e1; --net-alpha: .5; --ochre: #e2a638; --link: #e2a638;
     --mark: rgba(226, 166, 56, .28); --mark-hover: rgba(226, 166, 56, .45);
@@ -42,6 +49,36 @@
   --mark: rgba(226, 166, 56, .28); --mark-hover: rgba(226, 166, 56, .45);
   color-scheme: dark;
 }
+/* Sepia: warm paper, brown ink. */
+:root[data-theme="sepia"] {
+  --bg: #f3ead6; --panel: #e9dec5; --fg: #33291d; --fg-read: #33291d; --fg-2: #6a5943; --rule: #d6c8a8;
+  --net: #33291d; --net-alpha: .55; --ochre: #af7a19; --link: #805a13;
+  --mark: rgba(226, 166, 56, .34); --mark-hover: rgba(226, 166, 56, .55);
+  color-scheme: light;
+}
+/* Alto contraste: black and white, AAA body text, solid 2px link underlines, no highlight band. */
+:root[data-theme="contrast"] {
+  --bg: #000000; --panel: #141414; --fg: #ffffff; --fg-read: #ffffff; --fg-2: #d0d0d0; --rule: #9a9a9a;
+  --net: #ffffff; --net-alpha: .85; --ochre: #ffc233; --link: #ffd166;
+  --mark: transparent; --mark-hover: rgba(255, 209, 102, .28); --underline: 2px;
+  color-scheme: dark;
+}
+
+/* Reading settings: one attribute each on <html>, read by the prose. */
+:root { --scale: 1; --leading: 1.62; --tracking: 0; --measure: 66ch; --read-font: var(--read); }
+:root[data-size="1"] { --scale: .9; }
+:root[data-size="2"] { --scale: .95; }
+:root[data-size="4"] { --scale: 1.12; }
+:root[data-size="5"] { --scale: 1.25; }
+:root[data-leading="1"] { --leading: 1.45; }
+:root[data-leading="3"] { --leading: 1.9; }
+:root[data-tracking="2"] { --tracking: .04em; }
+:root[data-measure="1"] { --measure: 56ch; }
+:root[data-measure="3"] { --measure: 76ch; }
+:root[data-font="sans"] { --read-font: var(--ui); }
+:root[data-font="atkinson"] { --read-font: "Atkinson Hyperlegible", var(--ui); }
+:root[data-links="all"] a { text-decoration-line: underline; text-decoration-thickness: max(1px, var(--underline)); text-underline-offset: .2em; }
+
 @media (min-width: 900px) { :root { --gutter: 40px; } }
 
 * { box-sizing: border-box; }
@@ -63,8 +100,12 @@ a { color: inherit; }
 .skip { position: absolute; left: var(--gutter); top: -3rem; background: var(--fg); color: var(--bg); padding: .5rem .8rem; z-index: 20; }
 .skip:focus { top: .5rem; }
 
+/* Motion off under the OS setting and under the panel's own toggle. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+:root[data-motion="reduce"] *, :root[data-motion="reduce"] *::before, :root[data-motion="reduce"] *::after {
+  transition: none !important; animation: none !important; scroll-behavior: auto !important;
 }
 
 /* The net, after Gego's Reticulárea: thin wires, hollow nodes, ochre where lit. */

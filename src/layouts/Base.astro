@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { headScript } from '../lib/settings';
 
 interface Props {
   title: string;
@@ -33,8 +34,8 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
   <meta property="og:locale" content="es_VE" />
   {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
   {ogImage && <meta name="twitter:card" content="summary_large_image" />}
-  <!-- Theme before first paint: no flash. -->
-  <script is:inline>try{var t=localStorage.getItem('aragort-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+  <!-- Reading settings before first paint: no flash. Generated from src/lib/settings.ts. -->
+  <script is:inline set:html={headScript()} />
   <slot name="head" />
 </head>
 <body>
