@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>David Aragort · Vanguardia (maqueta D)</title>
+<script>try{var t=localStorage.getItem('aragort-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/instrument-serif.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("fonts/instrument-serif-italic.woff2") format("woff2"); }
+@font-face { font-family: "Newsreader"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("fonts/newsreader.woff2") format("woff2"); }
+@font-face { font-family: "Newsreader"; font-style: italic; font-weight: 400; font-display: swap; src: url("fonts/newsreader-italic.woff2") format("woff2"); }
+@font-face { font-family: "Instrument Sans"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("fonts/instrument-sans.woff2") format("woff2"); }
+
+/* light: bright off-white, graphite net */
+:root {
+  --bg: #f7f6f2;
+  --fg: #15171a;
+  --fg-read: #15171a;
+  --fg-2: #5a5f66;
+  --rule: #dcdad3;
+  --net: #15171a;
+  --net-alpha: .55;
+  --ochre: #b8801b;      /* net nodes, focus: UI, 3:1 */
+  --link: #926615;       /* text on light: 4.5:1 */
+  --display: "Instrument Serif", "Times New Roman", serif;
+  --read: "Newsreader", Georgia, serif;
+  --ui: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  --gutter: 16px;
+}
+/* dark: near-black with a cool cast, bone net */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c0e11; --fg: #ece9e1; --fg-read: #d9d6ce; --fg-2: #9ea3aa; --rule: #23272d;
+    --net: #ece9e1; --net-alpha: .5; --ochre: #e2a638; --link: #e2a638;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c0e11; --fg: #ece9e1; --fg-read: #d9d6ce; --fg-2: #9ea3aa; --rule: #23272d;
+  --net: #ece9e1; --net-alpha: .5; --ochre: #e2a638; --link: #e2a638;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--ui); font-size: 1rem; line-height: 1.5; font-synthesis: none; transition: background-color 140ms ease, color 140ms ease; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 2px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
+@media (min-width: 900px) { :root { --gutter: 40px; } }
+
+/* the net, drawn in code after Gego's Reticulárea */
+.net { display: block; overflow: visible; }
+.net line { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.net circle { fill: var(--bg); stroke: var(--net); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.net .on { stroke: var(--ochre); stroke-opacity: 1; }
+.net circle.on { fill: var(--ochre); }
+.net.live line, .net.live circle { transition: stroke 140ms ease, fill 140ms ease, stroke-opacity 140ms ease; }
+
+/* header */
+.site { display: flex; align-items: center; gap: 1rem 1.5rem; flex-wrap: wrap; padding: 1.25rem 0; }
+.brand { display: inline-flex; align-items: center; gap: .7rem; text-decoration: none; font-weight: 600; font-size: 1.0625rem; letter-spacing: -.01em; margin-right: auto; }
+.brand .net { width: 38px; height: 29px; }
+.site nav { display: flex; gap: 1.25rem; font-size: 1rem; }
+.site nav a { text-decoration: none; color: var(--fg-2); padding: .25rem 0; }
+.site nav a:hover { color: var(--fg); }
+.site nav a[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -1px 0 var(--fg); }
+.theme { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; padding: 2px; }
+.theme button { font: 500 .875rem/1 var(--ui); color: var(--fg-2); background: none; border: 0; border-radius: 999px; padding: .45rem .8rem; cursor: pointer; }
+.theme button:hover { color: var(--fg); }
+.theme button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+
+@media (max-width: 599px) { .site nav { order: 3; width: 100%; } }
+
+/* index */
+.hero { display: grid; gap: 2rem; padding: 3rem 0 4.5rem; }
+.hero .net-wrap { order: -1; }
+.hero .net { width: 100%; height: auto; max-height: 220px; }
+.hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(4.4rem, 19vw, 12.5rem); line-height: .84; letter-spacing: -.04em; margin: 0; }
+.hero .lede { font-size: 1.125rem; color: var(--fg-2); max-width: 30ch; margin: 1.5rem 0 0; }
+@media (min-width: 900px) {
+  .hero { grid-template-columns: 1.15fr 1fr; align-items: end; padding: 7rem 0 7rem; gap: 4rem; }
+  .hero .net-wrap { order: 0; }
+  .hero .net { max-height: none; }
+}
+.entries { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.entry { display: grid; gap: .35rem; padding: 1.75rem 0 1.9rem; border-bottom: 1px solid var(--rule); }
+.entry .d { font-size: .9375rem; color: var(--fg-2); }
+.entry .t { font-family: var(--display); font-size: clamp(2.1rem, 7.5vw, 3.9rem); line-height: .98; letter-spacing: -.02em; text-decoration: none; }
+.entry a.t:hover { text-decoration: underline; text-decoration-color: var(--ochre); text-decoration-thickness: 2px; text-underline-offset: .12em; }
+.entry .ex { font-family: var(--read); font-size: 1.1875rem; color: var(--fg-2); margin: .35rem 0 0; }
+.entry.draft .t { color: var(--fg-2); }
+.tag { font-family: var(--ui); font-size: .9375rem; color: var(--fg-2); }
+@media (min-width: 900px) {
+  .entry { grid-template-columns: 15rem 1fr; column-gap: 2rem; align-items: baseline; }
+  .entry .ex, .entry .tag { grid-column: 2; }
+}
+
+/* post */
+.post-head { padding: 3.5rem 0 3rem; }
+.post-head .meta { font-size: .9375rem; color: var(--fg-2); margin: 0; }
+.post-head h1 { font-family: var(--display); font-weight: 400; font-size: clamp(3.2rem, 13vw, 9rem); line-height: .88; letter-spacing: -.035em; margin: 1.25rem 0 0; max-width: 11ch; }
+.post-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+.rail { display: none; }
+.strip { position: sticky; bottom: 0; background: var(--bg); border-top: 1px solid var(--rule); padding: 8px 0 10px; margin-top: 2rem; }
+.strip .net { width: 100%; height: 44px; }
+@media (min-width: 1000px) {
+  .post-head { padding: 6rem 0 4.5rem; }
+  .post-grid { grid-template-columns: 150px minmax(0, 40rem) 1fr; column-gap: 4.5rem; }
+  .rail { display: block; position: sticky; top: 10vh; align-self: start; grid-column: 1; grid-row: 1 / span 2; }
+  .rail .net { height: 78vh; width: auto; max-width: 150px; }
+  .post-grid .prose, .post-grid .sig { grid-column: 2; }
+  .strip { display: none; }
+}
+.prose { font-family: var(--read); font-size: clamp(1.125rem, 1rem + .45vw, 1.3125rem); line-height: 1.62; color: var(--fg-read); max-width: 40rem; }
+.prose p { margin: 0 0 1.1em; }
+.prose a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: .18em; }
+.prose a:hover { text-decoration-thickness: 2px; }
+.prose hr { border: 0; height: 1px; background: var(--rule); margin: 2.4em 0; }
+.sig { display: flex; align-items: center; gap: .8rem; font-family: var(--display); font-style: italic; font-size: 2.1rem; line-height: 1; margin: 2.5rem 0 0; }
+.sig .net { width: 44px; height: 33px; }
+
+.site-foot { color: var(--fg-2); font-size: .9375rem; padding: 4rem 0 3rem; }
+.site-foot p { margin: 0; }
+
+/* mockup-only divider */
+.view-break { font-family: var(--ui); font-size: .875rem; text-align: center; padding: .55rem var(--gutter); color: var(--fg); border-block: 1px dashed var(--fg-2); margin: 5rem 0 0; }
+.view-break.first { margin: 0; border-top: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  body, .net.live line, .net.live circle { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="view-break first" role="note">Maqueta D, Vanguardia venezolana. Vista 1 de 2: índice de escritos</div>
+
+<div class="wrap">
+  <header class="site">
+    <a class="brand" href="#indice"><svg class="net mark" viewBox="0 0 48 36" aria-hidden="true" focusable="false"><line x1="3" y1="3" x2="18.6" y2="3" data-a="0" data-b="4"/><line x1="3" y1="3" x2="5.1" y2="17.3" data-a="0" data-b="2"/><line x1="4.4" y1="33" x2="17.8" y2="31.9" data-a="1" data-b="3"/><line x1="5.1" y1="17.3" x2="4.4" y2="33" data-a="2" data-b="1"/><line x1="5.1" y1="17.3" x2="18.6" y2="3" data-a="2" data-b="4"/><line x1="5.1" y1="17.3" x2="19.4" y2="13.8" data-a="2" data-b="5"/><line x1="5.1" y1="17.3" x2="17.8" y2="31.9" data-a="2" data-b="3"/><line x1="17.8" y1="31.9" x2="36.1" y2="28.4" data-a="3" data-b="7"/><line x1="18.6" y1="3" x2="31.4" y2="3" data-a="4" data-b="6"/><line x1="18.6" y1="3" x2="37.2" y2="21.3" data-a="4" data-b="8"/><line x1="18.6" y1="3" x2="19.4" y2="13.8" data-a="4" data-b="5"/><line x1="19.4" y1="13.8" x2="37.2" y2="21.3" data-a="5" data-b="8"/><line x1="19.4" y1="13.8" x2="36.1" y2="28.4" data-a="5" data-b="7"/><line x1="19.4" y1="13.8" x2="17.8" y2="31.9" data-a="5" data-b="3"/><line x1="19.4" y1="13.8" x2="31.4" y2="3" data-a="5" data-b="6"/><line x1="31.4" y1="3" x2="40.3" y2="3.1" data-a="6" data-b="9"/><line x1="36.1" y1="28.4" x2="45" y2="30.9" data-a="7" data-b="11"/><line x1="37.2" y1="21.3" x2="36.1" y2="28.4" data-a="8" data-b="7"/><line x1="37.2" y1="21.3" x2="41" y2="15.2" data-a="8" data-b="10"/><line x1="40.3" y1="3.1" x2="41" y2="15.2" data-a="9" data-b="10"/><line x1="41" y1="15.2" x2="45" y2="30.9" data-a="10" data-b="11"/><circle cx="3" cy="3" r="1.7" data-o="0"/><circle cx="4.4" cy="33" r="1.7" data-o="1"/><circle cx="5.1" cy="17.3" r="1.7" data-o="2"/><circle cx="17.8" cy="31.9" r="1.7" data-o="3"/><circle cx="18.6" cy="3" r="1.7" data-o="4"/><circle cx="19.4" cy="13.8" r="1.7" data-o="5"/><circle cx="31.4" cy="3" r="1.7" data-o="6"/><circle cx="36.1" cy="28.4" r="1.7" data-o="7"/><circle cx="37.2" cy="21.3" r="1.7" data-o="8"/><circle cx="40.3" cy="3.1" r="1.7" data-o="9" class="on"/><circle cx="41" cy="15.2" r="1.7" data-o="10"/><circle cx="45" cy="30.9" r="1.7" data-o="11"/></svg>David Aragort</a>
+    <nav aria-label="Principal"><a href="#indice" aria-current="page">Escritos</a><a href="#sobre-mi">Sobre mí</a></nav>
+    <div class="theme" role="group" aria-label="Tema"><button type="button" data-set-theme="light" aria-pressed="false">Claro</button><button type="button" data-set-theme="dark" aria-pressed="false">Oscuro</button></div>
+  </header>
+
+  <main id="indice">
+    <section class="hero">
+      <div>
+        <h1>Escritos</h1>
+        <p class="lede">Pruebo herramientas, anoto lo que funciona y lo que todavía no.</p>
+      </div>
+      <div class="net-wrap"><svg class="net" viewBox="0 0 600 400" aria-hidden="true" focusable="false"><line x1="7" y1="174.9" x2="52.4" y2="292.1" data-a="0" data-b="4"/><line x1="7" y1="174.9" x2="60.4" y2="213.5" data-a="0" data-b="5"/><line x1="7" y1="174.9" x2="158.6" y2="92.7" data-a="0" data-b="9"/><line x1="30.3" y1="91.5" x2="60.4" y2="213.5" data-a="1" data-b="5"/><line x1="30.3" y1="91.5" x2="7" y2="174.9" data-a="1" data-b="0"/><line x1="30.3" y1="91.5" x2="158.6" y2="92.7" data-a="1" data-b="9"/><line x1="31.4" y1="360.3" x2="111.2" y2="324.6" data-a="2" data-b="8"/><line x1="31.4" y1="360.3" x2="100.4" y2="380.9" data-a="2" data-b="6"/><line x1="32.8" y1="19.2" x2="107.7" y2="33.6" data-a="3" data-b="7"/><line x1="32.8" y1="19.2" x2="30.3" y2="91.5" data-a="3" data-b="1"/><line x1="52.4" y1="292.1" x2="100.4" y2="380.9" data-a="4" data-b="6"/><line x1="52.4" y1="292.1" x2="60.4" y2="213.5" data-a="4" data-b="5"/><line x1="52.4" y1="292.1" x2="111.2" y2="324.6" data-a="4" data-b="8"/><line x1="52.4" y1="292.1" x2="31.4" y2="360.3" data-a="4" data-b="2"/><line x1="60.4" y1="213.5" x2="111.2" y2="324.6" data-a="5" data-b="8"/><line x1="60.4" y1="213.5" x2="197.3" y2="181.6" data-a="5" data-b="12"/><line x1="100.4" y1="380.9" x2="189" y2="393" data-a="6" data-b="11"/><line x1="107.7" y1="33.6" x2="211.7" y2="111.9" data-a="7" data-b="13"/><line x1="107.7" y1="33.6" x2="158.6" y2="92.7" data-a="7" data-b="9"/><line x1="111.2" y1="324.6" x2="197.3" y2="181.6" data-a="8" data-b="12"/><line x1="111.2" y1="324.6" x2="189" y2="393" data-a="8" data-b="11"/><line x1="111.2" y1="324.6" x2="100.4" y2="380.9" data-a="8" data-b="6"/><line x1="158.6" y1="92.7" x2="159.1" y2="15.9" data-a="9" data-b="10"/><line x1="158.6" y1="92.7" x2="211.7" y2="111.9" data-a="9" data-b="13"/><line x1="158.6" y1="92.7" x2="197.3" y2="181.6" data-a="9" data-b="12"/><line x1="159.1" y1="15.9" x2="283.9" y2="31.4" data-a="10" data-b="17"/><line x1="159.1" y1="15.9" x2="211.7" y2="111.9" data-a="10" data-b="13"/><line x1="189" y1="393" x2="260.1" y2="393" data-a="11" data-b="16"/><line x1="197.3" y1="181.6" x2="241.4" y2="168" data-a="12" data-b="15"/><line x1="211.7" y1="111.9" x2="283.9" y2="31.4" data-a="13" data-b="17"/><line x1="211.7" y1="111.9" x2="197.3" y2="181.6" data-a="13" data-b="12"/><line x1="211.7" y1="111.9" x2="319.4" y2="103" data-a="13" data-b="19"/><line x1="211.7" y1="111.9" x2="241.4" y2="168" data-a="13" data-b="15"/><line x1="239.4" y1="309" x2="241.4" y2="168" data-a="14" data-b="15"/><line x1="239.4" y1="309" x2="331.6" y2="301.8" data-a="14" data-b="20"/><line x1="239.4" y1="309" x2="189" y2="393" data-a="14" data-b="11"/><line x1="239.4" y1="309" x2="260.1" y2="393" data-a="14" data-b="16"/><line x1="241.4" y1="168" x2="351.1" y2="186.9" data-a="15" data-b="22"/><line x1="260.1" y1="393" x2="313.5" y2="393" data-a="16" data-b="18"/><line x1="283.9" y1="31.4" x2="319.4" y2="103" data-a="17" data-b="19"/><line x1="319.4" y1="103" x2="357.1" y2="108.3" data-a="19" data-b="23"/><line x1="331.6" y1="301.8" x2="313.5" y2="393" data-a="20" data-b="18"/><line x1="331.6" y1="301.8" x2="351.1" y2="186.9" data-a="20" data-b="22"/><line x1="346.5" y1="7" x2="419.9" y2="39.4" data-a="21" data-b="27"/><line x1="346.5" y1="7" x2="437.9" y2="76.9" data-a="21" data-b="28"/><line x1="351.1" y1="186.9" x2="402.5" y2="209.6" data-a="22" data-b="26"/><line x1="351.1" y1="186.9" x2="373.8" y2="271.3" data-a="22" data-b="24"/><line x1="357.1" y1="108.3" x2="351.1" y2="186.9" data-a="23" data-b="22"/><line x1="357.1" y1="108.3" x2="419.9" y2="39.4" data-a="23" data-b="27"/><line x1="357.1" y1="108.3" x2="402.5" y2="209.6" data-a="23" data-b="26"/><line x1="357.1" y1="108.3" x2="437.9" y2="76.9" data-a="23" data-b="28"/><line x1="373.8" y1="271.3" x2="402.5" y2="209.6" data-a="24" data-b="26"/><line x1="373.8" y1="271.3" x2="474.3" y2="297.8" data-a="24" data-b="29"/><line x1="373.8" y1="271.3" x2="313.5" y2="393" data-a="24" data-b="18"/><line x1="373.8" y1="271.3" x2="401.2" y2="390.1" data-a="24" data-b="25"/><line x1="401.2" y1="390.1" x2="498.7" y2="365" data-a="25" data-b="31"/><line x1="402.5" y1="209.6" x2="515.6" y2="196.5" data-a="26" data-b="32"/><line x1="402.5" y1="209.6" x2="474.3" y2="297.8" data-a="26" data-b="29"/><line x1="419.9" y1="39.4" x2="437.9" y2="76.9" data-a="27" data-b="28"/><line x1="419.9" y1="39.4" x2="484" y2="7" data-a="27" data-b="30"/><line x1="437.9" y1="76.9" x2="531.4" y2="116.2" data-a="28" data-b="33"/><line x1="437.9" y1="76.9" x2="402.5" y2="209.6" data-a="28" data-b="26"/><line x1="437.9" y1="76.9" x2="515.6" y2="196.5" data-a="28" data-b="32"/><line x1="437.9" y1="76.9" x2="484" y2="7" data-a="28" data-b="30"/><line x1="474.3" y1="297.8" x2="498.7" y2="365" data-a="29" data-b="31"/><line x1="474.3" y1="297.8" x2="401.2" y2="390.1" data-a="29" data-b="25"/><line x1="474.3" y1="297.8" x2="547.1" y2="328.8" data-a="29" data-b="34"/><line x1="474.3" y1="297.8" x2="515.6" y2="196.5" data-a="29" data-b="32"/><line x1="484" y1="7" x2="531.4" y2="116.2" data-a="30" data-b="33"/><line x1="484" y1="7" x2="593" y2="7" data-a="30" data-b="37"/><line x1="515.6" y1="196.5" x2="547.1" y2="328.8" data-a="32" data-b="34"/><line x1="515.6" y1="196.5" x2="570.9" y2="209.1" data-a="32" data-b="35"/><line x1="531.4" y1="116.2" x2="579.2" y2="116" data-a="33" data-b="36"/><line x1="531.4" y1="116.2" x2="570.9" y2="209.1" data-a="33" data-b="35"/><line x1="531.4" y1="116.2" x2="593" y2="7" data-a="33" data-b="37"/><line x1="531.4" y1="116.2" x2="515.6" y2="196.5" data-a="33" data-b="32"/><line x1="547.1" y1="328.8" x2="570.9" y2="209.1" data-a="34" data-b="35"/><line x1="547.1" y1="328.8" x2="593" y2="271.2" data-a="34" data-b="38"/><line x1="547.1" y1="328.8" x2="593" y2="366.3" data-a="34" data-b="39"/><line x1="547.1" y1="328.8" x2="498.7" y2="365" data-a="34" data-b="31"/><line x1="570.9" y1="209.1" x2="593" y2="271.2" data-a="35" data-b="38"/><line x1="579.2" y1="116" x2="570.9" y2="209.1" data-a="36" data-b="35"/><line x1="593" y1="7" x2="579.2" y2="116" data-a="37" data-b="36"/><line x1="593" y1="271.2" x2="593" y2="366.3" data-a="38" data-b="39"/><circle cx="7" cy="174.9" r="3.5" data-o="0"/><circle cx="30.3" cy="91.5" r="3.5" data-o="1"/><circle cx="31.4" cy="360.3" r="3.5" data-o="2"/><circle cx="32.8" cy="19.2" r="3.5" data-o="3"/><circle cx="52.4" cy="292.1" r="3.5" data-o="4"/><circle cx="60.4" cy="213.5" r="3.5" data-o="5"/><circle cx="100.4" cy="380.9" r="3.5" data-o="6"/><circle cx="107.7" cy="33.6" r="3.5" data-o="7"/><circle cx="111.2" cy="324.6" r="3.5" data-o="8"/><circle cx="158.6" cy="92.7" r="3.5" data-o="9"/><circle cx="159.1" cy="15.9" r="3.5" data-o="10"/><circle cx="189" cy="393" r="3.5" data-o="11"/><circle cx="197.3" cy="181.6" r="3.5" data-o="12"/><circle cx="211.7" cy="111.9" r="3.5" data-o="13"/><circle cx="239.4" cy="309" r="3.5" data-o="14"/><circle cx="241.4" cy="168" r="3.5" data-o="15"/><circle cx="260.1" cy="393" r="3.5" data-o="16"/><circle cx="283.9" cy="31.4" r="3.5" data-o="17"/><circle cx="313.5" cy="393" r="3.5" data-o="18"/><circle cx="319.4" cy="103" r="3.5" data-o="19"/><circle cx="331.6" cy="301.8" r="3.5" data-o="20"/><circle cx="346.5" cy="7" r="3.5" data-o="21"/><circle cx="351.1" cy="186.9" r="3.5" data-o="22"/><circle cx="357.1" cy="108.3" r="3.5" data-o="23"/><circle cx="373.8" cy="271.3" r="3.5" data-o="24"/><circle cx="401.2" cy="390.1" r="3.5" data-o="25"/><circle cx="402.5" cy="209.6" r="3.5" data-o="26"/><circle cx="419.9" cy="39.4" r="3.5" data-o="27" class="on"/><circle cx="437.9" cy="76.9" r="3.5" data-o="28"/><circle cx="474.3" cy="297.8" r="3.5" data-o="29"/><circle cx="484" cy="7" r="3.5" data-o="30"/><circle cx="498.7" cy="365" r="3.5" data-o="31"/><circle cx="515.6" cy="196.5" r="3.5" data-o="32"/><circle cx="531.4" cy="116.2" r="3.5" data-o="33"/><circle cx="547.1" cy="328.8" r="3.5" data-o="34"/><circle cx="570.9" cy="209.1" r="3.5" data-o="35"/><circle cx="579.2" cy="116" r="3.5" data-o="36"/><circle cx="593" cy="7" r="3.5" data-o="37"/><circle cx="593" cy="271.2" r="3.5" data-o="38"/><circle cx="593" cy="366.3" r="3.5" data-o="39"/></svg></div>
+    </section>
+
+    <ol class="entries">
+      <li class="entry">
+        <time class="d" datetime="2026-09-20">20 de septiembre de 2026</time>
+        <a class="t" href="#post">Por qué dejé los chatbots</a>
+        <p class="ex">La conversación es desechable; el archivo no.</p>
+      </li>
+      <li class="entry draft">
+        <time class="d" datetime="2026-10-04">4 de octubre de 2026</time>
+        <span class="t">La terminal y GitHub</span>
+        <span class="tag">(borrador de ejemplo)</span>
+      </li>
+      <li class="entry draft">
+        <time class="d" datetime="2026-10-18">18 de octubre de 2026</time>
+        <span class="t">Tus instrucciones, tus reglas</span>
+        <span class="tag">(borrador de ejemplo)</span>
+      </li>
+      <li class="entry draft">
+        <time class="d" datetime="2026-11-01">1 de noviembre de 2026</time>
+        <span class="t">No dependas de una sola empresa</span>
+        <span class="tag">(borrador de ejemplo)</span>
+      </li>
+    </ol>
+  </main>
+  <footer class="site-foot"><p>aragort.com</p></footer>
+</div>
+
+<div class="view-break" role="note">Vista 2 de 2: artículo. La red se enciende en ocre a medida que lees.</div>
+
+<div class="wrap">
+  <header class="site">
+    <a class="brand" href="#indice"><svg class="net mark" viewBox="0 0 48 36" aria-hidden="true" focusable="false"><line x1="3" y1="3" x2="18.6" y2="3" data-a="0" data-b="4"/><line x1="3" y1="3" x2="5.1" y2="17.3" data-a="0" data-b="2"/><line x1="4.4" y1="33" x2="17.8" y2="31.9" data-a="1" data-b="3"/><line x1="5.1" y1="17.3" x2="4.4" y2="33" data-a="2" data-b="1"/><line x1="5.1" y1="17.3" x2="18.6" y2="3" data-a="2" data-b="4"/><line x1="5.1" y1="17.3" x2="19.4" y2="13.8" data-a="2" data-b="5"/><line x1="5.1" y1="17.3" x2="17.8" y2="31.9" data-a="2" data-b="3"/><line x1="17.8" y1="31.9" x2="36.1" y2="28.4" data-a="3" data-b="7"/><line x1="18.6" y1="3" x2="31.4" y2="3" data-a="4" data-b="6"/><line x1="18.6" y1="3" x2="37.2" y2="21.3" data-a="4" data-b="8"/><line x1="18.6" y1="3" x2="19.4" y2="13.8" data-a="4" data-b="5"/><line x1="19.4" y1="13.8" x2="37.2" y2="21.3" data-a="5" data-b="8"/><line x1="19.4" y1="13.8" x2="36.1" y2="28.4" data-a="5" data-b="7"/><line x1="19.4" y1="13.8" x2="17.8" y2="31.9" data-a="5" data-b="3"/><line x1="19.4" y1="13.8" x2="31.4" y2="3" data-a="5" data-b="6"/><line x1="31.4" y1="3" x2="40.3" y2="3.1" data-a="6" data-b="9"/><line x1="36.1" y1="28.4" x2="45" y2="30.9" data-a="7" data-b="11"/><line x1="37.2" y1="21.3" x2="36.1" y2="28.4" data-a="8" data-b="7"/><line x1="37.2" y1="21.3" x2="41" y2="15.2" data-a="8" data-b="10"/><line x1="40.3" y1="3.1" x2="41" y2="15.2" data-a="9" data-b="10"/><line x1="41" y1="15.2" x2="45" y2="30.9" data-a="10" data-b="11"/><circle cx="3" cy="3" r="1.7" data-o="0"/><circle cx="4.4" cy="33" r="1.7" data-o="1"/><circle cx="5.1" cy="17.3" r="1.7" data-o="2"/><circle cx="17.8" cy="31.9" r="1.7" data-o="3"/><circle cx="18.6" cy="3" r="1.7" data-o="4"/><circle cx="19.4" cy="13.8" r="1.7" data-o="5"/><circle cx="31.4" cy="3" r="1.7" data-o="6"/><circle cx="36.1" cy="28.4" r="1.7" data-o="7"/><circle cx="37.2" cy="21.3" r="1.7" data-o="8"/><circle cx="40.3" cy="3.1" r="1.7" data-o="9" class="on"/><circle cx="41" cy="15.2" r="1.7" data-o="10"/><circle cx="45" cy="30.9" r="1.7" data-o="11"/></svg>David Aragort</a>
+    <nav aria-label="Principal"><a href="#indice" aria-current="page">Escritos</a><a href="#sobre-mi">Sobre mí</a></nav>
+    <div class="theme" role="group" aria-label="Tema"><button type="button" data-set-theme="light" aria-pressed="false">Claro</button><button type="button" data-set-theme="dark" aria-pressed="false">Oscuro</button></div>
+  </header>
+
+  <article id="post">
+    <header class="post-head">
+      <p class="meta"><time datetime="2026-09-20">20 de septiembre de 2026</time> · 6 min de lectura</p>
+      <h1>Por qué dejé los chatbots</h1>
+    </header>
+    <div class="post-grid">
+      <div class="rail" aria-hidden="true"><svg class="net" viewBox="0 0 150 780" data-progress aria-hidden="true" focusable="false"><line x1="7" y1="7" x2="57.7" y2="23.6" data-a="0" data-b="2"/><line x1="7" y1="7" x2="43.7" y2="61.3" data-a="0" data-b="3"/><line x1="143" y1="14.6" x2="143" y2="72.4" data-a="1" data-b="5"/><line x1="57.7" y1="23.6" x2="121" y2="69" data-a="2" data-b="4"/><line x1="43.7" y1="61.3" x2="57.7" y2="23.6" data-a="3" data-b="2"/><line x1="43.7" y1="61.3" x2="57.2" y2="110.8" data-a="3" data-b="6"/><line x1="43.7" y1="61.3" x2="24.5" y2="122.4" data-a="3" data-b="8"/><line x1="121" y1="69" x2="143" y2="14.6" data-a="4" data-b="1"/><line x1="121" y1="69" x2="57.2" y2="110.8" data-a="4" data-b="6"/><line x1="121" y1="69" x2="143" y2="111.5" data-a="4" data-b="7"/><line x1="143" y1="72.4" x2="143" y2="111.5" data-a="5" data-b="7"/><line x1="57.2" y1="110.8" x2="86.2" y2="195.2" data-a="6" data-b="10"/><line x1="57.2" y1="110.8" x2="143" y2="111.5" data-a="6" data-b="7"/><line x1="143" y1="111.5" x2="118.9" y2="198.5" data-a="7" data-b="11"/><line x1="24.5" y1="122.4" x2="49" y2="188.6" data-a="8" data-b="9"/><line x1="24.5" y1="122.4" x2="57.2" y2="110.8" data-a="8" data-b="6"/><line x1="49" y1="188.6" x2="86.7" y2="252" data-a="9" data-b="14"/><line x1="49" y1="188.6" x2="57.2" y2="110.8" data-a="9" data-b="6"/><line x1="49" y1="188.6" x2="86.2" y2="195.2" data-a="9" data-b="10"/><line x1="49" y1="188.6" x2="24.6" y2="231.3" data-a="9" data-b="12"/><line x1="86.2" y1="195.2" x2="118.9" y2="198.5" data-a="10" data-b="11"/><line x1="86.2" y1="195.2" x2="143" y2="111.5" data-a="10" data-b="7"/><line x1="86.2" y1="195.2" x2="123.6" y2="249.5" data-a="10" data-b="13"/><line x1="86.2" y1="195.2" x2="86.7" y2="252" data-a="10" data-b="14"/><line x1="118.9" y1="198.5" x2="123.6" y2="249.5" data-a="11" data-b="13"/><line x1="24.6" y1="231.3" x2="86.2" y2="195.2" data-a="12" data-b="10"/><line x1="24.6" y1="231.3" x2="86.7" y2="252" data-a="12" data-b="14"/><line x1="24.6" y1="231.3" x2="21.6" y2="318.2" data-a="12" data-b="16"/><line x1="123.6" y1="249.5" x2="119.9" y2="294.3" data-a="13" data-b="15"/><line x1="86.7" y1="252" x2="119.9" y2="294.3" data-a="14" data-b="15"/><line x1="86.7" y1="252" x2="118.8" y2="320.8" data-a="14" data-b="17"/><line x1="86.7" y1="252" x2="123.6" y2="249.5" data-a="14" data-b="13"/><line x1="119.9" y1="294.3" x2="143" y2="352.6" data-a="15" data-b="18"/><line x1="21.6" y1="318.2" x2="13.2" y2="364.9" data-a="16" data-b="19"/><line x1="21.6" y1="318.2" x2="118.8" y2="320.8" data-a="16" data-b="17"/><line x1="21.6" y1="318.2" x2="58.6" y2="376.1" data-a="16" data-b="20"/><line x1="21.6" y1="318.2" x2="86.7" y2="252" data-a="16" data-b="14"/><line x1="118.8" y1="320.8" x2="119.9" y2="294.3" data-a="17" data-b="15"/><line x1="118.8" y1="320.8" x2="143" y2="352.6" data-a="17" data-b="18"/><line x1="118.8" y1="320.8" x2="58.6" y2="376.1" data-a="17" data-b="20"/><line x1="118.8" y1="320.8" x2="123.6" y2="249.5" data-a="17" data-b="13"/><line x1="143" y1="352.6" x2="142.7" y2="415.2" data-a="18" data-b="21"/><line x1="13.2" y1="364.9" x2="22.7" y2="426.2" data-a="19" data-b="23"/><line x1="58.6" y1="376.1" x2="104.2" y2="426" data-a="20" data-b="22"/><line x1="58.6" y1="376.1" x2="143" y2="352.6" data-a="20" data-b="18"/><line x1="142.7" y1="415.2" x2="139.2" y2="488.2" data-a="21" data-b="26"/><line x1="104.2" y1="426" x2="139.2" y2="488.2" data-a="22" data-b="26"/><line x1="104.2" y1="426" x2="143" y2="352.6" data-a="22" data-b="18"/><line x1="104.2" y1="426" x2="72.9" y2="487.5" data-a="22" data-b="25"/><line x1="22.7" y1="426.2" x2="58.6" y2="376.1" data-a="23" data-b="20"/><line x1="22.7" y1="426.2" x2="104.2" y2="426" data-a="23" data-b="22"/><line x1="22.7" y1="426.2" x2="7" y2="463.8" data-a="23" data-b="24"/><line x1="7" y1="463.8" x2="72.9" y2="487.5" data-a="24" data-b="25"/><line x1="7" y1="463.8" x2="43.1" y2="552.5" data-a="24" data-b="29"/><line x1="72.9" y1="487.5" x2="139.2" y2="488.2" data-a="25" data-b="26"/><line x1="139.2" y1="488.2" x2="124.3" y2="519.9" data-a="26" data-b="27"/><line x1="124.3" y1="519.9" x2="122.8" y2="602.7" data-a="27" data-b="30"/><line x1="117" y1="530.2" x2="124.3" y2="519.9" data-a="28" data-b="27"/><line x1="117" y1="530.2" x2="122.8" y2="602.7" data-a="28" data-b="30"/><line x1="117" y1="530.2" x2="94.4" y2="606.3" data-a="28" data-b="31"/><line x1="117" y1="530.2" x2="139.2" y2="488.2" data-a="28" data-b="26"/><line x1="43.1" y1="552.5" x2="94.4" y2="606.3" data-a="29" data-b="31"/><line x1="43.1" y1="552.5" x2="7" y2="610.8" data-a="29" data-b="32"/><line x1="43.1" y1="552.5" x2="117" y2="530.2" data-a="29" data-b="28"/><line x1="122.8" y1="602.7" x2="143" y2="651.9" data-a="30" data-b="33"/><line x1="94.4" y1="606.3" x2="122.8" y2="602.7" data-a="31" data-b="30"/><line x1="94.4" y1="606.3" x2="117" y2="665.2" data-a="31" data-b="34"/><line x1="7" y1="610.8" x2="94.4" y2="606.3" data-a="32" data-b="31"/><line x1="7" y1="610.8" x2="21.8" y2="670.7" data-a="32" data-b="35"/><line x1="143" y1="651.9" x2="143" y2="721.3" data-a="33" data-b="37"/><line x1="117" y1="665.2" x2="61.7" y2="711.6" data-a="34" data-b="36"/><line x1="117" y1="665.2" x2="122.8" y2="602.7" data-a="34" data-b="30"/><line x1="117" y1="665.2" x2="143" y2="651.9" data-a="34" data-b="33"/><line x1="21.8" y1="670.7" x2="117" y2="665.2" data-a="35" data-b="34"/><line x1="21.8" y1="670.7" x2="25" y2="732.6" data-a="35" data-b="38"/><line x1="21.8" y1="670.7" x2="94.4" y2="606.3" data-a="35" data-b="31"/><line x1="21.8" y1="670.7" x2="61.7" y2="711.6" data-a="35" data-b="36"/><line x1="61.7" y1="711.6" x2="143" y2="721.3" data-a="36" data-b="37"/><line x1="143" y1="721.3" x2="128.1" y2="773" data-a="37" data-b="41"/><line x1="25" y1="732.6" x2="36.4" y2="771" data-a="38" data-b="40"/><line x1="25" y1="732.6" x2="61.7" y2="711.6" data-a="38" data-b="36"/><line x1="133.2" y1="764" x2="128.1" y2="773" data-a="39" data-b="41"/><line x1="133.2" y1="764" x2="143" y2="721.3" data-a="39" data-b="37"/><line x1="36.4" y1="771" x2="133.2" y2="764" data-a="40" data-b="39"/><circle cx="7" cy="7" r="3.5" data-o="0"/><circle cx="143" cy="14.6" r="3.5" data-o="1"/><circle cx="57.7" cy="23.6" r="3.5" data-o="2"/><circle cx="43.7" cy="61.3" r="3.5" data-o="3"/><circle cx="121" cy="69" r="3.5" data-o="4"/><circle cx="143" cy="72.4" r="3.5" data-o="5"/><circle cx="57.2" cy="110.8" r="3.5" data-o="6"/><circle cx="143" cy="111.5" r="3.5" data-o="7"/><circle cx="24.5" cy="122.4" r="3.5" data-o="8"/><circle cx="49" cy="188.6" r="3.5" data-o="9"/><circle cx="86.2" cy="195.2" r="3.5" data-o="10"/><circle cx="118.9" cy="198.5" r="3.5" data-o="11"/><circle cx="24.6" cy="231.3" r="3.5" data-o="12"/><circle cx="123.6" cy="249.5" r="3.5" data-o="13"/><circle cx="86.7" cy="252" r="3.5" data-o="14"/><circle cx="119.9" cy="294.3" r="3.5" data-o="15"/><circle cx="21.6" cy="318.2" r="3.5" data-o="16"/><circle cx="118.8" cy="320.8" r="3.5" data-o="17"/><circle cx="143" cy="352.6" r="3.5" data-o="18"/><circle cx="13.2" cy="364.9" r="3.5" data-o="19"/><circle cx="58.6" cy="376.1" r="3.5" data-o="20"/><circle cx="142.7" cy="415.2" r="3.5" data-o="21"/><circle cx="104.2" cy="426" r="3.5" data-o="22"/><circle cx="22.7" cy="426.2" r="3.5" data-o="23"/><circle cx="7" cy="463.8" r="3.5" data-o="24"/><circle cx="72.9" cy="487.5" r="3.5" data-o="25"/><circle cx="139.2" cy="488.2" r="3.5" data-o="26"/><circle cx="124.3" cy="519.9" r="3.5" data-o="27"/><circle cx="117" cy="530.2" r="3.5" data-o="28"/><circle cx="43.1" cy="552.5" r="3.5" data-o="29"/><circle cx="122.8" cy="602.7" r="3.5" data-o="30"/><circle cx="94.4" cy="606.3" r="3.5" data-o="31"/><circle cx="7" cy="610.8" r="3.5" data-o="32"/><circle cx="143" cy="651.9" r="3.5" data-o="33"/><circle cx="117" cy="665.2" r="3.5" data-o="34"/><circle cx="21.8" cy="670.7" r="3.5" data-o="35"/><circle cx="61.7" cy="711.6" r="3.5" data-o="36"/><circle cx="143" cy="721.3" r="3.5" data-o="37"/><circle cx="25" cy="732.6" r="3.5" data-o="38"/><circle cx="133.2" cy="764" r="3.5" data-o="39"/><circle cx="36.4" cy="771" r="3.5" data-o="40"/><circle cx="128.1" cy="773" r="3.5" data-o="41"/></svg></div>
+      <div class="prose">
+        <p>Las herramientas de inteligencia artificial cambian prácticamente cada mes, pero la mayoría de las personas las siguen usando igual que cuando salió ChatGPT: abren un chat, hacen una pregunta, iteran y copian la respuesta. Hasta el año pasado, los “agentes” eran cosa de programadores. Pero eso está cambiando rápidamente y quiero contarte por qué dejé de usar los chatbots y qué gané con ese cambio.</p>
+        <p>A principios de este año migré de ChatGPT a Claude y la experiencia no fue lo que esperaba. Después de años de uso, ChatGPT tenía mucho contexto sobre mí: mi trabajo, mis proyectos y la forma en que me gustaba trabajar con la herramienta. A pesar de que usé la función de Claude para importar la memoria desde otros proveedores, lo que llegó estaba incompleto, mezclaba temas que no tenían nada que ver entre sí y parte de la información era inexacta.</p>
+        <p>Ahí noté el primer problema. Cuando solo usas el chatbot, la empresa guarda en sus servidores tus memorias, tus preferencias y el contexto de tus conversaciones en formatos que no siempre puedes descargar para usarlos con otro proveedor, o al menos no de forma confiable. Esto importa y mucho, porque para obtener un buen resultado no basta con tener un modelo capaz. El contexto es igual de importante y sin él lo más probable es que recibas una respuesta genérica que no se ajusta a tus necesidades u objetivos.</p>
+        <p>Poco después, en un taller práctico sobre inteligencia artificial, uno de los mentores me recomendó probar <a href="https://github.com/obra/superpowers#how-it-works">Superpowers</a>, un conjunto de habilidades (<em>skills</em>, en inglés) que le enseñan al agente a planificar antes de actuar y a revisar su trabajo antes de decir que terminó. El detalle es que, en ese momento, solo funcionaba con agentes y yo solo usaba el chatbot.</p>
+        <p>Si te preguntas cuál es la diferencia, es sencilla. Un chatbot conversa contigo: tú preguntas, te responde y lo que hagas con esa respuesta depende de ti. Un agente trabaja: puede leer archivos de tu computadora, crear o editar documentos, usar otros programas y encadenar varios pasos hasta terminar una tarea. Al chatbot le preguntas. Al agente lo diriges.</p>
+        <p>Y sí, un programa que puede leer y editar tus archivos merece una conversación aparte sobre seguridad y planeo abordar el tema en otro texto. Por ahora basta con saber que la pregunta es válida y tiene respuesta.</p>
+        <p>Así que decidí experimentar y migrar mi flujo de trabajo completamente desde el chatbot a un agente. Me inspiré sobre todo en dos ideas: <a href="https://stephango.com/file-over-app">“archivos por encima de aplicaciones” de Steph Ango</a>, uno de los desarrolladores de Obsidian; y la <a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">“LLM wiki” de Andrej Karpathy</a>, uno de los miembros fundadores de OpenAI. Ango sostiene que, si quieres que lo que estás creando permanezca, tiene que estar en archivos que controlas y en formatos accesibles. Karpathy propone que un agente construya y mantenga una carpeta de archivos de texto, para que el conocimiento se acumule con el tiempo en vez de buscarse de nuevo cada vez que se necesite. Con esas dos ideas entendí que, en vez de dejar que la plataforma generara y guardara las memorias de mis conversaciones, podía construir mi propia versión de ese sistema con archivos locales, que viven en mi computadora y no en los servidores de estas empresas. Y a diferencia del chatbot, un agente sí puede leerlos.</p>
+        <p>Aclaro que no hablo de ejecutar modelos en local. El tema me interesa, pero hoy no es realista, especialmente por el costo, ejecutar en local algo que se acerque a los principales modelos comerciales. Lo que vive en mi computadora es el contexto, no el modelo. Las conversaciones siguen pasando por los servidores del proveedor, que es donde ocurre la inferencia, y cada proveedor aplica sus propias políticas de retención de datos.</p>
+        <p>El experimento me ha llevado muchas iteraciones, sobre todo porque las herramientas siguen cambiando y cosas que no eran posibles cuando empecé hoy lo son. Aun así, el resultado fue mejor de lo que esperaba. Hoy tengo un sistema que sabe lo suficiente sobre mí para darme respuestas útiles en vez de genéricas y todo ese contexto vive en archivos de texto en mis propias carpetas: quién soy, qué hago, cómo trabajo y cuáles son mis objetivos. Con archivos de instrucciones (<a href="https://agents.md/">AGENTS.md</a> o <a href="https://code.claude.com/docs/es/glossary#claude-md">CLAUDE.md</a>, según la herramienta) le explico al agente cómo quiero que se comporte, en general o para un proyecto específico. Con las <em>skills</em> le enseño a hacer tareas concretas como yo las haría. Este tema da para otro texto, pero lo que quiero que te lleves es que la personalización dejó de ser algo que la plataforma hace por mí y pasó a ser algo que controlo yo.</p>
+        <p>Eso hace que mi contexto sea portable. Es decir, si mañana quiero cambiar de proveedor: pago una suscripción, instalo otra herramienta, selecciono la misma carpeta y sigo trabajando sin perder contexto y sin estar atado a una empresa en específico. Funciona por dos razones: todo es texto plano, en formato <a href="https://es.wikipedia.org/wiki/Markdown">Markdown</a>; y buena parte de estas herramientas son de <a href="https://es.wikipedia.org/wiki/C%C3%B3digo_abierto">código abierto</a> y usan formatos abiertos. Los mismos archivos de instrucciones y las mismas <em>skills</em> funcionan en Claude Code, Codex y OpenCode.</p>
+        <p>Pero más allá de lo que yo opino, también hay una tendencia clara. Este año Anthropic y OpenAI desarrollaron herramientas para llevar los agentes a quienes no programan. Anthropic empezó con <a href="https://claude.com/blog/cowork-is-now-claude">Claude Cowork</a> a principios de año y OpenAI lanzó <a href="https://openai.com/index/chatgpt-for-your-most-ambitious-work/">ChatGPT Work</a> a mediados de año. Las dos llevan las capacidades de un agente a tareas de oficina y trabajan directamente con los archivos de tu computadora, incluidos PDF, Word, Excel y PowerPoint. Hace unos días, además, Anthropic integró Cowork en el chat de Claude. Antes era una sección aparte que tenías que ir a buscar y ahora está ahí desde que abres Claude. Para quien ya lo usaba no cambió mucho y quien no lo usaba ahora lo estará usando por defecto. Todo apunta a que el agente se va a convertir en la forma estándar de usar estas herramientas en poco tiempo.</p>
+        <p>Te conté mi caso, pero el tuyo puede ser distinto. Yo trabajo sobre todo con Claude Code y sus equivalentes. No uso Claude Cowork ni ChatGPT Work, así que no puedo explicarte cómo funcionan por dentro. Pero te invito a hacerte una pregunta: si mañana te cambias a otro proveedor, ¿qué te llevas contigo? Si tus instrucciones y tu contexto viven dentro de la aplicación, se quedan ahí. Si viven en archivos en tus carpetas, se van contigo. Esa pregunta te va a servir hoy y dentro de seis meses, cuando estas herramientas hayan vuelto a cambiar.</p>
+        <p>Para ser justo, la portabilidad total de las conversaciones no la tiene nadie, yo incluido. Mis conversaciones también se quedan en los servidores del proveedor. Lo que me llevo es lo que quedó escrito: las memorias, las instrucciones y las decisiones que fui guardando en archivos mientras trabajaba. La conversación es desechable; el archivo no. Esa disciplina de escribir el contexto en vez de confiar en que la plataforma lo recuerde es lo que hace la diferencia y no depende de qué herramienta uses.</p>
+        <p>Dejé los chatbots hace varios meses por algo más simple que la dirección que están tomando estas herramientas. Los modelos son los mismos en los dos casos; lo que cambia es qué puede hacer la herramienta y dónde queda el contexto. El chatbot responde y se queda con todo. Un agente puede trabajar sobre tus archivos, pero el contexto solo se queda contigo si lo escribes en ellos.</p>
+        <hr />
+        <p>Esto es parte de lo que quiero enseñar con <a href="https://ateneo-abierto.org">Ateneo Abierto</a>, un proyecto para aprender a usar estas herramientas desde Venezuela con lo que tienes a mano, sin depender de una sola empresa y sin tener que saber programar. A largo plazo, la idea es conectar esto con la educación tradicional y con espacios físicos donde la gente pueda encontrarse y acceder a oportunidades educativas. Si quieres saber más, puedes ver mi presentación sobre Ateneo Abierto, un <a href="https://youtu.be/oS2N8cz7p4w">Ignite Talk en el Oslo Freedom Forum 2026</a> (en inglés).</p>
+      </div>
+      <p class="sig"><svg class="net mark" viewBox="0 0 48 36" aria-hidden="true" focusable="false"><line x1="3" y1="3" x2="18.6" y2="3" data-a="0" data-b="4"/><line x1="3" y1="3" x2="5.1" y2="17.3" data-a="0" data-b="2"/><line x1="4.4" y1="33" x2="17.8" y2="31.9" data-a="1" data-b="3"/><line x1="5.1" y1="17.3" x2="4.4" y2="33" data-a="2" data-b="1"/><line x1="5.1" y1="17.3" x2="18.6" y2="3" data-a="2" data-b="4"/><line x1="5.1" y1="17.3" x2="19.4" y2="13.8" data-a="2" data-b="5"/><line x1="5.1" y1="17.3" x2="17.8" y2="31.9" data-a="2" data-b="3"/><line x1="17.8" y1="31.9" x2="36.1" y2="28.4" data-a="3" data-b="7"/><line x1="18.6" y1="3" x2="31.4" y2="3" data-a="4" data-b="6"/><line x1="18.6" y1="3" x2="37.2" y2="21.3" data-a="4" data-b="8"/><line x1="18.6" y1="3" x2="19.4" y2="13.8" data-a="4" data-b="5"/><line x1="19.4" y1="13.8" x2="37.2" y2="21.3" data-a="5" data-b="8"/><line x1="19.4" y1="13.8" x2="36.1" y2="28.4" data-a="5" data-b="7"/><line x1="19.4" y1="13.8" x2="17.8" y2="31.9" data-a="5" data-b="3"/><line x1="19.4" y1="13.8" x2="31.4" y2="3" data-a="5" data-b="6"/><line x1="31.4" y1="3" x2="40.3" y2="3.1" data-a="6" data-b="9"/><line x1="36.1" y1="28.4" x2="45" y2="30.9" data-a="7" data-b="11"/><line x1="37.2" y1="21.3" x2="36.1" y2="28.4" data-a="8" data-b="7"/><line x1="37.2" y1="21.3" x2="41" y2="15.2" data-a="8" data-b="10"/><line x1="40.3" y1="3.1" x2="41" y2="15.2" data-a="9" data-b="10"/><line x1="41" y1="15.2" x2="45" y2="30.9" data-a="10" data-b="11"/><circle cx="3" cy="3" r="1.7" data-o="0"/><circle cx="4.4" cy="33" r="1.7" data-o="1"/><circle cx="5.1" cy="17.3" r="1.7" data-o="2"/><circle cx="17.8" cy="31.9" r="1.7" data-o="3"/><circle cx="18.6" cy="3" r="1.7" data-o="4"/><circle cx="19.4" cy="13.8" r="1.7" data-o="5"/><circle cx="31.4" cy="3" r="1.7" data-o="6"/><circle cx="36.1" cy="28.4" r="1.7" data-o="7"/><circle cx="37.2" cy="21.3" r="1.7" data-o="8"/><circle cx="40.3" cy="3.1" r="1.7" data-o="9" class="on"/><circle cx="41" cy="15.2" r="1.7" data-o="10"/><circle cx="45" cy="30.9" r="1.7" data-o="11"/></svg><span>David Aragort</span></p>
+      <div class="strip" aria-hidden="true"><svg class="net" viewBox="0 0 390 44" data-progress aria-hidden="true" focusable="false"><line x1="6.7" y1="9.9" x2="40" y2="14.8" data-a="0" data-b="2"/><line x1="6.7" y1="9.9" x2="12.2" y2="33" data-a="0" data-b="1"/><line x1="12.2" y1="33" x2="40" y2="14.8" data-a="1" data-b="2"/><line x1="12.2" y1="33" x2="58.9" y2="40" data-a="1" data-b="3"/><line x1="40" y1="14.8" x2="68.1" y2="14.3" data-a="2" data-b="4"/><line x1="40" y1="14.8" x2="72.8" y2="40" data-a="2" data-b="5"/><line x1="40" y1="14.8" x2="58.9" y2="40" data-a="2" data-b="3"/><line x1="58.9" y1="40" x2="72.8" y2="40" data-a="3" data-b="5"/><line x1="58.9" y1="40" x2="68.1" y2="14.3" data-a="3" data-b="4"/><line x1="68.1" y1="14.3" x2="72.8" y2="40" data-a="4" data-b="5"/><line x1="72.8" y1="40" x2="107.7" y2="40" data-a="5" data-b="7"/><line x1="81.6" y1="4" x2="131.4" y2="7.6" data-a="6" data-b="9"/><line x1="81.6" y1="4" x2="107.7" y2="40" data-a="6" data-b="7"/><line x1="107.7" y1="40" x2="131.4" y2="7.6" data-a="7" data-b="9"/><line x1="107.7" y1="40" x2="129.6" y2="40" data-a="7" data-b="8"/><line x1="129.6" y1="40" x2="159.9" y2="4" data-a="8" data-b="10"/><line x1="129.6" y1="40" x2="169.9" y2="40" data-a="8" data-b="11"/><line x1="131.4" y1="7.6" x2="159.9" y2="4" data-a="9" data-b="10"/><line x1="131.4" y1="7.6" x2="129.6" y2="40" data-a="9" data-b="8"/><line x1="159.9" y1="4" x2="179.6" y2="4" data-a="10" data-b="12"/><line x1="159.9" y1="4" x2="169.9" y2="40" data-a="10" data-b="11"/><line x1="169.9" y1="40" x2="203.8" y2="35.1" data-a="11" data-b="13"/><line x1="179.6" y1="4" x2="210.7" y2="5.8" data-a="12" data-b="14"/><line x1="179.6" y1="4" x2="221.3" y2="31.8" data-a="12" data-b="15"/><line x1="203.8" y1="35.1" x2="221.3" y2="31.8" data-a="13" data-b="15"/><line x1="210.7" y1="5.8" x2="228.2" y2="4" data-a="14" data-b="16"/><line x1="210.7" y1="5.8" x2="221.3" y2="31.8" data-a="14" data-b="15"/><line x1="221.3" y1="31.8" x2="228.2" y2="4" data-a="15" data-b="16"/><line x1="228.2" y1="4" x2="245.9" y2="29.4" data-a="16" data-b="17"/><line x1="245.9" y1="29.4" x2="263.5" y2="14.2" data-a="17" data-b="18"/><line x1="245.9" y1="29.4" x2="278.7" y2="40" data-a="17" data-b="19"/><line x1="263.5" y1="14.2" x2="278.7" y2="40" data-a="18" data-b="19"/><line x1="263.5" y1="14.2" x2="303.8" y2="4" data-a="18" data-b="21"/><line x1="278.7" y1="40" x2="303.8" y2="4" data-a="19" data-b="21"/><line x1="278.7" y1="40" x2="301.4" y2="40" data-a="19" data-b="20"/><line x1="301.4" y1="40" x2="333.9" y2="4" data-a="20" data-b="22"/><line x1="301.4" y1="40" x2="338.3" y2="35.3" data-a="20" data-b="23"/><line x1="303.8" y1="4" x2="301.4" y2="40" data-a="21" data-b="20"/><line x1="303.8" y1="4" x2="333.9" y2="4" data-a="21" data-b="22"/><line x1="303.8" y1="4" x2="338.3" y2="35.3" data-a="21" data-b="23"/><line x1="333.9" y1="4" x2="378.4" y2="39.5" data-a="22" data-b="26"/><line x1="333.9" y1="4" x2="338.3" y2="35.3" data-a="22" data-b="23"/><line x1="338.3" y1="35.3" x2="359.2" y2="4" data-a="23" data-b="24"/><line x1="338.3" y1="35.3" x2="378.4" y2="39.5" data-a="23" data-b="26"/><line x1="359.2" y1="4" x2="374.9" y2="13.1" data-a="24" data-b="25"/><line x1="359.2" y1="4" x2="378.4" y2="39.5" data-a="24" data-b="26"/><line x1="374.9" y1="13.1" x2="381.9" y2="39.5" data-a="25" data-b="27"/><line x1="378.4" y1="39.5" x2="374.9" y2="13.1" data-a="26" data-b="25"/><line x1="378.4" y1="39.5" x2="381.9" y2="39.5" data-a="26" data-b="27"/><circle cx="6.7" cy="9.9" r="2.6" data-o="0"/><circle cx="12.2" cy="33" r="2.6" data-o="1"/><circle cx="40" cy="14.8" r="2.6" data-o="2"/><circle cx="58.9" cy="40" r="2.6" data-o="3"/><circle cx="68.1" cy="14.3" r="2.6" data-o="4"/><circle cx="72.8" cy="40" r="2.6" data-o="5"/><circle cx="81.6" cy="4" r="2.6" data-o="6"/><circle cx="107.7" cy="40" r="2.6" data-o="7"/><circle cx="129.6" cy="40" r="2.6" data-o="8"/><circle cx="131.4" cy="7.6" r="2.6" data-o="9"/><circle cx="159.9" cy="4" r="2.6" data-o="10"/><circle cx="169.9" cy="40" r="2.6" data-o="11"/><circle cx="179.6" cy="4" r="2.6" data-o="12"/><circle cx="203.8" cy="35.1" r="2.6" data-o="13"/><circle cx="210.7" cy="5.8" r="2.6" data-o="14"/><circle cx="221.3" cy="31.8" r="2.6" data-o="15"/><circle cx="228.2" cy="4" r="2.6" data-o="16"/><circle cx="245.9" cy="29.4" r="2.6" data-o="17"/><circle cx="263.5" cy="14.2" r="2.6" data-o="18"/><circle cx="278.7" cy="40" r="2.6" data-o="19"/><circle cx="301.4" cy="40" r="2.6" data-o="20"/><circle cx="303.8" cy="4" r="2.6" data-o="21"/><circle cx="333.9" cy="4" r="2.6" data-o="22"/><circle cx="338.3" cy="35.3" r="2.6" data-o="23"/><circle cx="359.2" cy="4" r="2.6" data-o="24"/><circle cx="374.9" cy="13.1" r="2.6" data-o="25"/><circle cx="378.4" cy="39.5" r="2.6" data-o="26"/><circle cx="381.9" cy="39.5" r="2.6" data-o="27"/></svg></div>
+    </div>
+  </article>
+  <footer class="site-foot" id="sobre-mi"><p>Sobre mí: página pendiente (marcador de posición).</p></footer>
+</div>
+
+<script>
+/* theme: follows the system until you choose; the choice is remembered */
+(function () {
+  var root = document.documentElement, KEY = 'aragort-theme';
+  var mq = matchMedia('(prefers-color-scheme: dark)');
+  function cur() { return root.dataset.theme || (mq.matches ? 'dark' : 'light'); }
+  function sync() {
+    var t = cur();
+    document.querySelectorAll('[data-set-theme]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.setTheme === t)); });
+  }
+  document.querySelectorAll('[data-set-theme]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      root.dataset.theme = b.dataset.setTheme;
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      sync();
+    });
+  });
+  mq.addEventListener('change', sync);
+  sync();
+})();
+/* reading progress: nodes light in order along the net's axis */
+(function () {
+  var nets = document.querySelectorAll('.net[data-progress]');
+  var body = document.querySelector('#post .prose');
+  if (!nets.length || !body) return;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; /* static, fully drawn */
+  nets.forEach(function (n) { n.classList.add('live'); });
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var r = body.getBoundingClientRect();
+    var p = Math.min(1, Math.max(0, (innerHeight * 0.65 - r.top) / r.height));
+    nets.forEach(function (net) {
+      var nodes = net.querySelectorAll('circle');
+      var k = Math.round(p * nodes.length);
+      nodes.forEach(function (c) { c.classList.toggle('on', +c.dataset.o < k); });
+      net.querySelectorAll('line').forEach(function (l) {
+        l.classList.toggle('on', +l.dataset.a < k && +l.dataset.b < k);
+      });
+    });
+  }
+  addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();
+</script>
+</body>
+</html>

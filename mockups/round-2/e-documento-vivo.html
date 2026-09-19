@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<title>David Aragort · Documento vivo (maqueta E)</title>
+<script>try{var t=localStorage.getItem('aragort-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+<style>
+@font-face { font-family: "Bricolage Grotesque"; font-style: normal; font-weight: 500 800; font-display: swap; src: url("fonts/bricolage-grotesque.woff2") format("woff2"); }
+@font-face { font-family: "Newsreader"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("fonts/newsreader.woff2") format("woff2"); }
+@font-face { font-family: "Newsreader"; font-style: italic; font-weight: 400; font-display: swap; src: url("fonts/newsreader-italic.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800; font-display: swap; src: url("fonts/jetbrains-mono.woff2") format("woff2"); }
+
+/* light: cool sage paper, like a draft left on the desk */
+:root {
+  --bg: #eef1ec;
+  --bg-2: #e2e7e0;
+  --fg: #14181a;
+  --fg-2: #535c58;
+  --rule: #c9d0c8;
+  --ochre: #e2a638;        /* the highlighter: fill only, text never sits on it alone */
+  --mark: rgba(226, 166, 56, .42);
+  --mark-hover: rgba(226, 166, 56, .62);
+  --ochre-ui: #b37d1a;      /* progress, note edge: 3:1 on sage */
+  --link: #8e6315;         /* ochre as text on light */
+  --display: "Bricolage Grotesque", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --read: "Newsreader", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  --gutter: 16px;
+}
+/* dark: blue-slate night desk */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15191b; --bg-2: #1d2326; --fg: #e8ece8; --fg-2: #9aa5a1; --rule: #2d3538;
+    --mark: rgba(226, 166, 56, .30); --mark-hover: rgba(226, 166, 56, .48); --ochre-ui: #e2a638; --link: #e2a638;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15191b; --bg-2: #1d2326; --fg: #e8ece8; --fg-2: #9aa5a1; --rule: #2d3538;
+  --mark: rgba(226, 166, 56, .30); --mark-hover: rgba(226, 166, 56, .48); --ochre-ui: #e2a638; --link: #e2a638;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--display); font-size: 1rem; line-height: 1.5; font-synthesis: none; transition: background-color 140ms ease, color 140ms ease; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; border-radius: 3px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
+@media (min-width: 900px) { :root { --gutter: 40px; } }
+.mono { font-family: var(--mono); font-size: .875rem; letter-spacing: -.01em; }
+
+/* header */
+.site { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 1.5rem; padding: 1.25rem 0; border-bottom: 1px solid var(--rule); }
+.brand { font-weight: 750; font-size: 1.25rem; letter-spacing: -.02em; text-decoration: none; margin-right: auto; font-variation-settings: "opsz" 24; }
+.site nav { display: flex; gap: 1.25rem; font-weight: 500; }
+.site nav a { text-decoration: none; color: var(--fg-2); }
+.site nav a:hover { color: var(--fg); }
+.site nav a[aria-current="page"] { color: var(--fg); text-decoration: underline; text-decoration-color: var(--ochre); text-decoration-thickness: .3em; text-underline-offset: -.12em; text-decoration-skip-ink: none; }
+
+/* segmented controls: theme, and the post's view switch */
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; padding: 2px; background: var(--bg-2); }
+.seg button { font: 500 .875rem/1 var(--mono); color: var(--fg-2); background: none; border: 0; border-radius: 6px; padding: .5rem .7rem; cursor: pointer; }
+.seg button:hover { color: var(--fg); }
+.seg button[aria-pressed="true"] { background: var(--bg); color: var(--fg); box-shadow: 0 0 0 1px var(--rule); }
+
+@media (max-width: 599px) { .site nav { order: 3; width: 100%; } }
+
+/* index: a changelog */
+.idx-head { padding: 3.5rem 0 2rem; }
+.idx-head h1 { font-weight: 800; font-size: clamp(3.4rem, 15vw, 8.5rem); line-height: .9; letter-spacing: -.045em; margin: 0; font-variation-settings: "opsz" 96; }
+.idx-head .lede { font-family: var(--read); font-size: 1.25rem; color: var(--fg-2); margin: 1rem 0 0; max-width: 34ch; }
+.idx-head .count { color: var(--fg-2); margin: 1.5rem 0 0; }
+.log { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--fg); }
+.log > li { display: grid; gap: .5rem; padding: 1.5rem 0 1.6rem; border-bottom: 1px solid var(--rule); }
+.log .t { font-weight: 700; font-size: clamp(1.6rem, 5.5vw, 2.6rem); line-height: 1.02; letter-spacing: -.03em; text-decoration: none; font-variation-settings: "opsz" 60; }
+.log a.t:hover { text-decoration: underline; text-decoration-color: var(--ochre); text-decoration-thickness: .28em; text-underline-offset: -.08em; text-decoration-skip-ink: none; }
+.log .ex { font-family: var(--read); font-size: 1.1875rem; color: var(--fg-2); margin: 0; }
+.log .meta { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem 1rem; color: var(--fg-2); }
+.versions { display: inline-flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+.versions li { width: 26px; height: 20px; border: 1px solid var(--fg-2); border-radius: 3px; font: 500 .6875rem/18px var(--mono); text-align: center; color: var(--fg-2); }
+.versions li.cur { background: var(--ochre); border-color: var(--ochre); color: #1a1408; }
+.log .draft .t { color: var(--fg-2); font-weight: 600; }
+.tag { font-family: var(--display); font-weight: 500; font-size: .9375rem; color: var(--fg-2); }
+@media (min-width: 900px) {
+  .log > li { grid-template-columns: 1fr 22rem; column-gap: 3rem; align-items: start; }
+  .log .meta { grid-column: 2; grid-row: 1 / span 2; justify-content: flex-end; padding-top: .7rem; }
+}
+
+/* post */
+.progress { position: fixed; inset: 0 0 auto 0; height: 3px; background: var(--ochre-ui); transform-origin: 0 50%; transform: scaleX(0); z-index: 10; pointer-events: none; }
+.post-head { padding: 3rem 0 2rem; max-width: 52rem; }
+.post-head .ver { color: var(--fg-2); margin: 0; }
+.post-head .ver b { color: var(--fg); font-weight: 600; }
+.post-head h1 { font-weight: 800; font-size: clamp(2.6rem, 9vw, 5.6rem); line-height: .95; letter-spacing: -.045em; margin: 1rem 0 1.75rem; font-variation-settings: "opsz" 96; text-wrap: balance; }
+.post-tools { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; }
+.post-tools .facts { color: var(--fg-2); }
+
+.body { display: grid; grid-template-columns: minmax(0, 1fr); padding: 1.5rem 0 0; }
+.prose { font-family: var(--read); font-size: clamp(1.125rem, 1rem + .45vw, 1.3125rem); line-height: 1.64; display: grid; grid-template-columns: minmax(0, 40rem); }
+.prose > * { grid-column: 1; }
+.prose p { margin: 0 0 1.1em; }
+.prose a { color: var(--fg); text-decoration: underline 1px var(--link); text-underline-offset: .2em; box-shadow: inset 0 -.42em 0 var(--mark); }
+.prose a:hover { box-shadow: inset 0 -.42em 0 var(--mark-hover); }
+.prose hr { border: 0; border-top: 1px dashed var(--fg-2); margin: 2.4em 0; }
+.nref { font: 600 .75em/1 var(--mono); vertical-align: .45em; margin-left: .1em; text-decoration: none !important; color: var(--link) !important; }
+.note { font-family: var(--display); font-size: .9375rem; line-height: 1.45; color: var(--fg-2); margin: -.4em 0 1.4em; padding: .6rem .8rem; border-left: 3px solid var(--ochre-ui); background: var(--bg-2); border-radius: 0 6px 6px 0; }
+.note p { margin: 0; }
+.note p + p { margin-top: .55rem; }
+.note .n { font-family: var(--mono); font-weight: 600; color: var(--link); margin-right: .35rem; }
+.note a { color: var(--fg); font-weight: 600; }
+.note .src { display: block; font-family: var(--mono); font-size: .8125rem; }
+@media (min-width: 1100px) {
+  .prose { grid-template-columns: minmax(0, 40rem) 15rem; column-gap: 3.5rem; }
+  .prose > .note { grid-column: 2; align-self: start; margin: .3em 0 0; background: none; padding: 0 0 0 .8rem; }
+}
+.sig { font-family: var(--display); font-weight: 700; font-size: 1.25rem; letter-spacing: -.02em; margin: 2.5rem 0 0; }
+.sig span { display: block; font-family: var(--mono); font-weight: 400; font-size: .8125rem; color: var(--fg-2); letter-spacing: 0; margin-top: .25rem; }
+.source { margin: 0; max-width: 46rem; font: 400 1rem/1.7 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg-2); border: 1px solid var(--rule); border-radius: 8px; padding: 1.25rem; tab-size: 2; }
+.source .file { display: block; color: var(--fg-2); border-bottom: 1px solid var(--rule); padding-bottom: .6rem; margin-bottom: 1rem; }
+@media (min-width: 900px) { .source { font-size: 1.0625rem; padding: 1.75rem 2rem; } }
+[hidden] { display: none !important; }
+
+.site-foot { color: var(--fg-2); padding: 4rem 0 3rem; font-size: .9375rem; }
+.site-foot p { margin: 0; }
+
+.view-break { font-family: var(--mono); font-size: .8125rem; text-align: center; padding: .55rem var(--gutter); color: var(--fg); border-block: 1px dashed var(--fg-2); margin: 5rem 0 0; }
+.view-break.first { margin: 0; border-top: 0; }
+
+@media (prefers-reduced-motion: reduce) { body { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="view-break first" role="note">Maqueta E, Documento vivo. Vista 1 de 2: índice de escritos</div>
+
+<div class="wrap">
+  <header class="site">
+    <a class="brand" href="#indice">David Aragort</a>
+    <nav aria-label="Principal"><a href="#indice" aria-current="page">Escritos</a><a href="#sobre-mi">Sobre mí</a></nav>
+    <div class="seg" role="group" aria-label="Tema"><button type="button" data-set-theme="light" aria-pressed="false">Claro</button><button type="button" data-set-theme="dark" aria-pressed="false">Oscuro</button></div>
+  </header>
+
+  <main id="indice">
+    <div class="idx-head">
+      <h1>Escritos</h1>
+      <p class="lede">Cada texto es un archivo que sigo corrigiendo; aquí ves sus versiones.</p>
+      <p class="count mono">4 archivos · 1 publicado · 3 borradores</p>
+    </div>
+
+    <ol class="log">
+      <li>
+        <a class="t" href="#post">Por qué dejé los chatbots</a>
+        <p class="ex">La conversación es desechable; el archivo no.</p>
+        <div class="meta mono">
+          <ol class="versions" aria-label="3 versiones"><li>v1</li><li>v2</li><li class="cur">v3</li></ol>
+          <span>editado <time datetime="2026-09-22">2026-09-22</time></span>
+        </div>
+      </li>
+      <li class="draft">
+        <span class="t">La terminal y GitHub</span>
+        <span class="tag">(borrador de ejemplo)</span>
+        <div class="meta mono"><ol class="versions" aria-label="1 versión"><li>v0</li></ol><span>previsto <time datetime="2026-10-04">2026-10-04</time></span></div>
+      </li>
+      <li class="draft">
+        <span class="t">Tus instrucciones, tus reglas</span>
+        <span class="tag">(borrador de ejemplo)</span>
+        <div class="meta mono"><ol class="versions" aria-label="1 versión"><li>v0</li></ol><span>previsto <time datetime="2026-10-18">2026-10-18</time></span></div>
+      </li>
+      <li class="draft">
+        <span class="t">No dependas de una sola empresa</span>
+        <span class="tag">(borrador de ejemplo)</span>
+        <div class="meta mono"><ol class="versions" aria-label="1 versión"><li>v0</li></ol><span>previsto <time datetime="2026-11-01">2026-11-01</time></span></div>
+      </li>
+    </ol>
+  </main>
+  <footer class="site-foot"><p>aragort.com</p></footer>
+</div>
+
+<div class="view-break" role="note">Vista 2 de 2: artículo. Prueba el botón Markdown.</div>
+
+<div class="progress" aria-hidden="true"></div>
+<div class="wrap">
+  <header class="site">
+    <a class="brand" href="#indice">David Aragort</a>
+    <nav aria-label="Principal"><a href="#indice" aria-current="page">Escritos</a><a href="#sobre-mi">Sobre mí</a></nav>
+    <div class="seg" role="group" aria-label="Tema"><button type="button" data-set-theme="light" aria-pressed="false">Claro</button><button type="button" data-set-theme="dark" aria-pressed="false">Oscuro</button></div>
+  </header>
+
+  <article id="post">
+    <header class="post-head">
+      <p class="ver mono"><b>v3</b> · editado <time datetime="2026-09-22">2026-09-22</time> · publicado <time datetime="2026-09-20">2026-09-20</time></p>
+      <h1>Por qué dejé los chatbots</h1>
+      <div class="post-tools">
+        <div class="seg" role="group" aria-label="Cómo ver el artículo">
+          <button type="button" data-view="read" aria-pressed="true">Vista leída</button>
+          <button type="button" data-view="md" aria-pressed="false">Markdown</button>
+        </div>
+        <span class="facts mono">6 min · 1.350 palabras</span>
+      </div>
+    </header>
+    <div class="body">
+      <div class="prose" data-pane="read">
+        <p>Las herramientas de inteligencia artificial cambian prácticamente cada mes, pero la mayoría de las personas las siguen usando igual que cuando salió ChatGPT: abren un chat, hacen una pregunta, iteran y copian la respuesta. Hasta el año pasado, los “agentes” eran cosa de programadores. Pero eso está cambiando rápidamente y quiero contarte por qué dejé de usar los chatbots y qué gané con ese cambio.</p>
+        <p>A principios de este año migré de ChatGPT a Claude y la experiencia no fue lo que esperaba. Después de años de uso, ChatGPT tenía mucho contexto sobre mí: mi trabajo, mis proyectos y la forma en que me gustaba trabajar con la herramienta. A pesar de que usé la función de Claude para importar la memoria desde otros proveedores, lo que llegó estaba incompleto, mezclaba temas que no tenían nada que ver entre sí y parte de la información era inexacta.</p>
+        <p>Ahí noté el primer problema. Cuando solo usas el chatbot, la empresa guarda en sus servidores tus memorias, tus preferencias y el contexto de tus conversaciones en formatos que no siempre puedes descargar para usarlos con otro proveedor, o al menos no de forma confiable. Esto importa y mucho, porque para obtener un buen resultado no basta con tener un modelo capaz. El contexto es igual de importante y sin él lo más probable es que recibas una respuesta genérica que no se ajusta a tus necesidades u objetivos.</p>
+        <p>Poco después, en un taller práctico sobre inteligencia artificial, uno de los mentores me recomendó probar <a href="https://github.com/obra/superpowers#how-it-works">Superpowers</a>, un conjunto de habilidades (<em>skills</em>, en inglés) que le enseñan al agente a planificar antes de actuar y a revisar su trabajo antes de decir que terminó. El detalle es que, en ese momento, solo funcionaba con agentes y yo solo usaba el chatbot.</p>
+        <p>Si te preguntas cuál es la diferencia, es sencilla. Un chatbot conversa contigo: tú preguntas, te responde y lo que hagas con esa respuesta depende de ti. Un agente trabaja: puede leer archivos de tu computadora, crear o editar documentos, usar otros programas y encadenar varios pasos hasta terminar una tarea. Al chatbot le preguntas. Al agente lo diriges.</p>
+        <p>Y sí, un programa que puede leer y editar tus archivos merece una conversación aparte sobre seguridad y planeo abordar el tema en otro texto. Por ahora basta con saber que la pregunta es válida y tiene respuesta.</p>
+        <p>Así que decidí experimentar y migrar mi flujo de trabajo completamente desde el chatbot a un agente. Me inspiré sobre todo en dos ideas: <a href="https://stephango.com/file-over-app">“archivos por encima de aplicaciones” de Steph Ango</a><a class="nref" href="#nota-1" id="ref-1" aria-label="Nota 1">1</a>, uno de los desarrolladores de Obsidian; y la <a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">“LLM wiki” de Andrej Karpathy</a><a class="nref" href="#nota-2" id="ref-2" aria-label="Nota 2">2</a>, uno de los miembros fundadores de OpenAI. Ango sostiene que, si quieres que lo que estás creando permanezca, tiene que estar en archivos que controlas y en formatos accesibles. Karpathy propone que un agente construya y mantenga una carpeta de archivos de texto, para que el conocimiento se acumule con el tiempo en vez de buscarse de nuevo cada vez que se necesite. Con esas dos ideas entendí que, en vez de dejar que la plataforma generara y guardara las memorias de mis conversaciones, podía construir mi propia versión de ese sistema con archivos locales, que viven en mi computadora y no en los servidores de estas empresas. Y a diferencia del chatbot, un agente sí puede leerlos.</p>
+        <aside class="note" aria-label="Fuentes 1 y 2"><p id="nota-1"><span class="n">1</span><a href="https://stephango.com/file-over-app">Archivos por encima de aplicaciones</a><span class="src">stephango.com/file-over-app</span></p><p id="nota-2"><span class="n">2</span><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">LLM wiki</a><span class="src">gist.github.com/karpathy</span></p></aside>
+        <p>Aclaro que no hablo de ejecutar modelos en local. El tema me interesa, pero hoy no es realista, especialmente por el costo, ejecutar en local algo que se acerque a los principales modelos comerciales. Lo que vive en mi computadora es el contexto, no el modelo. Las conversaciones siguen pasando por los servidores del proveedor, que es donde ocurre la inferencia, y cada proveedor aplica sus propias políticas de retención de datos.</p>
+        <p>El experimento me ha llevado muchas iteraciones, sobre todo porque las herramientas siguen cambiando y cosas que no eran posibles cuando empecé hoy lo son. Aun así, el resultado fue mejor de lo que esperaba. Hoy tengo un sistema que sabe lo suficiente sobre mí para darme respuestas útiles en vez de genéricas y todo ese contexto vive en archivos de texto en mis propias carpetas: quién soy, qué hago, cómo trabajo y cuáles son mis objetivos. Con archivos de instrucciones (<a href="https://agents.md/">AGENTS.md</a><a class="nref" href="#nota-3" id="ref-3" aria-label="Nota 3">3</a> o <a href="https://code.claude.com/docs/es/glossary#claude-md">CLAUDE.md</a>, según la herramienta) le explico al agente cómo quiero que se comporte, en general o para un proyecto específico. Con las <em>skills</em> le enseño a hacer tareas concretas como yo las haría. Este tema da para otro texto, pero lo que quiero que te lleves es que la personalización dejó de ser algo que la plataforma hace por mí y pasó a ser algo que controlo yo.</p>
+        <aside class="note" aria-label="Fuente 3"><p id="nota-3"><span class="n">3</span><a href="https://agents.md/">AGENTS.md</a><span class="src">agents.md</span></p></aside>
+        <p>Eso hace que mi contexto sea portable. Es decir, si mañana quiero cambiar de proveedor: pago una suscripción, instalo otra herramienta, selecciono la misma carpeta y sigo trabajando sin perder contexto y sin estar atado a una empresa en específico. Funciona por dos razones: todo es texto plano, en formato <a href="https://es.wikipedia.org/wiki/Markdown">Markdown</a>; y buena parte de estas herramientas son de <a href="https://es.wikipedia.org/wiki/C%C3%B3digo_abierto">código abierto</a> y usan formatos abiertos. Los mismos archivos de instrucciones y las mismas <em>skills</em> funcionan en Claude Code, Codex y OpenCode.</p>
+        <p>Pero más allá de lo que yo opino, también hay una tendencia clara. Este año Anthropic y OpenAI desarrollaron herramientas para llevar los agentes a quienes no programan. Anthropic empezó con <a href="https://claude.com/blog/cowork-is-now-claude">Claude Cowork</a> a principios de año y OpenAI lanzó <a href="https://openai.com/index/chatgpt-for-your-most-ambitious-work/">ChatGPT Work</a> a mediados de año. Las dos llevan las capacidades de un agente a tareas de oficina y trabajan directamente con los archivos de tu computadora, incluidos PDF, Word, Excel y PowerPoint. Hace unos días, además, Anthropic integró Cowork en el chat de Claude. Antes era una sección aparte que tenías que ir a buscar y ahora está ahí desde que abres Claude. Para quien ya lo usaba no cambió mucho y quien no lo usaba ahora lo estará usando por defecto. Todo apunta a que el agente se va a convertir en la forma estándar de usar estas herramientas en poco tiempo.</p>
+        <p>Te conté mi caso, pero el tuyo puede ser distinto. Yo trabajo sobre todo con Claude Code y sus equivalentes. No uso Claude Cowork ni ChatGPT Work, así que no puedo explicarte cómo funcionan por dentro. Pero te invito a hacerte una pregunta: si mañana te cambias a otro proveedor, ¿qué te llevas contigo? Si tus instrucciones y tu contexto viven dentro de la aplicación, se quedan ahí. Si viven en archivos en tus carpetas, se van contigo. Esa pregunta te va a servir hoy y dentro de seis meses, cuando estas herramientas hayan vuelto a cambiar.</p>
+        <p>Para ser justo, la portabilidad total de las conversaciones no la tiene nadie, yo incluido. Mis conversaciones también se quedan en los servidores del proveedor. Lo que me llevo es lo que quedó escrito: las memorias, las instrucciones y las decisiones que fui guardando en archivos mientras trabajaba. La conversación es desechable; el archivo no. Esa disciplina de escribir el contexto en vez de confiar en que la plataforma lo recuerde es lo que hace la diferencia y no depende de qué herramienta uses.</p>
+        <p>Dejé los chatbots hace varios meses por algo más simple que la dirección que están tomando estas herramientas. Los modelos son los mismos en los dos casos; lo que cambia es qué puede hacer la herramienta y dónde queda el contexto. El chatbot responde y se queda con todo. Un agente puede trabajar sobre tus archivos, pero el contexto solo se queda contigo si lo escribes en ellos.</p>
+        <hr />
+        <p>Esto es parte de lo que quiero enseñar con <a href="https://ateneo-abierto.org">Ateneo Abierto</a>, un proyecto para aprender a usar estas herramientas desde Venezuela con lo que tienes a mano, sin depender de una sola empresa y sin tener que saber programar. A largo plazo, la idea es conectar esto con la educación tradicional y con espacios físicos donde la gente pueda encontrarse y acceder a oportunidades educativas. Si quieres saber más, puedes ver mi presentación sobre Ateneo Abierto, un <a href="https://youtu.be/oS2N8cz7p4w">Ignite Talk en el Oslo Freedom Forum 2026</a> (en inglés).</p>
+        <p class="sig">David Aragort<span>2026-09-20-por-que-deje-los-chatbots.md</span></p>
+      </div>
+      <pre class="source" data-pane="md" hidden><span class="file">2026-09-20-por-que-deje-los-chatbots.md</span># Por qué dejé los chatbots
+
+*David Aragort*
+
+Las herramientas de inteligencia artificial cambian prácticamente cada mes, pero la mayoría de las personas las siguen usando igual que cuando salió ChatGPT: abren un chat, hacen una pregunta, iteran y copian la respuesta. Hasta el año pasado, los &quot;agentes&quot; eran cosa de programadores. Pero eso está cambiando rápidamente y quiero contarte por qué dejé de usar los chatbots y qué gané con ese cambio.
+
+A principios de este año migré de ChatGPT a Claude y la experiencia no fue lo que esperaba. Después de años de uso, ChatGPT tenía mucho contexto sobre mí: mi trabajo, mis proyectos y la forma en que me gustaba trabajar con la herramienta. A pesar de que usé la función de Claude para importar la memoria desde otros proveedores, lo que llegó estaba incompleto, mezclaba temas que no tenían nada que ver entre sí y parte de la información era inexacta.
+
+Ahí noté el primer problema. Cuando solo usas el chatbot, la empresa guarda en sus servidores tus memorias, tus preferencias y el contexto de tus conversaciones en formatos que no siempre puedes descargar para usarlos con otro proveedor, o al menos no de forma confiable. Esto importa y mucho, porque para obtener un buen resultado no basta con tener un modelo capaz. El contexto es igual de importante y sin él lo más probable es que recibas una respuesta genérica que no se ajusta a tus necesidades u objetivos.
+
+Poco después, en un taller práctico sobre inteligencia artificial, uno de los mentores me recomendó probar [Superpowers](https://github.com/obra/superpowers#how-it-works), un conjunto de habilidades (*skills*, en inglés) que le enseñan al agente a planificar antes de actuar y a revisar su trabajo antes de decir que terminó. El detalle es que, en ese momento, solo funcionaba con agentes y yo solo usaba el chatbot.
+
+Si te preguntas cuál es la diferencia, es sencilla. Un chatbot conversa contigo: tú preguntas, te responde y lo que hagas con esa respuesta depende de ti. Un agente trabaja: puede leer archivos de tu computadora, crear o editar documentos, usar otros programas y encadenar varios pasos hasta terminar una tarea. Al chatbot le preguntas. Al agente lo diriges.
+
+Y sí, un programa que puede leer y editar tus archivos merece una conversación aparte sobre seguridad y planeo abordar el tema en otro texto. Por ahora basta con saber que la pregunta es válida y tiene respuesta.
+
+Así que decidí experimentar y migrar mi flujo de trabajo completamente desde el chatbot a un agente. Me inspiré sobre todo en dos ideas: [&quot;archivos por encima de aplicaciones&quot; de Steph Ango](https://stephango.com/file-over-app), uno de los desarrolladores de Obsidian; y la [&quot;LLM wiki&quot; de Andrej Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), uno de los miembros fundadores de OpenAI. Ango sostiene que, si quieres que lo que estás creando permanezca, tiene que estar en archivos que controlas y en formatos accesibles. Karpathy propone que un agente construya y mantenga una carpeta de archivos de texto, para que el conocimiento se acumule con el tiempo en vez de buscarse de nuevo cada vez que se necesite. Con esas dos ideas entendí que, en vez de dejar que la plataforma generara y guardara las memorias de mis conversaciones, podía construir mi propia versión de ese sistema con archivos locales, que viven en mi computadora y no en los servidores de estas empresas. Y a diferencia del chatbot, un agente sí puede leerlos.
+
+Aclaro que no hablo de ejecutar modelos en local. El tema me interesa, pero hoy no es realista, especialmente por el costo, ejecutar en local algo que se acerque a los principales modelos comerciales. Lo que vive en mi computadora es el contexto, no el modelo. Las conversaciones siguen pasando por los servidores del proveedor, que es donde ocurre la inferencia, y cada proveedor aplica sus propias políticas de retención de datos.
+
+El experimento me ha llevado muchas iteraciones, sobre todo porque las herramientas siguen cambiando y cosas que no eran posibles cuando empecé hoy lo son. Aun así, el resultado fue mejor de lo que esperaba. Hoy tengo un sistema que sabe lo suficiente sobre mí para darme respuestas útiles en vez de genéricas y todo ese contexto vive en archivos de texto en mis propias carpetas: quién soy, qué hago, cómo trabajo y cuáles son mis objetivos. Con archivos de instrucciones ([AGENTS.md](https://agents.md/) o [CLAUDE.md](https://code.claude.com/docs/es/glossary#claude-md), según la herramienta) le explico al agente cómo quiero que se comporte, en general o para un proyecto específico. Con las *skills* le enseño a hacer tareas concretas como yo las haría. Este tema da para otro texto, pero lo que quiero que te lleves es que la personalización dejó de ser algo que la plataforma hace por mí y pasó a ser algo que controlo yo.
+
+Eso hace que mi contexto sea portable. Es decir, si mañana quiero cambiar de proveedor: pago una suscripción, instalo otra herramienta, selecciono la misma carpeta y sigo trabajando sin perder contexto y sin estar atado a una empresa en específico. Funciona por dos razones: todo es texto plano, en formato [Markdown](https://es.wikipedia.org/wiki/Markdown); y buena parte de estas herramientas son de [código abierto](https://es.wikipedia.org/wiki/C%C3%B3digo_abierto) y usan formatos abiertos. Los mismos archivos de instrucciones y las mismas *skills* funcionan en Claude Code, Codex y OpenCode.
+
+Pero más allá de lo que yo opino, también hay una tendencia clara. Este año Anthropic y OpenAI desarrollaron herramientas para llevar los agentes a quienes no programan. Anthropic empezó con [Claude Cowork](https://claude.com/blog/cowork-is-now-claude) a principios de año y OpenAI lanzó [ChatGPT Work](https://openai.com/index/chatgpt-for-your-most-ambitious-work/) a mediados de año. Las dos llevan las capacidades de un agente a tareas de oficina y trabajan directamente con los archivos de tu computadora, incluidos PDF, Word, Excel y PowerPoint. Hace unos días, además, Anthropic integró Cowork en el chat de Claude. Antes era una sección aparte que tenías que ir a buscar y ahora está ahí desde que abres Claude. Para quien ya lo usaba no cambió mucho y quien no lo usaba ahora lo estará usando por defecto. Todo apunta a que el agente se va a convertir en la forma estándar de usar estas herramientas en poco tiempo.
+
+Te conté mi caso, pero el tuyo puede ser distinto. Yo trabajo sobre todo con Claude Code y sus equivalentes. No uso Claude Cowork ni ChatGPT Work, así que no puedo explicarte cómo funcionan por dentro. Pero te invito a hacerte una pregunta: si mañana te cambias a otro proveedor, ¿qué te llevas contigo? Si tus instrucciones y tu contexto viven dentro de la aplicación, se quedan ahí. Si viven en archivos en tus carpetas, se van contigo. Esa pregunta te va a servir hoy y dentro de seis meses, cuando estas herramientas hayan vuelto a cambiar.
+
+Para ser justo, la portabilidad total de las conversaciones no la tiene nadie, yo incluido. Mis conversaciones también se quedan en los servidores del proveedor. Lo que me llevo es lo que quedó escrito: las memorias, las instrucciones y las decisiones que fui guardando en archivos mientras trabajaba. La conversación es desechable; el archivo no. Esa disciplina de escribir el contexto en vez de confiar en que la plataforma lo recuerde es lo que hace la diferencia y no depende de qué herramienta uses.
+
+Dejé los chatbots hace varios meses por algo más simple que la dirección que están tomando estas herramientas. Los modelos son los mismos en los dos casos; lo que cambia es qué puede hacer la herramienta y dónde queda el contexto. El chatbot responde y se queda con todo. Un agente puede trabajar sobre tus archivos, pero el contexto solo se queda contigo si lo escribes en ellos.
+
+---
+
+Esto es parte de lo que quiero enseñar con [Ateneo Abierto](https://ateneo-abierto.org), un proyecto para aprender a usar estas herramientas desde Venezuela con lo que tienes a mano, sin depender de una sola empresa y sin tener que saber programar. A largo plazo, la idea es conectar esto con la educación tradicional y con espacios físicos donde la gente pueda encontrarse y acceder a oportunidades educativas. Si quieres saber más, puedes ver mi presentación sobre Ateneo Abierto, un [Ignite Talk en el Oslo Freedom Forum 2026](https://youtu.be/oS2N8cz7p4w) (en inglés).</pre>
+    </div>
+  </article>
+  <footer class="site-foot" id="sobre-mi"><p>Sobre mí: página pendiente (marcador de posición).</p></footer>
+</div>
+
+<script>
+/* theme: follows the system until you choose; the choice is remembered */
+(function () {
+  var root = document.documentElement, KEY = 'aragort-theme';
+  var mq = matchMedia('(prefers-color-scheme: dark)');
+  function cur() { return root.dataset.theme || (mq.matches ? 'dark' : 'light'); }
+  function sync() {
+    var t = cur();
+    document.querySelectorAll('[data-set-theme]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.setTheme === t)); });
+  }
+  document.querySelectorAll('[data-set-theme]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      root.dataset.theme = b.dataset.setTheme;
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      sync();
+    });
+  });
+  mq.addEventListener('change', sync);
+  sync();
+})();
+/* read view / Markdown source, in place */
+(function () {
+  var btns = document.querySelectorAll('[data-view]');
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      btns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      document.querySelectorAll('[data-pane]').forEach(function (p) { p.hidden = p.dataset.pane !== b.dataset.view; });
+    });
+  });
+})();
+/* reading-progress hairline, tied to the article only */
+(function () {
+  var bar = document.querySelector('.progress');
+  var art = document.querySelector('#post .body');
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var r = art.getBoundingClientRect();
+    var p = Math.min(1, Math.max(0, (innerHeight - r.top) / r.height));
+    bar.style.transform = 'scaleX(' + (r.top < innerHeight ? p : 0).toFixed(4) + ')';
+  }
+  addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();
+</script>
+</body>
+</html>
