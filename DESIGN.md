@@ -271,10 +271,12 @@ below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir mov
   (~450ms; each rail node starts from the hero node at the same place in reading order). On a phone the
   hero shrinks into the header mark.
 - **The net is alive:** every net drifts in 3D (each node has a depth; a few degrees of
-  turn, near nodes move more). The cursor tilts it on desktop, scroll on a phone. Posts
-  get half amplitude and hold still while scrolling. The node under the cursor glows in
-  ochre and fades (~600ms); a tap sends a 2-hop pulse; the first page of a session opens
-  with one pulse from the ochre node.
+  turn, near nodes move more). Each node hangs on a spring, so every force moves it with
+  inertia: the cursor (or a finger on the net) pulls nearby nodes in like gravity; a
+  click or a tap sends a ring outward that springs back; on a phone, scrolling swings the
+  net against its motion and it settles. Posts get half amplitude and hold still while
+  scrolling. The node under the cursor glows in ochre and fades (~600ms); the first page
+  of a session opens with one pulse of light from the ochre node.
 - **Landing:** hovering or focusing an entry lights its path through the net, the wire and
   the thread in the entry's hue. On a phone, the entry at mid-screen does.
 - **Post:** the rail and the header mark light node by node as you read. At the end the
@@ -311,6 +313,7 @@ Ambient motion is allowed for the net only, for impact. It is bounded:
 2. **One shared loop per page, capped at 30fps.** It stops when the tab is hidden. The
    sticky header mark drifts too, so it runs while the page is visible (measured: 2.6%
    scripting at 4× CPU throttling). No library.
-3. **Small amplitude:** drift 2.5°, cursor tilt 1°; at most 12px on the landing hero.
-   Wires never enter the text halo.
+3. **Bounded amplitude:** drift 2.5°, cursor tilt 1°; gravity up to 20px within 160px of
+   the pointer; a ring kick of 9px within 280px; nothing strays more than 30px from its
+   drifting place. Wires never enter the text halo.
 4. Everything else stays functional: 120–360ms, no loops.
