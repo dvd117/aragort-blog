@@ -55,11 +55,11 @@ Each value is the colour used as text and UI in that theme: ratio on the page / 
 
 | Hue | Light | Dark | Sepia | Alto contraste |
 |---|---|---|---|---|
-| ochre | `#8b6114` 5.09 / 4.66 | `#e2a638` 8.97 / 8.26 | `#805a13` 5.18 / 4.64 | `#ffd166` 14.56 / 12.78 |
-| teal | `#2f7472` 5.03 / 4.6 | `#43a3a0` 6.43 / 5.92 | `#2c6b69` 5.14 / 4.6 | `#48b0ac` 8.08 / 7.09 |
-| brick | `#aa4e3c` 5.03 / 4.6 | `#c36855` 5.0 / 4.61 | `#9d4837` 5.14 / 4.6 | `#d39082` 8.08 / 7.09 |
-| sky | `#386e97` 5.05 / 4.62 | `#4587ba` 5.0 / 4.6 | `#34658c` 5.18 / 4.64 | `#75a6cc` 8.08 / 7.09 |
-| moss | `#567138` 5.09 / 4.66 | `#759a4c` 5.97 / 5.5 | `#506833` 5.21 / 4.67 | `#84ac56` 8.02 / 7.03 |
+| ochre | `#8b6114` 5.09 / 4.66 | `#e2a638` 9.75 / 8.77 | `#805a13` 5.18 / 4.64 | `#ffd166` 14.56 / 12.78 |
+| teal | `#2f7472` 5.03 / 4.6 | `#43a3a0` 6.99 / 6.28 | `#2c6b69` 5.14 / 4.6 | `#48b0ac` 8.08 / 7.09 |
+| brick | `#aa4e3c` 5.03 / 4.6 | `#d4735f` 6.42 / 5.77 | `#9d4837` 5.14 / 4.6 | `#d39082` 8.08 / 7.09 |
+| sky | `#386e97` 5.05 / 4.62 | `#5b9bd0` 7.04 / 6.34 | `#34658c` 5.18 / 4.64 | `#75a6cc` 8.08 / 7.09 |
+| moss | `#567138` 5.09 / 4.66 | `#759a4c` 6.48 / 5.83 | `#506833` 5.21 / 4.67 | `#84ac56` 8.02 / 7.03 |
 
 
 ## Reading settings, motion and the preview
@@ -71,7 +71,7 @@ Each value is the colour used as text and UI in that theme: ratio on the page / 
 - highlighting the paragraph being read, underlining every link, and reducing motion;
 - reading aloud, with a local Spanish voice only (the control is hidden when there is none).
 
-**Theme resolution:** the reader's saved choice first. With nothing saved, the OS preference applies (light or dark). With no preference, or none readable, the site is dark. The base CSS is dark and a `prefers-color-scheme: light` rule applies only when nothing is saved, so there is no flash.
+**Theme resolution:** the reader's saved choice; with nothing saved, dark (OLED black) for everyone. "Sistema" in Ajustes follows the OS.
 
 Each setting is one `data-*` attribute on `<html>`, applied before first paint by an inline script generated from `src/lib/settings.ts`, and stored in `localStorage` (`aragort-lectura`).
 
@@ -129,14 +129,14 @@ The Dockerfile has two stages: Node builds the site (with `git`, for versions), 
 | Light | Link text on hover band (`fg` on `band .60`) | 11.03 | 4.5 |
 | Light | Net nodes, focus ring, progress (UI) (`ochre` on `bg`) | 3.16 | 3 |
 | Light | Pressed toggle label (`bg` on `fg`) | 16.61 | 4.5 |
-| Dark | Body text (reading) (`fg-read` on `bg`) | 13.31 | 4.5 |
-| Dark | Titles (`fg` on `bg`) | 15.93 | 4.5 |
-| Dark | Muted text (`fg-2` on `bg`) | 7.61 | 4.5 |
-| Dark | Muted on panel (`fg-2` on `panel`) | 7.02 | 4.5 |
-| Dark | Ochre text (`link` on `bg`) | 8.97 | 4.5 |
-| Dark | Ochre text on panel (`link` on `panel`) | 8.26 | 4.5 |
-| Dark | Link text on highlighter band (`fg` on `band .28`) | 9.22 | 4.5 |
-| Dark | Link text on hover band (`fg` on `band .45`) | 6.03 | 4.5 |
-| Dark | Net nodes, focus ring, progress (UI) (`ochre` on `bg`) | 8.97 | 3 |
+| Dark | Body text (reading) (`fg-read` on `bg`) | 13.09 | 4.5 |
+| Dark | Titles (`fg` on `bg`) | 17.31 | 4.5 |
+| Dark | Muted text (`fg-2` on `bg`) | 8.27 | 4.5 |
+| Dark | Muted on panel (`fg-2` on `panel`) | 7.44 | 4.5 |
+| Dark | Ochre text (`link` on `bg`) | 9.75 | 4.5 |
+| Dark | Ochre text on panel (`link` on `panel`) | 8.77 | 4.5 |
+| Dark | Link text on highlighter band (`fg` on `band .28`) | 10.75 | 4.5 |
+| Dark | Link text on hover band (`fg` on `band .45`) | 6.69 | 4.5 |
+| Dark | Net nodes, focus ring, progress (UI) (`ochre` on `bg`) | 9.75 | 3 |
 
 Band pairs are the ochre highlight composited over the page background before the ratio is taken.
