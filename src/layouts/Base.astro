@@ -10,13 +10,14 @@ interface Props {
   current?: 'escritos' | 'sobre-mi';
   ogImage?: string;
   type?: 'website' | 'article';
+  hue?: string;
 }
-const { title, description = 'Escritos de David Aragort.', current, ogImage, type = 'website' } = Astro.props;
+const { title, description = 'Escritos de David Aragort.', current, ogImage, type = 'website', hue } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort`;
 ---
 <!doctype html>
-<html lang="es">
+<html lang="es" data-hue={hue}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />

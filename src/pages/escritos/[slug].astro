@@ -22,12 +22,13 @@ const version = versionLine(postVersion(post.file, post.date));
 const source = await readFile(post.file, 'utf8');
 const filename = `${post.id}.md`;
 ---
-<Base title={post.title} description={post.description} current="escritos" type="article" ogImage={`/og/${post.slug}.png`}>
+<Base title={post.title} description={post.description} current="escritos" type="article" ogImage={`/og/${post.slug}.png`} hue={post.hue}>
   <div class="progress" aria-hidden="true"></div>
   <article class="wrap post">
     <header class="post-head">
       {version && <p class="ver">{version}</p>}
       <p class="meta">
+        <span class="hue-dot" aria-hidden="true"></span>
         <time datetime={post.date}>{formatDateEs(post.date)}</time> · {post.minutes} min de lectura · {words} palabras
         {post.draft && <span> · borrador</span>}
       </p>

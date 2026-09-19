@@ -22,8 +22,8 @@ const posts = await getPosts();
     ) : (
       <ol class="entries">
         {posts.map((p) => (
-          <li class:list={['entry', { draft: p.draft }]}>
-            <time class="d" datetime={p.date}>{formatDateEs(p.date)}</time>
+          <li class:list={['entry', { draft: p.draft }]} data-hue={p.hue}>
+            <p class="d"><span class="hue-dot" aria-hidden="true"></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
             <a class="t" href={`/escritos/${p.slug}/`}>{p.title}</a>
             {p.description && <p class="ex">{p.description}</p>}
             {p.draft && <span class="tag">borrador</span>}
