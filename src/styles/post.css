@@ -28,7 +28,8 @@
 /* E's layer: version line, view switch, Markdown source, margin notes. */
 .ver { font: 500 .875rem/1.4 var(--mono); color: var(--fg-2); margin: 0 0 .6rem; }
 .view { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; padding: 2px; margin-top: 2rem; background: var(--panel); }
-.view[hidden] { display: none; }
+.view { display: none; }
+.js .view { display: inline-flex; }
 .view button { font: 500 .875rem/1 var(--mono); color: var(--fg-2); background: none; border: 0; border-radius: 6px; padding: .55rem .75rem; cursor: pointer; }
 .view button:hover { color: var(--fg); }
 .view button[aria-pressed="true"] { background: var(--bg); color: var(--fg); box-shadow: 0 0 0 1px var(--rule); }
@@ -69,8 +70,8 @@
 
 /* Note threads. Phone: notes rest on one line until their marker is tapped. */
 @media (max-width: 1099px) {
-  .notes-compact .note { cursor: pointer; }
-  .notes-compact .note:not(.is-open) p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .js .prose .note { cursor: pointer; }
+  .js .prose .note:not(.is-open) p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 .note { transition: background-color 240ms ease; }
 .note.is-flash { background: var(--hue-band); }

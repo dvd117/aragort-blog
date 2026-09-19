@@ -57,6 +57,27 @@ Each value is the colour used as text and UI in that theme: ratio on the page / 
 | sky | `#386e97` 5.05 / 4.62 | `#4587ba` 5.0 / 4.6 | `#34658c` 5.18 / 4.64 | `#75a6cc` 8.08 / 7.09 |
 | moss | `#567138` 5.09 / 4.66 | `#759a4c` 5.97 / 5.5 | `#506833` 5.21 / 4.67 | `#84ac56` 8.02 / 7.03 |
 
+
+## Reading settings, motion and the preview
+
+**Ajustes de lectura** (the "Aa Ajustes" button in the header) is a bottom sheet on phones and a popover on desktop. It offers:
+- text size, line spacing, letter spacing and column width;
+- the typeface: Newsreader, Instrument Sans, or Atkinson Hyperlegible, which is downloaded only when chosen;
+- the theme: Sistema, Claro, Oscuro, Sepia or Alto contraste;
+- highlighting the paragraph being read, underlining every link, and reducing motion;
+- reading aloud, with a local Spanish voice only (the control is hidden when there is none).
+
+Each setting is one `data-*` attribute on `<html>`, applied before first paint by an inline script generated from `src/lib/settings.ts`, and stored in `localStorage` (`aragort-lectura`).
+
+**Motion** is functional, 120 to 360ms, never looping, and off under `prefers-reduced-motion` or the panel's "Reducir movimiento":
+- Moving between pages uses cross-document View Transitions, CSS only. An index title becomes the post title, the hero net shrinks into the header mark, "Escritos" and "Sobre mí" morph into each other, and every page rises in 12px.
+- On the index, hovering or focusing an entry lights its path through the net. On a phone, the entry in the middle of the screen does, in a sticky net band.
+- On a post, the header mark lights node by node as you read. A compact bar with the time left appears on scroll-up, and footnote markers draw a wire to their margin note (on a phone, a tap opens the note).
+- At the end of a post, the net completes with one pulse and a card offers the next post and "Escríbeme".
+- "Sigue donde quedaste" offers to jump back to the last paragraph read. It is stored on the device only and forgotten after 30 days.
+
+**Preview.** `node scripts/preview.mjs` writes `preview/`, a small multi-page build with relative links that works from any subpath. It includes the labelled test posts in `tests/fixtures/posts` so hues and navigation can be judged; add `--real` for real content only.
+
 ## Development
 
 ```sh

@@ -85,5 +85,5 @@ export function initReading(minutes: number): void {
   addEventListener('resize', update);
   document.addEventListener('ajustes:change', update);
   card?.addEventListener('focusin', finish); // keyboard readers who jump to the end
-  update();
+  requestAnimationFrame(update); // first layout read after first paint, not during load
 }

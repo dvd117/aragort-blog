@@ -17,8 +17,7 @@ export function initThreads(): void {
   const margin = matchMedia(MARGIN);
   const noteOf = (m: HTMLAnchorElement) => document.getElementById(decodeURIComponent(m.hash.slice(1)))?.closest<HTMLElement>('.note') ?? null;
 
-  // Phone: compact notes, opened by their marker.
-  prose.classList.add('notes-compact');
+  // Phone: notes rest compact (CSS, keyed on html.js), opened by their marker.
   const flash = (note: HTMLElement) => {
     note.classList.remove('is-flash');
     void note.offsetWidth; // restart the highlight
