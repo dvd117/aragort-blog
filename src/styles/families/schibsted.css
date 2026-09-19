@@ -5,7 +5,7 @@
 :root[data-family="schibsted"] {
   --sans: "Schibsted Grotesk", system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
-  --display-weight: 800; --display-tracking: -.05em; --display-leading: .9;
+  --display-weight: 800; --display-tracking: -.04em; --display-leading: .92;
   --title-weight: 700; --title-tracking: -.03em; --title-leading: 1.02;
   --lh: 1.58; --trk: .003em; --body-weight: 400;
   --em-style: italic; --em-weight: 400;
