@@ -4,14 +4,15 @@ import Net from '../components/Net.astro';
 import { getPosts } from '../lib/collection';
 import { formatDateEs } from '../lib/posts';
 import { nets } from '../assets/net/geometry';
-import { exitNode, exitPath } from '../lib/netpath';
+import { exitNode, exitPath, routesFor } from '../lib/netpath';
 import { LEDE, WHO } from '../lib/site';
-import { landingMode } from '../lib/landing';
 import '../styles/index.css';
 
 const posts = await getPosts();
 const exit = exitPath(nets.hero).join(',');
-const mode = landingMode(posts.length);
+// Oldest first, so a new post never takes an older post's section of the net.
+const oldest = [...posts].reverse();
+const routes = new Map(routesFor(nets.hero, oldest.map((p) => p.slug)).map((r, i) => [oldest[i]!.slug, r.join(',')]));
 ---
 <Base title="David Aragort" description={LEDE} current="escritos" heroNet ogImage="/og/index.png" ogAlt={`David Aragort: ${LEDE}`}>
   <div class="index wrap" data-netnav-root>
@@ -25,31 +26,26 @@ const mode = landingMode(posts.length);
       </div>
     </section>
 
-    {mode === 'empty' ? (
+    {posts.length === 0 ? (
       <p class="empty">Todavía no hay escritos publicados.</p>
     ) : (
       <>
         <ol class="entries" data-thread>
-          {posts.map((p, i) => {
-            const feature = mode === 'featured' && i === 0;
-            return (
-              <li class:list={['entry', { draft: p.draft, feature }]} data-hue={p.hue}>
+          {posts.map((p) => (
+              <li class:list={['entry', 'feature', { draft: p.draft }]} data-hue={p.hue} data-route={routes.get(p.slug)}>
                 <p class="d"><span class="node" aria-hidden="true" style={`view-transition-name: dot-${p.slug}`}></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
                 <a class="t" href={`/escritos/${p.slug}/`} style={`view-transition-name: t-${p.slug}; view-transition-class: title`}>{p.title}</a>
                 {p.description && <p class="ex">{p.description}</p>}
-                {feature && p.resumen && <ul class="teaser">{p.resumen.map((r) => <li>{r}</li>)}</ul>}
-                {feature && <a class="more" href={`/escritos/${p.slug}/`}>Leer · {p.minutes} min</a>}
+                {p.resumen && <ul class="teaser">{p.resumen.map((r) => <li>{r}</li>)}</ul>}
+                <a class="more" href={`/escritos/${p.slug}/`}>Leer · {p.minutes} min</a>
                 {p.draft && <span class="tag">borrador</span>}
               </li>
-            );
-          })}
+          ))}
         </ol>
-        {mode === 'featured' && (
-          <aside class="who" aria-label="Quién escribe">
-            <Net name="mark" />
-            <p>{WHO} <a href="/sobre-mi/">Sobre mí</a></p>
-          </aside>
-        )}
+        <aside class="who" aria-label="Quién escribe">
+          <Net name="mark" />
+          <p>{WHO} <a href="/sobre-mi/">Sobre mí</a></p>
+        </aside>
       </>
     )}
   </div>
