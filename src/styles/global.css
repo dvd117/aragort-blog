@@ -155,18 +155,25 @@ a { color: inherit; }
 
 /* Moving between pages: cross-document View Transitions, CSS only.
    - index <-> post: the entry's title and hue dot become the post's title and dot;
-   - the index's hero net shrinks into the header mark (and grows back);
+   - the index's hero net shrinks into the header mark (and grows back); on desktop posts
+     it becomes the rail instead (netmorph.ts);
    - "Escritos" <-> "Sobre mí": the page title morphs, the nav underline slides;
-   - every page rises in 12px while the old one fades.
-   All between 160 and 320ms, and none of it under reduced motion. */
+   - every page rises 6px over the old one, which stays solid.
+   All between 120 and 320ms, and none of it under reduced motion. */
 @view-transition { navigation: auto; }
-::view-transition-group(*) { animation-duration: 280ms; animation-timing-function: cubic-bezier(.2, 0, 0, 1); }
+/* Groups move in 300ms. The old page stays opaque underneath while the new one fades in
+   on top (200ms, 6px rise), so nothing is ever half transparent. Titles hand over in
+   sequence: the old wrap fades out in the first 40%, the new wrap in over the last 60%. */
+::view-transition-group(*) { animation-duration: 300ms; animation-timing-function: cubic-bezier(.2, 0, 0, 1); }
 ::view-transition-group(net) { animation-duration: 320ms; }
 ::view-transition-group(nav-current) { animation-duration: 240ms; }
-::view-transition-old(root) { animation: 160ms ease both vt-fade-out; }
-::view-transition-new(root) { animation: 260ms cubic-bezier(.2, 0, 0, 1) both vt-rise-in; }
-@keyframes vt-fade-out { to { opacity: 0; } }
-@keyframes vt-rise-in { from { opacity: 0; transform: translateY(12px); } }
+::view-transition-old(root) { animation: none; }
+::view-transition-new(root) { animation: 200ms cubic-bezier(.2, 0, 0, 1) both vt-rise-in; }
+::view-transition-old(*.title) { animation: 120ms linear both vt-out; }
+::view-transition-new(*.title) { animation: 180ms linear 120ms both vt-in; }
+@keyframes vt-rise-in { from { opacity: 0; transform: translateY(6px); } }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
