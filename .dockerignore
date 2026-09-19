@@ -1,0 +1,7 @@
+# .git stays in the context on purpose: post versions come from its history.
+node_modules
+dist
+.astro
+mockups
+*.log
+.DS_Store

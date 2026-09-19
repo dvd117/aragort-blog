@@ -17,7 +17,7 @@
   --net: #15171a;
   --net-alpha: .55;
   --ochre: #b8801b;               /* UI marks: net nodes, focus, progress (3:1) */
-  --link: #926615;                /* ochre as text (4.5:1) */
+  --link: #8b6114;                /* ochre as text: 5.09 on bg, 4.66 on panel */
   --mark: rgba(226, 166, 56, .38);
   --mark-hover: rgba(226, 166, 56, .6);
   --display: "Instrument Serif", "Times New Roman", serif;
