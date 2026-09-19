@@ -92,19 +92,20 @@ before the next. The order reduces risk: content and colour first, the net engin
 
 ### 6. Post: the rail is the index; chapter headings
 
-- **Desktop (≥1000px):** the rail column is about 200px. Chapter `h2`s map to rail nodes
+- **Desktop (≥1000px):** the rail column is 220px (an 88px net plus labels). Chapter `h2`s map to rail nodes
   in reading order; each shows its short title beside the node, the current one is lit,
   and each is a link to its anchor. The `<details>` index is hidden on desktop.
 - **Chapter headings:** a Geist Mono number (`01`…) in the hue. On desktop it hangs in
-  the margin, aligned with its node; on a phone it sits above the heading with a short
+  the gap between the rail and the text; on a phone it sits above the heading with a short
   hue rule. Numbers are generated, not written in the Markdown.
 
 ### 7. One net geometry
 
 - `scripts/generate-net.py` generates the **rail from the hero's topology**: the same 40
-  nodes and 84 edges, with positions laid out for the 200×780 column (the hero's grid
-  rotated, cols ↔ rows, with jitter re-applied from a fixed seed). The mark and hero stay
-  byte-identical. The favicon stays as it is.
+  nodes and 84 edges, with the same indices. Positions are the hero's transposed into a
+  110×780 box (hero x → rail y, hero y → rail x). The hero's nodes are ordered by x, so
+  the rail's come out ordered by y: the index stays the reading order. The mark and hero
+  stay byte-identical. The favicon stays as it is.
 - A test asserts `rail.edges` equals `hero.edges` and the node counts match.
 
 ### 8. The net engine (`src/scripts/netlive.ts`)
@@ -127,8 +128,8 @@ One module drives every net on a page (mark, hero, portrait, rail).
 
 ### 9. Landing → post morph
 
-- On desktop, the hero net takes the rail's place. On `pageswap` the hero's node
-  positions in screen space go to `sessionStorage`. On `pagereveal` the rail starts from
+- On desktop, the hero net takes the rail's place. When an entry link is
+  clicked, the hero's node positions in screen space go to `sessionStorage`. On `pagereveal` the rail starts from
   those positions and interpolates to its own in about 450ms, then hands over to the
   reading progress.
 - On a phone, the hero shrinks into the header mark, as now.
@@ -136,9 +137,13 @@ One module drives every net on a page (mark, hero, portrait, rail).
 
 ### 10. Transitions and preloading
 
-- The title and net groups don't stretch: `::view-transition-old/new` use
-  `object-fit`-style sizing (`height: 100%; width: auto` or `object-fit: none`), and the
-  old and new cross-fade at their natural size while the group moves.
+- **Correction (2026-09-19, while planning):** the UA stylesheet sizes
+  `::view-transition-old/new` at `inline-size: 100%; block-size: auto`, so snapshots
+  scale uniformly and never squash. The rough part of the title morph is the cross-fade
+  between two different line breaks (one line on the index, two in the post) at the same
+  time. Fix: tag the titles with `view-transition-class: title`; the old title fades out
+  in the first 40% of the group's duration, the new one fades in over the last 60%, so
+  the two wraps are never both visible at full strength.
 - The root: the old page stays opaque; the new one fades in on top with a 6px rise, in
   200ms. The flying elements take 280–320ms; the net morph (unit 9) is the one exception,
   at about 450ms.
@@ -159,7 +164,8 @@ One module drives every net on a page (mark, hero, portrait, rail).
   (slowed to 10× with `playbackRate`); that the 3D loop stops off-screen (check
   `document.getAnimations()` and the rAF count); and that CPU stays reasonable with 4×
   throttling.
-- `npm run build`, `npm test` and `npm run check` pass after every unit.
+- `npm run build` and `npm test` pass after every unit. (`npm run check` is not a gate:
+  `@astrojs/check` is not installed and the command blocks on an interactive prompt.)
 
 ## Risks
 
