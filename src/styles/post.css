@@ -12,11 +12,17 @@
   .rail .net { height: 78vh; width: auto; max-width: 150px; }
 }
 
-.prose { font-family: var(--read-font); font-size: calc(clamp(1.125rem, 1rem + .45vw, 1.3125rem) * var(--scale)); line-height: var(--leading); letter-spacing: var(--tracking); color: var(--fg-read); max-width: var(--measure); }
-.prose p { margin: 0 0 1.1em; }
+/* Long-form in Geist: 18px on a phone (line-height 1.65 from the family tokens), 20px on
+   desktop, about 63 characters per line, paragraphs well apart. */
+.prose { font-family: var(--read-font); font-size: calc(clamp(1.125rem, 1rem + .4vw, 1.25rem) * var(--scale)); line-height: var(--leading); letter-spacing: var(--tracking); color: var(--fg-read); max-width: var(--measure); }
+.prose p { margin: 0 0 1.35em; }
+/* The first paragraph is the lead: one step larger. */
+.prose > p:first-of-type { font-size: 1.12em; line-height: 1.55; color: var(--fg); }
 /* E's highlighter, in D's palette: a band plus a 1px underline, so links never rely on the band alone. */
-.prose a { color: var(--fg); text-decoration: underline var(--underline) var(--hue); text-underline-offset: .2em; box-shadow: inset 0 -.42em 0 var(--hue-band); }
-.prose a:hover { box-shadow: inset 0 -.42em 0 var(--mark-hover); }
+/* Links: a thin underline in the post's hue; the highlight band only on hover, so
+   1,300 words do not carry a dozen heavy bands. */
+.prose a { color: var(--fg); text-decoration: underline var(--underline) var(--hue); text-underline-offset: .22em; }
+.prose a:hover { box-shadow: inset 0 -.42em 0 var(--hue-band); text-decoration-thickness: 2px; }
 .prose hr { border: 0; height: 1px; background: var(--rule); margin: 2.4em 0; }
 /* Emphasis: a true italic where the family has one; a weight step where it has not (never synthesized). */
 .prose em { font-style: var(--em-style); font-weight: var(--em-weight); }
