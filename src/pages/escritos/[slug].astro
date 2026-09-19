@@ -22,7 +22,7 @@ const version = versionLine(postVersion(post.file), post.date);
 const source = await readFile(post.file, 'utf8');
 const filename = `${post.id}.md`;
 ---
-<Base title={post.title} description={post.description} current="escritos" type="article">
+<Base title={post.title} description={post.description} current="escritos" type="article" ogImage={`/og/${post.slug}.png`}>
   <div class="progress" aria-hidden="true"></div>
   <article class="wrap post">
     <header class="post-head">
