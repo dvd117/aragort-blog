@@ -56,7 +56,9 @@
 [data-pane][hidden] { display: none; }
 
 .source { max-width: 46rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 1.1rem 1rem; }
-.source .file { font: 500 .875rem/1.4 var(--mono); margin: 0 0 1rem; padding-bottom: .6rem; border-bottom: 1px solid var(--rule); }
+.source .file { display: flex; align-items: center; justify-content: space-between; gap: 1rem; font: 500 .875rem/1.4 var(--mono); margin: 0 0 1rem; padding-bottom: .6rem; border-bottom: 1px solid var(--rule); }
+.source .copy { flex: none; min-height: 44px; font: 500 .875rem/1 var(--mono); color: var(--fg); background: var(--bg); border: 1px solid var(--rule); border-radius: 6px; padding: 0 .9rem; cursor: pointer; }
+.source .copy:hover { border-color: var(--fg-2); }
 .source .file a { color: var(--link); text-underline-offset: .2em; }
 .source pre { margin: 0; font: 400 1rem/1.7 var(--mono); color: var(--fg); white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
 @media (min-width: 900px) { .source { padding: 1.75rem 2rem; } .source pre { font-size: 1.0625rem; } }

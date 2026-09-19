@@ -70,7 +70,7 @@ const filename = `${post.id}.md`;
         <Content />
       </div>
       <div class="source" data-pane="md" hidden>
-        <p class="file"><a href={`/escritos/${post.slug}.md`}>{filename}</a></p>
+        <p class="file"><a href={`/escritos/${post.slug}.md`}>{filename}</a><button type="button" class="copy" data-copy aria-live="polite">Copiar</button></p>
         <pre>{source}</pre>
       </div>
       <p class="sig"><a href="/sobre-mi/"><Net name="mark" /><span>David Aragort</span></a></p>
@@ -99,6 +99,17 @@ const filename = `${post.id}.md`;
     views.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     document.querySelectorAll<HTMLElement>('[data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== b.dataset.view; });
   }));
+
+  /* Copiar: the same text the .md download gives (source plus licence line). */
+  const copy = document.querySelector<HTMLButtonElement>('[data-copy]');
+  const text = document.querySelector<HTMLElement>('.source pre')?.textContent ?? '';
+  let reset = 0;
+  copy?.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(text); } catch { return; }
+    copy.textContent = 'Copiado';
+    clearTimeout(reset);
+    reset = window.setTimeout(() => { copy.textContent = 'Copiar'; }, 2000);
+  });
 </script>
 
 <script>
