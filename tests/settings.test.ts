@@ -73,6 +73,17 @@ describe('reading settings: head script', () => {
 
   it('migrates the v1 theme key', () => {
     expect(runHead({ 'aragort-theme': 'dark' })).toEqual({ 'data-theme': 'dark' });
+    expect(runHead({ 'aragort-theme': 'light' })).toEqual({ 'data-theme': 'light' });
+  });
+
+  it('with nothing saved sets no theme: the OS decides, and the base CSS is dark', () => {
+    expect(runHead({})).toEqual({});
+    expect(DEFAULTS.theme).toBe('system');
+  });
+
+  it('a saved choice always wins over the OS, including Oscuro', () => {
+    expect(runHead({ 'aragort-lectura': '{"theme":"dark"}' })).toEqual({ 'data-theme': 'dark' });
+    expect(runHead({ 'aragort-lectura': '{"theme":"system"}' })).toEqual({});
   });
 
   it('survives corrupt storage without throwing', () => {

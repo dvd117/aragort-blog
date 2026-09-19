@@ -8,21 +8,23 @@
 @font-face { font-family: "Atkinson Hyperlegible"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/atkinson-hyperlegible-italic.woff2") format("woff2"); }
 @font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/atkinson-hyperlegible-bold.woff2") format("woff2"); }
 
-/* Themes. No data-theme = follow the system. Ratios in README. */
-/* Light: bright off-white, graphite net. */
+/* Themes. Resolution: (1) the reader's saved choice in Ajustes; (2) otherwise the OS
+   preference; (3) with no preference, or none readable, DARK. So the base is dark, and
+   light applies to "Claro" or, with nothing saved, to a light OS. Ratios in README. */
+/* Dark: near-black with a cool cast, bone net. */
 :root {
-  --bg: #f7f6f2;
-  --panel: #eeece6;
-  --fg: #15171a;
-  --fg-read: #15171a;
-  --fg-2: #5a5f66;
-  --rule: #dcdad3;
-  --net: #15171a;
-  --net-alpha: .55;
-  --ochre: #b8801b;               /* UI marks: wordmark node, focus ring (3:1) */
-  --link: #8b6114;                /* ochre as text: 5.09 on bg, 4.66 on panel */
-  --mark: rgba(226, 166, 56, .38);
-  --mark-hover: rgba(226, 166, 56, .6);
+  --bg: #0c0e11;
+  --panel: #15181c;
+  --fg: #ece9e1;
+  --fg-read: #d9d6ce;
+  --fg-2: #9ea3aa;
+  --rule: #23272d;
+  --net: #ece9e1;
+  --net-alpha: .5;
+  --ochre: #e2a638;               /* UI marks: wordmark node, focus ring */
+  --link: #e2a638;                /* ochre as text */
+  --mark: rgba(226, 166, 56, .28);
+  --mark-hover: rgba(226, 166, 56, .45);
   --underline: 1px;
   /* Type: one sans family for display, UI and body (src/styles/families/*.css sets
      --sans, --mono and the per-family weights, tracking and line-heights). */
@@ -37,22 +39,22 @@
   --lh: 1.62; --trk: 0em; --body-weight: 400;
   --em-style: italic; --em-weight: 400;
   --gutter: 16px;
+  color-scheme: dark;
+}
+/* Light ("Claro", or nothing saved on a light OS): bright off-white, graphite net. */
+:root[data-theme="light"] {
+  --bg: #f7f6f2; --panel: #eeece6; --fg: #15171a; --fg-read: #15171a; --fg-2: #5a5f66; --rule: #dcdad3;
+  --net: #15171a; --net-alpha: .55; --ochre: #b8801b; --link: #8b6114;
+  --mark: rgba(226, 166, 56, .38); --mark-hover: rgba(226, 166, 56, .6);
   color-scheme: light;
 }
-/* Dark: near-black with a cool cast, bone net. */
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
-    --bg: #0c0e11; --panel: #15181c; --fg: #ece9e1; --fg-read: #d9d6ce; --fg-2: #9ea3aa; --rule: #23272d;
-    --net: #ece9e1; --net-alpha: .5; --ochre: #e2a638; --link: #e2a638;
-    --mark: rgba(226, 166, 56, .28); --mark-hover: rgba(226, 166, 56, .45);
-    color-scheme: dark;
+    --bg: #f7f6f2; --panel: #eeece6; --fg: #15171a; --fg-read: #15171a; --fg-2: #5a5f66; --rule: #dcdad3;
+    --net: #15171a; --net-alpha: .55; --ochre: #b8801b; --link: #8b6114;
+    --mark: rgba(226, 166, 56, .38); --mark-hover: rgba(226, 166, 56, .6);
+    color-scheme: light;
   }
-}
-:root[data-theme="dark"] {
-  --bg: #0c0e11; --panel: #15181c; --fg: #ece9e1; --fg-read: #d9d6ce; --fg-2: #9ea3aa; --rule: #23272d;
-  --net: #ece9e1; --net-alpha: .5; --ochre: #e2a638; --link: #e2a638;
-  --mark: rgba(226, 166, 56, .28); --mark-hover: rgba(226, 166, 56, .45);
-  color-scheme: dark;
 }
 /* Sepia: warm paper, brown ink. */
 :root[data-theme="sepia"] {
@@ -71,9 +73,9 @@
 
 /* A hue per post (README has the table). Each value passes 4.5:1 on the page
    and the panel in its theme (7:1 in alto contraste); text on its band passes too. */
-:root { --h-ochre: #8b6114; --hb-ochre: var(--mark); --h-teal: #2f7472; --hb-teal: rgba(92, 188, 185, 0.3); --h-brick: #aa4e3c; --hb-brick: rgba(195, 104, 85, 0.3); --h-sky: #386e97; --hb-sky: rgba(87, 147, 193, 0.3); --h-moss: #567138; --hb-moss: rgba(143, 179, 101, 0.3); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme]) { --h-ochre: #e2a638; --hb-ochre: var(--mark); --h-teal: #43a3a0; --hb-teal: rgba(92, 188, 185, 0.26); --h-brick: #c36855; --hb-brick: rgba(195, 104, 85, 0.26); --h-sky: #4587ba; --hb-sky: rgba(87, 147, 193, 0.26); --h-moss: #759a4c; --hb-moss: rgba(143, 179, 101, 0.26); } }
-:root[data-theme="dark"] { --h-ochre: #e2a638; --hb-ochre: var(--mark); --h-teal: #43a3a0; --hb-teal: rgba(92, 188, 185, 0.26); --h-brick: #c36855; --hb-brick: rgba(195, 104, 85, 0.26); --h-sky: #4587ba; --hb-sky: rgba(87, 147, 193, 0.26); --h-moss: #759a4c; --hb-moss: rgba(143, 179, 101, 0.26); }
+:root { --h-ochre: #e2a638; --hb-ochre: var(--mark); --h-teal: #43a3a0; --hb-teal: rgba(92, 188, 185, 0.26); --h-brick: #c36855; --hb-brick: rgba(195, 104, 85, 0.26); --h-sky: #4587ba; --hb-sky: rgba(87, 147, 193, 0.26); --h-moss: #759a4c; --hb-moss: rgba(143, 179, 101, 0.26); }
+:root[data-theme="light"] { --h-ochre: #8b6114; --hb-ochre: var(--mark); --h-teal: #2f7472; --hb-teal: rgba(92, 188, 185, 0.3); --h-brick: #aa4e3c; --hb-brick: rgba(195, 104, 85, 0.3); --h-sky: #386e97; --hb-sky: rgba(87, 147, 193, 0.3); --h-moss: #567138; --hb-moss: rgba(143, 179, 101, 0.3); }
+@media (prefers-color-scheme: light) { :root:not([data-theme]) { --h-ochre: #8b6114; --hb-ochre: var(--mark); --h-teal: #2f7472; --hb-teal: rgba(92, 188, 185, 0.3); --h-brick: #aa4e3c; --hb-brick: rgba(195, 104, 85, 0.3); --h-sky: #386e97; --hb-sky: rgba(87, 147, 193, 0.3); --h-moss: #567138; --hb-moss: rgba(143, 179, 101, 0.3); } }
 :root[data-theme="sepia"] { --h-ochre: #805a13; --hb-ochre: var(--mark); --h-teal: #2c6b69; --hb-teal: rgba(92, 188, 185, 0.3); --h-brick: #9d4837; --hb-brick: rgba(195, 104, 85, 0.3); --h-sky: #34658c; --hb-sky: rgba(87, 147, 193, 0.3); --h-moss: #506833; --hb-moss: rgba(143, 179, 101, 0.3); }
 :root[data-theme="contrast"] { --h-ochre: #ffd166; --hb-ochre: transparent; --h-teal: #48b0ac; --hb-teal: transparent; --h-brick: #d39082; --hb-brick: transparent; --h-sky: #75a6cc; --hb-sky: transparent; --h-moss: #84ac56; --hb-moss: transparent; }
 :root, [data-hue="ochre"] { --hue: var(--h-ochre); --hue-band: var(--hb-ochre); }
