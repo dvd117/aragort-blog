@@ -4,17 +4,17 @@ name: Reticulárea
 description: >
   A personal essay site built on one figure: a frozen net after Gego's Reticulárea, which
   is the mark, the landing's hero, the portrait on Sobre mí and the reading rail. One sans
-  family (Geist) set large and tight for display, calm for reading. Near-black by default,
+  family (Geist) set large and tight for display, calm for reading. OLED black when dark,
   bone text, ochre as the one brand accent, and five muted hues that each belong to a post.
 webgl: none
 colors:
-  # Dark (the default theme)
-  night: "#0c0e11"
-  night-panel: "#15181c"
+  # Dark (the base CSS; the OS preference picks light or dark)
+  night: "#000000"
+  night-panel: "#101113"
   bone: "#ece9e1"
-  bone-read: "#d9d6ce"
+  bone-read: "#cfccc4"
   slate: "#9ea3aa"
-  night-rule: "#23272d"
+  night-rule: "#24272c"
   ochre: "#e2a638"
   # Light ("Claro")
   paper: "#f7f6f2"
@@ -40,8 +40,8 @@ colors:
   ochre-contrast: "#ffd166"
   # Post hues, dark values (light/sepia/contrast values in README)
   teal: "#43a3a0"
-  brick: "#c36855"
-  sky: "#4587ba"
+  brick: "#d4735f"
+  sky: "#5b9bd0"
   moss: "#759a4c"
 color-aliases:
   c-bg: night
@@ -190,22 +190,35 @@ decoration that means nothing.
 
 ## Colors
 
-- **Theme resolution:** the reader's saved choice first, then the OS preference, then
-  dark. The base CSS is dark.
-- **Ochre** is the brand: the wordmark node, the focus ring, global UI marks.
+- **Theme resolution:** the reader's saved choice first, then the OS preference (light or
+  dark), then dark. The base CSS is dark. Dark is OLED black (`#000`), with reading text
+  at `#cfccc4` against halation; panels (`#101113`) and rules (`#24272c`) still separate
+  from black. "Sistema" is the first option in Ajustes.
+- **Ochre** is the brand: the wordmark node, the focus ring, global UI marks, and all of
+  Sobre mí (ochre plus neutrals, no post hues).
 - **The five post hues** (ochre, teal, brick, sky, moss) each belong to one post, set in
   frontmatter or hashed from the slug. A hue colours its post's rail, progress line,
-  footnote markers, note edge, link underline and hover band, and the dot beside its date.
+  footnote markers, note edge, links, chapter numbers and the dot beside its date.
+- **Colour means something.** Colour on the letters means clickable: links are set in the
+  hue with a faint hue underline that goes solid and 2px on hover. Colour behind the
+  letters means emphasis: bold keeps its hue band, text in `fg`. In Alto contraste bold is
+  weight only. External links carry a ↗ joined to their last word (never wrapping alone)
+  and a hidden "abre en otra pestaña", and open in a new tab.
+- **Text and marks:** hue text stays at 4.5:1; UI marks that only need 3:1 (net, dots,
+  rails, rules) use a more saturated `--hue-ui` in the light themes.
 - **The net** is drawn in the text colour at low alpha (`--net-alpha`, .26 to .55 by
   context). Lit parts go to ochre or the post's hue.
 
 ## Typography
 
 - **Geist** carries everything: display, UI and body. **Geist Mono** is for the source
-  view, the version line and footnote numbers. Italic is never synthesized.
+  view, the version line, footnote numbers and chapter numbers. Italic is never synthesized.
 - **Display** is set huge and tight: weight 700, tracking −.055em, leading .92. Page
-  titles (Escritos, Sobre mí, the post title) use it.
+  titles (Escritos, Sobre mí, the post title, the featured post) use it.
 - **Titles** (index entries, chapters) are weight 620, tracking −.035em.
+- **Chapter numbers** (`01`…) are generated, not written, in the hue and Geist Mono. On
+  desktop they hang in the gap beside the text; on a phone they sit above the heading on a
+  short hue rule. Screen readers skip them.
 - **Reading** runs at 18px on a phone and 20px on desktop, leading 1.65, 63ch measure.
   The first paragraph is one step larger (the lead).
 - Large type over the net gets a halo in the page colour (`text-shadow`) so the wires
@@ -214,15 +227,28 @@ decoration that means nothing.
 ## Layout
 
 - One `.wrap`: max 1240px, gutter 16px on a phone and 40px from 900px.
+- **Layout by shape, not width.** Short landscape (height ≤ 500px) gets a compact
+  two-column composition: title left, net contained right, never bleeding past the list.
+- **Header:** 58px with a 42px mark on desktop, 56px with a 38px mark on a phone. Reading a
+  post on a phone: mark · title and time left · Aa. No nav links while reading.
 - **Landing, phone:** the net bleeds off the right edge behind the title; a wire leaves
   its exit node and becomes the thread down the left gutter; each entry hangs on the
   thread by its hue node.
 - **Landing, desktop (≥900px):** two columns, the title and lede on the left and the net
   on the right at fuller strength.
-- **Post:** a single column on a phone, with a 3px progress hairline. From 1000px, a
-  150px sticky rail on the left. From 1100px, footnotes move into a 14rem margin column.
+- **Landing under 3 posts:** the latest post is featured (date, near-display title,
+  description, its En corto as a teaser, "Leer · N min"), then a "quién escribe" strip
+  (the mark beside one sentence and a link to Sobre mí). The thread runs past it to the
+  footer mark: net, wire, posts, strip and footer are one line. From 3 posts the list
+  returns, decided at build time.
+- **Post:** a single column on a phone, with a progress hairline and a closed "En este
+  texto". From 1000px, a 220px sticky rail: an 88px net with the chapters beside it, each
+  at the height where it begins, the current one lit, each a link. From 1100px, footnotes
+  move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
 - **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
   sticky on the left and the thread runs on the right.
+- **Footer:** the mark, "<build year> David Aragort · CC BY-SA 4.0 ↗" and RSS. The writing
+  is CC BY-SA 4.0; every served `.md` closes with its licence line.
 
 ## Depth
 
@@ -232,12 +258,22 @@ passing behind type, not from shadows.
 
 ## Motion
 
-Functional only, 120 to 360ms, never looping, and off under `prefers-reduced-motion` or
-Ajustes' "Reducir movimiento".
+Functional motion is 120 to 360ms. The net is the one ambient exception (see the rule
+below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir movimiento".
 
 - **Between pages:** cross-document View Transitions, CSS only. An index title becomes the
-  post title; the hero net shrinks into the header mark; Escritos and Sobre mí morph into
-  each other; the old page fades out (160ms) and the new one rises 12px (260ms).
+  post title; titles hand over in sequence (old out in the first 40%, new in over the last
+  60%) so two line breaks never overlap. The old page stays opaque while the new one fades
+  in on top (200ms, 6px rise). Escritos and Sobre mí morph into each other. Same-origin
+  pages are prerendered on hover or focus.
+- **The net becomes the rail:** on desktop the hero's nodes glide into the post's rail
+  (~450ms; the rail is the hero transposed, same 40 nodes and 84 wires). On a phone the
+  hero shrinks into the header mark.
+- **The net is alive:** every net drifts in 3D (each node has a depth; a few degrees of
+  turn, near nodes move more). The cursor tilts it on desktop, scroll on a phone. Posts
+  get half amplitude and hold still while scrolling. The node under the cursor glows in
+  ochre and fades (~600ms); a tap sends a 2-hop pulse; the first page of a session opens
+  with one pulse from the ochre node.
 - **Landing:** hovering or focusing an entry lights its path through the net, the wire and
   the thread in the entry's hue. On a phone, the entry at mid-screen does.
 - **Post:** the rail and the header mark light node by node as you read. At the end the
@@ -252,82 +288,28 @@ Ajustes' "Reducir movimiento".
 - **Don't** add a runtime request, a tracker or a third-party embed.
 - **Don't** ship a theme that passes contrast in only one mode.
 
-## Known failures (extract, 2026-09-19)
+## Fixed in the 2026-09-19 round
 
-Found in review and in the browser. These are bugs in the shipped design, not style notes.
+1. **Links and bold looked alike:** links are now the hue as text; bold keeps the band
+   (`post.css`, Colors above).
+2. **Colour without meaning on Sobre mí:** it is ochre plus neutrals (`sobre-mi.astro`).
+3. **Small landscape broke the landing:** a short-landscape composition keeps the net in
+   its column, above the thread (`index.css`).
+4. **The net only came alive on hover:** it drifts and answers everyone (`netlive.ts`).
+5. **The landing felt empty with one post:** it features the latest post under three
+   (`landing.ts`, `index.astro`).
+6. **The phone header was loaded while reading:** the nav steps aside while reading
+   (`Header.astro`).
 
-1. **Links and bold look alike.** In a post, a link is a hue underline with a hue band on
-   hover, and `strong` is a permanent hue band (`post.css:25`, `:151`). Both use the post
-   hue, so the reader cannot tell what is clickable.
-2. **Colour without meaning on Sobre mí.** Its four paragraphs use teal, sky, moss and
-   ochre. Those hues belong to posts; here they are decoration, and it reads as busy.
-3. **Small landscape breaks the landing.** The phone composition applies below 900px
-   wide, whatever the height. At 844×390 the net, sized in `vw`, becomes about 810px
-   wide, spills past the list and the footer, and the wire runs diagonally up-left across
-   the entry's date, because the exit node sits below the top of the thread.
-4. **The net only comes alive for readers who hover a post,** and its colours depend on
-   how many posts exist. A first visitor who does not hover sees a static figure.
-5. **The landing feels empty with one post.** The layout is built for a list.
-6. **The phone header is loaded while reading:** mark, title, time left, Escritos and Aa
-   in 390px.
-
-## Decided (2026-09-19, not yet built)
-
-- **Links are the hue.** Link text is set in the post's hue with a faint hue underline
-  that goes solid and 2px on hover. External links carry a ↗ joined to their last word
-  (never wrapping alone) and a hidden "abre en otra pestaña"; they open in a new tab.
-- **Bold keeps its highlighter band** in the hue, text in `fg`. Colour on the letters
-  means clickable; colour behind them means emphasis. In Alto contraste, bold drops its
-  underline and is weight only.
-- **Sobre mí** is ochre plus neutrals: no post hues.
-- **Dark is OLED:** `--bg: #000`. Reading text drops to `#cfccc4` against halation;
-  panels and rules are re-derived so they still separate from pure black.
-- **Dark for everyone by default.** The OS preference is no longer read; any other theme
-  (including "Sistema") is a manual choice in Ajustes.
-- **Light themes:** hue text stays at 4.5:1, but UI marks that only need 3:1 (net, dots,
-  bands) get more saturation.
-- **One net.** The rail is regenerated with the hero's exact topology (40 nodes, 84
-  edges) laid out as a column. Landing → post on desktop: the hero flies to the rail slot
-  and its nodes glide into the column (~450ms, JS on arrival; without View Transitions the
-  rail draws in). Phone: the hero shrinks into the header mark, as now. The mark keeps
-  its own 12-node geometry.
-- **The net responds to everyone:** the nearest node lights in ochre under the cursor
-  and trails off (~600ms); on a phone a tap sends a 2–3 hop pulse; one pulse on the first
-  arrival of a session. The post-hue path on entry hover stays.
-- **The net drifts in 3D, everywhere, including the header mark.** Each node has a depth.
-  The net turns a few degrees at most, and near nodes move more than far ones. The cursor
-  tilts it on desktop; scroll tilts it on a phone (no gyroscope: it needs a permission
-  prompt). Posts get half amplitude and freeze while scrolling; the landing and Sobre mí
-  get full amplitude.
-- **Layout by shape, not width.** Short landscape (height ≤ 500px) gets a compact
-  desktop composition: title left, net contained right, never bleeding. Tall phones
-  keep the current composition.
-- **Landing under 3 posts: a featured post** (date, near-display title, description,
-  its En corto as a teaser, "Leer · N min") and a "quién escribe" strip (mark, one line,
-  link to Sobre mí). From 3 posts the list returns, decided at build time.
-- **Phone reading header:** mark (home) · title and time left · Aa as an icon. No nav
-  links while reading. Landing and Sobre mí keep the full header.
-- **The rail is the index (desktop):** chapter nodes on the rail with short labels,
-  current one lit, clickable; the column grows to ~200px. "En este texto" is phone-only,
-  closed by default.
-- **Chapter headings:** a mono number in the hue (`01`…). Desktop: hanging in the margin,
-  aligned with its rail node. Phone: above the heading, with a short hue rule.
-- **Post meta:** date · N min (no word count). `p.sig` links to Sobre mí.
-- **Header:** 58px with a 42px mark on desktop, 56px with a 38px mark on a phone. The
-  mark stays the full 12-node A, and so does the favicon (thinned versions rejected).
-- **Transitions:** titles hand over with a staggered cross-fade (old out in the first 40%,
-  new in over the last 60%), so two line breaks never overlap; the old page stays opaque under the new one (6px rise, 200ms); same-origin
-  pages are prerendered on hover or focus.
-
-Implementation order and verification: `docs/superpowers/specs/2026-09-19-v4-redesign-design.md`.
-
-## Motion (rule, replaces "never looping")
+## Motion (rule)
 
 Ambient motion is allowed for the net only, for impact. It is bounded:
 
 1. **Reduced motion stops everything:** the OS setting or Ajustes' "Reducir movimiento".
    This is the WCAG 2.2.2 pause mechanism.
-2. **One shared loop per page, capped at 30fps.** It stops when no net is on screen or
-   the tab is hidden. No library.
-3. **Small amplitude:** a few px and degrees. Wires never enter the text halo.
+2. **One shared loop per page, capped at 30fps.** It stops when the tab is hidden. The
+   sticky header mark drifts too, so it runs while the page is visible (measured: 2.6%
+   scripting at 4× CPU throttling). No library.
+3. **Small amplitude:** drift 2.5°, cursor tilt 1°; at most 12px on the landing hero.
+   Wires never enter the text halo.
 4. Everything else stays functional: 120–360ms, no loops.
