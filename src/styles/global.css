@@ -88,7 +88,7 @@
 [data-hue="moss"] { --hue: var(--h-moss); --hue-band: var(--hb-moss); }
 
 /* Reading settings: one attribute each on <html>, read by the prose. */
-:root { --scale: 1; --lh-step: 1; --trk-step: 0em; --leading: calc(var(--lh) * var(--lh-step)); --tracking: calc(var(--trk) + var(--trk-step)); --measure: 66ch; --read-font: var(--sans); }
+:root { --scale: 1; --lh-step: 1; --trk-step: 0em; --leading: calc(var(--lh) * var(--lh-step)); --tracking: calc(var(--trk) + var(--trk-step)); --measure: 63ch; --read-font: var(--sans); }
 :root[data-size="1"] { --scale: .9; }
 :root[data-size="2"] { --scale: .95; }
 :root[data-size="4"] { --scale: 1.12; }
@@ -96,8 +96,8 @@
 :root[data-leading="1"] { --lh-step: .9; }
 :root[data-leading="3"] { --lh-step: 1.17; }
 :root[data-tracking="2"] { --trk-step: .04em; }
-:root[data-measure="1"] { --measure: 56ch; }
-:root[data-measure="3"] { --measure: 76ch; }
+:root[data-measure="1"] { --measure: 54ch; }
+:root[data-measure="3"] { --measure: 72ch; }
 :root[data-font="serif"] { --read-font: var(--serif); --lh: 1.62; --trk: 0em; --em-style: italic; --em-weight: 400; }
 :root[data-font="atkinson"] { --read-font: "Atkinson Hyperlegible", var(--sans); --em-style: italic; --em-weight: 400; }
 :root[data-links="all"] a { text-decoration-line: underline; text-decoration-thickness: max(1px, var(--underline)); text-underline-offset: .2em; }
