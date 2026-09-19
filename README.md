@@ -38,9 +38,9 @@ Notes are standard Markdown footnotes, so the raw `.md` stays readable:
 
 ### Versions
 
-At build time each post shows `v<n> · editado <date>` when its file has more than one commit and the last commit is later than the filename date. The count comes from `git log --follow`, so renames keep their history.
+A post is **v1 when published**. Each commit to its file **after the filename date** adds one version; drafting commits on or before that date do not count. From v2 on the post shows `v<n> · editado <date>`, where the date is the last commit after publication. The history comes from `git log --follow`, so renaming the file to move the date keeps it.
 
-**Shallow-clone caveat.** Dokploy (like most CI) may build from a shallow clone. In a shallow clone, or with no git at all, the history is incomplete. The site then shows **no version line at all**, never a wrong number. To get versions in production, build from a full clone: set the clone depth to full in Dokploy, or run `git fetch --unshallow` before `npm run build`. The Docker build keeps `.git` in its context for this reason (see `.dockerignore`).
+**Dokploy must build with full git history.** In a shallow clone (depth 1, the usual CI default), or with no git at all, the history is incomplete. The site then shows **no version line at all**, never a wrong number. For the deploy step: set the Dokploy application's clone to full depth, or run `git fetch --unshallow` before `npm run build`. The Docker build keeps `.git` in its context for this reason (see `.dockerignore`) and installs `git` in the build stage.
 
 ## Development
 

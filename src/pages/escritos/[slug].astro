@@ -18,7 +18,7 @@ interface Props { post: Post; }
 const { post } = Astro.props;
 const { Content } = await render(post.entry);
 const words = new Intl.NumberFormat('es').format(post.words);
-const version = versionLine(postVersion(post.file), post.date);
+const version = versionLine(postVersion(post.file, post.date));
 const source = await readFile(post.file, 'utf8');
 const filename = `${post.id}.md`;
 ---
