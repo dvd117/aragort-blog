@@ -247,7 +247,7 @@ decoration that means nothing.
   move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
 - **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
   sticky on the left and the thread runs on the right.
-- **Footer:** the mark, "<build year> David Aragort · CC BY-SA 4.0 ↗" and RSS. The writing
+- **Footer:** the mark, "David Aragort · CC BY-SA 4.0 ↗" and RSS. The writing
   is CC BY-SA 4.0; every served `.md` closes with its licence line.
 
 ## Depth

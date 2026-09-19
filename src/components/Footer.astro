@@ -2,14 +2,11 @@
 import Net from './Net.astro';
 import ExtLink from './ExtLink.astro';
 import { LICENCE } from '../lib/licence';
-
-// The build year: a rebuild keeps it current, nothing to edit by hand.
-const year = new Date().getFullYear();
 ---
 <footer class="site-foot wrap">
   <Net name="mark" />
   <div class="foot-text">
-    <p>{year} David Aragort · <ExtLink href={LICENCE.url} rel="license">{LICENCE.name}</ExtLink></p>
+    <p>David Aragort · <ExtLink href={LICENCE.url} rel="license">{LICENCE.name}</ExtLink></p>
     <p><a href="/rss.xml">RSS</a></p>
   </div>
 </footer>
