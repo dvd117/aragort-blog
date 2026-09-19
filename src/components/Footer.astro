@@ -1,9 +1,10 @@
 ---
 import Net from './Net.astro';
+import ExtLink from './ExtLink.astro';
 ---
 <footer class="site-foot wrap">
   <Net name="mark" />
-  <p>© 2026 <a href="/sobre-mi/">David Aragort</a></p>
+  <p>2026 David Aragort · <ExtLink href="https://creativecommons.org/licenses/by-sa/4.0/deed.es" rel="license">CC BY-SA 4.0</ExtLink></p>
   <p><a href="/rss.xml">RSS</a></p>
 </footer>
 
@@ -11,6 +12,6 @@ import Net from './Net.astro';
   .site-foot { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; color: var(--fg-2); font-size: .9375rem; padding-top: 4rem; padding-bottom: 3rem; }
   .site-foot p { margin: 0; }
   .site-foot :global(.net) { width: 38px; height: 29px; }
-  a { color: var(--fg-2); text-underline-offset: .2em; }
-  a:hover { color: var(--fg); }
+  .site-foot :global(a) { color: var(--fg-2); text-underline-offset: .2em; }
+  .site-foot :global(a:hover) { color: var(--fg); }
 </style>
