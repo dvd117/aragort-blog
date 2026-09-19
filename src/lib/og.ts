@@ -9,7 +9,7 @@ import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import { nets } from '../assets/net/geometry';
 
-const DARK = { bg: '#0c0e11', fg: '#ece9e1', muted: '#9ea3aa', ochre: '#e2a638' };
+const DARK = { bg: '#000000', fg: '#ece9e1', muted: '#9ea3aa', ochre: '#e2a638' };
 
 function markSvg(): string {
   const g = nets.mark;
