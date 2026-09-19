@@ -162,7 +162,8 @@ a { color: inherit; }
    - index <-> post: the entry's title and hue dot become the post's title and dot;
    - the index's hero net shrinks into the header mark (and grows back); on desktop posts
      it becomes the rail instead (netmorph.ts);
-   - "Escritos" <-> "Sobre mí": the page title morphs, the nav underline slides;
+   - "Escritos" <-> "Sobre mí": the page title morphs, and the nav's raised tab slides
+     from one to the other (it is the group named nav-current);
    - every page rises 6px over the old one, which stays solid.
    All between 120 and 320ms, and none of it under reduced motion. */
 @view-transition { navigation: auto; }

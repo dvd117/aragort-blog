@@ -265,6 +265,9 @@ decoration that means nothing.
   move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
 - **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
   sticky on the left and the thread runs on the right.
+- **Nav:** a segmented control, the same shape as the post's Formato/Markdown toggle -- one
+  pill on a panel, the current page raised. Moving between the two slides the raised tab
+  across, carried by the page transition rather than by script.
 - **Footer:** the mark, "David Aragort" and three icon links, all on one centre line (the
   mark sits in a box the height of an icon link and pinned to the top of the row, so the
   landing's thread always meets its top-left node in the same place) — GitHub (the source of this
@@ -287,7 +290,8 @@ below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir mov
 - **Between pages:** cross-document View Transitions, CSS only. An index title becomes the
   post title; titles hand over in sequence (old out in the first 40%, new in over the last
   60%) so two line breaks never overlap. The old page stays opaque while the new one fades
-  in on top (200ms, 6px rise). Escritos and Sobre mí morph into each other. Same-origin
+  in on top (200ms, 6px rise). Escritos and Sobre mí morph into each other, and the nav's
+  raised tab slides between them (240ms) rather than snapping. Same-origin
   pages are prerendered on hover or focus.
 - **The net becomes the rail:** on desktop the hero's nodes glide into the post's rail
   (~450ms; each rail node starts from the hero node at the same place in reading order). On a phone the
