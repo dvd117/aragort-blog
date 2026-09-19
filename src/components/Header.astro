@@ -2,26 +2,50 @@
 import ReadingSettings from './ReadingSettings.astro';
 import Net from './Net.astro';
 
-interface Props { current?: 'escritos' | 'sobre-mi'; netMark?: boolean; }
-const { current, netMark = true } = Astro.props;
+interface Props {
+  current?: 'escritos' | 'sobre-mi';
+  netMark?: boolean;
+  /** On a post: minutes to read. The header then carries "quedan N min" and the progress line. */
+  minutes?: number;
+}
+const { current, netMark = true, minutes } = Astro.props;
 ---
-<header class="site wrap">
-  <a class="brand" href="/"><span class="mark" style={netMark ? 'view-transition-name: net' : undefined}><Net name="mark" /></span>David Aragort</a>
-  <nav aria-label="Principal">
-    <a href="/" aria-current={current === 'escritos' ? 'page' : undefined}>Escritos</a>
-    <a href="/sobre-mi/" aria-current={current === 'sobre-mi' ? 'page' : undefined}>Sobre mí</a>
-  </nav>
-  <ReadingSettings />
+<!-- Always visible, one compact row (52px on a phone). On a post the mark is the
+     reading progress, with the time left beside it and a progress line along the bottom. -->
+<header class="site">
+  <div class="row wrap">
+    <a class="brand" href="/">
+      <span class="mark" style={netMark ? 'view-transition-name: net' : undefined}><Net name="mark" /></span>
+      <span class="name">David Aragort</span>
+    </a>
+    {minutes && <span class="left" data-left aria-hidden="true">quedan {minutes} min</span>}
+    <nav aria-label="Principal">
+      <a href="/" aria-current={current === 'escritos' ? 'page' : undefined}>Escritos</a>
+      <a href="/sobre-mi/" aria-current={current === 'sobre-mi' ? 'page' : undefined}>Sobre mí</a>
+    </nav>
+    <ReadingSettings />
+  </div>
+  {minutes && <div class="progress" aria-hidden="true"></div>}
 </header>
 
 <style>
-  .site { position: relative; display: flex; align-items: center; gap: 1rem 1.5rem; flex-wrap: wrap; padding-top: 1.25rem; padding-bottom: 1.25rem; }
-  .brand { display: inline-flex; align-items: center; gap: .7rem; text-decoration: none; font-weight: 600; font-size: 1.0625rem; letter-spacing: -.01em; margin-right: auto; }
+  .site { position: sticky; top: 0; z-index: 30; background: var(--bg); border-bottom: 1px solid var(--rule); }
+  .row { position: relative; display: flex; align-items: center; gap: .9rem; min-height: 51px; padding-top: 3px; padding-bottom: 3px; }
+  .brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; font-weight: 600; font-size: 1rem; letter-spacing: -.01em; min-height: 44px; }
   .mark { display: block; }
-  .brand :global(.net) { width: 38px; height: 29px; }
-  nav { display: flex; gap: 1.25rem; }
-  nav a { text-decoration: none; color: var(--fg-2); padding: .35rem 0; }
+  .brand :global(.net) { width: 34px; height: 26px; }
+  .left { font: 500 .8125rem/1 var(--ui); color: var(--fg-2); white-space: nowrap; }
+  nav { display: flex; gap: .9rem; margin-left: auto; }
+  nav a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; color: var(--fg-2); font-size: .9375rem; }
   nav a:hover { color: var(--fg); }
-  nav a[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -1px 0 var(--fg); view-transition-name: nav-current; }
-  @media (max-width: 599px) { nav { order: 3; width: 100%; } }
+  nav a[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -2px 0 var(--fg); view-transition-name: nav-current; }
+  .progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--hue); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
+  /* Phone: the name gives its room to the nav; the mark still says who it is. */
+  @media (max-width: 519px) {
+    .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  }
+  @media (min-width: 900px) {
+    .row { gap: 1.5rem; }
+    nav { gap: 1.25rem; }
+  }
 </style>

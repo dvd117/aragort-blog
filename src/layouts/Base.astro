@@ -16,8 +16,10 @@ interface Props {
   hue?: string;
   /** The index's hero net takes the shared `net` name; elsewhere the header mark does. */
   heroNet?: boolean;
+  /** On a post: minutes to read, shown in the header. */
+  minutes?: number;
 }
-const { title, description = 'Escritos de David Aragort.', current, ogImage, ogAlt, type = 'website', hue, heroNet = false } = Astro.props;
+const { title, description = 'Escritos de David Aragort.', current, ogImage, ogAlt, type = 'website', hue, heroNet = false, minutes } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort`;
 ---
@@ -57,10 +59,15 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
-  <Header current={current} netMark={!heroNet} />
+  <Header current={current} netMark={!heroNet} minutes={minutes} />
   <main id="contenido">
     <slot />
   </main>
   <Footer />
+  <button type="button" class="to-top" data-to-top aria-label="Volver arriba" hidden><span aria-hidden="true">↑</span></button>
+  <script>
+    import { initToTop } from '../scripts/totop';
+    initToTop();
+  </script>
 </body>
 </html>

@@ -15,7 +15,7 @@ const font = group('Tipografía', 'font', [['sans', 'Sans'], ['serif', 'Serif'],
 const theme = group('Tema', 'theme', [['system', 'Sistema'], ['dark', 'Oscuro'], ['light', 'Claro'], ['sepia', 'Sepia'], ['contrast', 'Alto contraste']]);
 ---
 <button class="ajustes-btn" type="button" aria-expanded="false" aria-controls="ajustes" data-ajustes-open>
-  <span class="aa" aria-hidden="true">Aa</span> Ajustes
+  <span class="aa" aria-hidden="true">Aa</span> <span class="lbl">Ajustes</span>
 </button>
 
 <section id="ajustes" class="ajustes" aria-labelledby="ajustes-title" hidden>
@@ -85,6 +85,7 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['dark', 'Oscuro'],
   .ajustes-btn { display: inline-flex; align-items: center; gap: .45rem; font: 500 .9375rem/1 var(--ui); color: var(--fg); background: none; border: 1px solid var(--rule); border-radius: 999px; padding: .6rem .9rem; min-height: 44px; cursor: pointer; }
   .ajustes-btn:hover { border-color: var(--fg-2); }
   .ajustes-btn[aria-expanded="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  @media (max-width: 519px) { .ajustes-btn { padding: .6rem .7rem; } .lbl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
   .aa { font-family: var(--display); font-weight: var(--display-weight); letter-spacing: -.04em; font-size: 1.1rem; line-height: .8; }
 
   /* Phone first: a bottom sheet. */

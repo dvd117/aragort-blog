@@ -1,9 +1,8 @@
 /**
  * Motion while reading, driven by one scroll position:
  * - desktop rail: nodes light in reading order (static under reduced motion);
- * - top hairline (phone): position, always, no transition;
- * - the header mark and the compact bar's mark: the rail in miniature, in the post's hue;
- * - compact bar: appears on scroll-up with the mark, the title and "quedan N min";
+ * - the progress line along the header's bottom edge: position, always, no transition;
+ * - the header mark: the rail in miniature, in the post's hue, with "quedan N min" beside it;
  * - at the end: every net completes with one short pulse, and the end card appears.
  */
 import { reduced } from './motion';
@@ -12,19 +11,16 @@ export function initReading(minutes: number): void {
   const grid = document.querySelector<HTMLElement>('.post-grid');
   const prose = document.querySelector<HTMLElement>('.post .prose');
   const bar = document.querySelector<HTMLElement>('.progress');
-  const mini = document.querySelector<HTMLElement>('[data-minibar]');
   const left = document.querySelector<HTMLElement>('[data-left]');
   const card = document.querySelector<HTMLElement>('[data-done]');
-  const header = document.querySelector<HTMLElement>('header.site');
   const rail = document.querySelector<SVGSVGElement>('.rail .net');
   if (!grid || !prose || !bar) return;
 
-  const marks = [...document.querySelectorAll<SVGSVGElement>('.site .brand .net, [data-minibar] .net, .post .sig .net')];
+  const marks = [...document.querySelectorAll<SVGSVGElement>('.site .brand .net, .post .sig .net')];
   const railNodes = rail ? [...rail.querySelectorAll<SVGCircleElement>('circle')] : [];
   const railWires = rail ? [...rail.querySelectorAll<SVGLineElement>('line')] : [];
   const nets = [...marks, ...(rail ? [rail] : [])];
 
-  let lastY = scrollY;
   let complete = false;
   let queued = false;
   card?.classList.add('pending');
@@ -69,16 +65,6 @@ export function initReading(minutes: number): void {
       if (left) left.textContent = `quedan ${Math.max(1, Math.ceil(minutes * (1 - p)))} min`;
     }
 
-    // Compact bar: shown while scrolling up, once the header is out of view.
-    if (mini && header) {
-      const below = header.getBoundingClientRect().bottom < 0;
-      const up = scrollY < lastY - 4;
-      const down = scrollY > lastY + 4;
-      if (!below) mini.classList.remove('show');
-      else if (up) mini.classList.add('show');
-      else if (down) mini.classList.remove('show');
-    }
-    lastY = scrollY;
   };
 
   addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
