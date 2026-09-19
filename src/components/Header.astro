@@ -17,7 +17,7 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
 <header class="site">
   <div class="row wrap">
     <a class="brand" href="/">
-      <span class="mark" style={netMark ? 'view-transition-name: net' : undefined}><Net name="mark" /></span>
+      <span class:list={['mark', { 'vt-net': netMark }]}><Net name="mark" /></span>
       <span class="name">David Aragort</span>
     </a>
     {minutes && (
