@@ -94,4 +94,10 @@ const path = exitPath(nets.hero);
     .node { left: calc(-2.25rem + 5.5px - 7px); }
     .node-item { padding-bottom: 2.5rem; }
   }
+  @media (max-width: 899px) and (max-height: 500px) and (orientation: landscape) {
+    .about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); column-gap: 2rem; align-items: start; }
+    .portrait { position: sticky; top: 64px; }
+    h1 { font-size: clamp(2.6rem, 14vh, 4.5rem); }
+    .portrait-net { margin: -1rem 0 0; }
+  }
 </style>

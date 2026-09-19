@@ -5,11 +5,13 @@ import { getPosts } from '../lib/collection';
 import { formatDateEs } from '../lib/posts';
 import { nets } from '../assets/net/geometry';
 import { exitPath } from '../lib/netpath';
-import { LEDE } from '../lib/site';
+import { LEDE, WHO } from '../lib/site';
+import { landingMode } from '../lib/landing';
 import '../styles/index.css';
 
 const posts = await getPosts();
 const exit = exitPath(nets.hero).join(',');
+const mode = landingMode(posts.length);
 ---
 <Base title="David Aragort" description={LEDE} current="escritos" heroNet ogImage="/og/index.png" ogAlt={`David Aragort: ${LEDE}`}>
   <div class="index wrap" data-netnav-root>
@@ -23,19 +25,32 @@ const exit = exitPath(nets.hero).join(',');
       </div>
     </section>
 
-    {posts.length === 0 ? (
+    {mode === 'empty' ? (
       <p class="empty">Todavía no hay escritos publicados.</p>
     ) : (
-      <ol class="entries" data-thread>
-        {posts.map((p) => (
-          <li class:list={['entry', { draft: p.draft }]} data-hue={p.hue}>
-            <p class="d"><span class="node" aria-hidden="true" style={`view-transition-name: dot-${p.slug}`}></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
-            <a class="t" href={`/escritos/${p.slug}/`} style={`view-transition-name: t-${p.slug}`}>{p.title}</a>
-            {p.description && <p class="ex">{p.description}</p>}
-            {p.draft && <span class="tag">borrador</span>}
-          </li>
-        ))}
-      </ol>
+      <>
+        <ol class="entries" data-thread>
+          {posts.map((p, i) => {
+            const feature = mode === 'featured' && i === 0;
+            return (
+              <li class:list={['entry', { draft: p.draft, feature }]} data-hue={p.hue}>
+                <p class="d"><span class="node" aria-hidden="true" style={`view-transition-name: dot-${p.slug}`}></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
+                <a class="t" href={`/escritos/${p.slug}/`} style={`view-transition-name: t-${p.slug}`}>{p.title}</a>
+                {p.description && <p class="ex">{p.description}</p>}
+                {feature && p.resumen && <ul class="teaser">{p.resumen.map((r) => <li>{r}</li>)}</ul>}
+                {feature && <a class="more" href={`/escritos/${p.slug}/`}>Leer · {p.minutes} min</a>}
+                {p.draft && <span class="tag">borrador</span>}
+              </li>
+            );
+          })}
+        </ol>
+        {mode === 'featured' && (
+          <aside class="who" aria-label="Quién escribe">
+            <Net name="mark" />
+            <p>{WHO} <a href="/sobre-mi/">Sobre mí</a></p>
+          </aside>
+        )}
+      </>
     )}
   </div>
 </Base>

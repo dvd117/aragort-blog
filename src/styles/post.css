@@ -161,3 +161,5 @@
 .net-hr line { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
 .net-hr circle { fill: var(--bg); stroke: var(--net); stroke-width: 1; }
 .net-hr circle.on { fill: var(--hue-ui); stroke: var(--hue-ui); }
+
+@media (max-width: 899px) and (max-height: 500px) and (orientation: landscape) { .post-head { padding-top: 1.5rem; padding-bottom: 1.5rem; } .post-head h1 { font-size: clamp(2.2rem, 13vh, 4rem); max-width: 18ch; } }
