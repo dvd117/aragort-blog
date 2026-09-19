@@ -31,7 +31,7 @@ describe('reading settings: serialization', () => {
   it('migrates the v1 theme once, and only when nothing newer is stored', () => {
     expect(parseSettings(null, 'dark').theme).toBe('dark');
     expect(parseSettings('{"theme":"sepia"}', 'dark').theme).toBe('sepia');
-    expect(parseSettings(null, 'purple').theme).toBe('dark');
+    expect(parseSettings(null, 'purple').theme).toBe('system');
   });
 });
 
@@ -72,18 +72,18 @@ describe('reading settings: head script', () => {
   });
 
   it('migrates the v1 theme key', () => {
-    expect(runHead({ 'aragort-theme': 'dark' })).toEqual({});
+    expect(runHead({ 'aragort-theme': 'dark' })).toEqual({ 'data-theme': 'dark' });
     expect(runHead({ 'aragort-theme': 'light' })).toEqual({ 'data-theme': 'light' });
   });
 
-  it('with nothing saved sets no theme: the base CSS is dark, for everyone', () => {
+  it('with nothing saved sets no theme: the OS decides, and the base CSS is dark', () => {
     expect(runHead({})).toEqual({});
-    expect(DEFAULTS.theme).toBe('dark');
+    expect(DEFAULTS.theme).toBe('system');
   });
 
-  it('Sistema is an explicit choice that follows the OS', () => {
-    expect(runHead({ 'aragort-lectura': '{"theme":"system"}' })).toEqual({ 'data-theme': 'system' });
-    expect(runHead({ 'aragort-lectura': '{"theme":"dark"}' })).toEqual({});
+  it('a saved choice always wins over the OS, including Oscuro', () => {
+    expect(runHead({ 'aragort-lectura': '{"theme":"dark"}' })).toEqual({ 'data-theme': 'dark' });
+    expect(runHead({ 'aragort-lectura': '{"theme":"system"}' })).toEqual({});
   });
 
   it('survives corrupt storage without throwing', () => {
