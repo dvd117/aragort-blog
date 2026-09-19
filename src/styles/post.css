@@ -7,8 +7,8 @@
 .progress { position: fixed; inset: 0 0 auto 0; height: 3px; background: var(--ochre); transform-origin: 0 50%; transform: scaleX(0); z-index: 10; pointer-events: none; }
 @media (min-width: 1000px) {
   .post-head { padding-top: 6rem; padding-bottom: 4.5rem; }
-  .post-grid { grid-template-columns: 150px minmax(0, 40rem) 1fr; column-gap: 4.5rem; }
-  .post-grid > .prose, .post-grid > .sig { grid-column: 2; }
+  .post-grid { grid-template-columns: 150px minmax(0, 1fr); column-gap: 4.5rem; }
+  .post-grid > .prose, .post-grid > .source, .post-grid > .sig { grid-column: 2; }
   .rail { display: block; position: sticky; top: 10vh; align-self: start; grid-column: 1; grid-row: 1 / span 2; }
   .rail .net { height: 78vh; width: auto; max-width: 150px; }
   .progress { display: none; }
@@ -24,3 +24,30 @@
 
 .sig .net { width: 44px; height: 33px; }
 .sig { display: flex; align-items: center; gap: .8rem; font-family: var(--display); font-style: italic; font-size: 2.1rem; line-height: 1; margin: 2.5rem 0 0; }
+
+/* E's layer: version line, view switch, Markdown source, margin notes. */
+.ver { font: 500 .875rem/1.4 var(--mono); color: var(--fg-2); margin: 0 0 .6rem; }
+.view { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; padding: 2px; margin-top: 2rem; background: var(--panel); }
+.view[hidden] { display: none; }
+.view button { font: 500 .875rem/1 var(--mono); color: var(--fg-2); background: none; border: 0; border-radius: 6px; padding: .55rem .75rem; cursor: pointer; }
+.view button:hover { color: var(--fg); }
+.view button[aria-pressed="true"] { background: var(--bg); color: var(--fg); box-shadow: 0 0 0 1px var(--rule); }
+[data-pane][hidden] { display: none; }
+
+.source { max-width: 46rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 1.1rem 1rem; }
+.source .file { font: 500 .875rem/1.4 var(--mono); margin: 0 0 1rem; padding-bottom: .6rem; border-bottom: 1px solid var(--rule); }
+.source .file a { color: var(--link); text-underline-offset: .2em; }
+.source pre { margin: 0; font: 400 1rem/1.7 var(--mono); color: var(--fg); white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
+@media (min-width: 900px) { .source { padding: 1.75rem 2rem; } .source pre { font-size: 1.0625rem; } }
+
+.nref { font: 600 .75em/1 var(--mono); vertical-align: .45em; margin-left: .1em; color: var(--link); text-decoration: none; box-shadow: none; }
+.prose .nref { color: var(--link); box-shadow: none; text-decoration: none; }
+.note { font-family: var(--ui); font-size: 1rem; line-height: 1.5; color: var(--fg-2); margin: -.3em 0 1.4em; padding: .7rem .9rem; border-left: 3px solid var(--ochre); background: var(--panel); border-radius: 0 6px 6px 0; }
+.note p { margin: 0; }
+.note p + p { margin-top: .5rem; }
+.note .n { font: 600 .875rem/1 var(--mono); color: var(--link); margin-right: .2rem; }
+@media (min-width: 1100px) {
+  .prose { display: grid; grid-template-columns: minmax(0, 40rem) 14rem; column-gap: 3rem; max-width: none; align-content: start; }
+  .prose > * { grid-column: 1; }
+  .prose > .note { grid-column: 2; align-self: start; margin: .25em 0 0; padding: 0 0 0 .8rem; background: none; border-radius: 0; font-size: .9375rem; }
+}
