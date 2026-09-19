@@ -242,8 +242,9 @@ decoration that means nothing.
   footer mark: net, wire, posts, strip and footer are one line. From 3 posts the list
   returns, decided at build time.
 - **Post:** a single column on a phone, with a progress hairline and a closed "En este
-  texto". From 1000px, a 220px sticky rail: an 88px net with the chapters beside it, each
-  at the height where it begins, the current one lit, each a link. From 1100px, footnotes
+  texto". From 1000px, a 150px sticky rail. At rest it is only the net, with a dot beside
+  the current chapter's node; hovering or focusing it opens a dock: each chapter as a pill
+  beside its node, the ones near the pointer magnified, the current one in the hue. From 1100px, footnotes
   move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
 - **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
   sticky on the left and the thread runs on the right.

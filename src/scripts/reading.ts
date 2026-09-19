@@ -18,6 +18,8 @@ export function initReading(minutes: number): void {
 
   const marks = [...document.querySelectorAll<SVGSVGElement>('.site .brand .net, .post .sig .net')];
   const railNodes = rail ? [...rail.querySelectorAll<SVGCircleElement>('circle')] : [];
+  // Drawn positions, read before the net starts to drift (netlive draws on the next frame).
+  const railBase = railNodes.map((c) => [Number(c.getAttribute('cx')), Number(c.getAttribute('cy'))] as const);
   const railWires = rail ? [...rail.querySelectorAll<SVGLineElement>('line')] : [];
   const nets = [...marks, ...(rail ? [rail] : [])];
 
@@ -80,6 +82,14 @@ export function initReading(minutes: number): void {
   const siteHeader = document.querySelector<HTMLElement>('header.site');
   let marks_: number[] = [];
   const tocLinks = [...document.querySelectorAll<HTMLAnchorElement>('.rail-toc a')];
+  // The dock (desktop): each chapter sits beside the rail node where reading reaches it,
+  // and a dot beside the current chapter's node marks where you are.
+  const dot = rail && tocLinks.length ? rail.parentElement!.appendChild(document.createElement('span')) : null;
+  dot?.classList.add('rail-dot');
+  dot?.setAttribute('aria-hidden', 'true');
+  const chapterNode = (m: number) => Math.min(railNodes.length - 1, Math.round(m * railNodes.length));
+  const vb = rail?.viewBox.baseVal;
+  const nodeAt = (i: number) => ({ y: (railBase[i]?.[1] ?? 0) / (vb?.height || 1) });
   let ticks: HTMLElement[] = [];
   if (heads.length >= 3 && siteHeader) {
     const host = document.createElement('div');
@@ -92,7 +102,7 @@ export function initReading(minutes: number): void {
       marks_ = heads.map((h) => (h.getBoundingClientRect().top - g.top) / g.height);
       // A chapter that opens the text needs no notch at 0%.
       ticks.forEach((t, i) => { t.style.left = `${(marks_[i]! * 100).toFixed(2)}%`; t.hidden = marks_[i]! < 0.02; });
-      tocLinks.forEach((a, i) => { (a.parentElement as HTMLElement).style.top = `${(marks_[i]! * 100).toFixed(2)}%`; });
+      tocLinks.forEach((a, i) => { (a.parentElement as HTMLElement).style.top = `${(nodeAt(chapterNode(marks_[i]!)).y * 100).toFixed(2)}%`; });
       update();
     };
     addEventListener('resize', place);
@@ -105,6 +115,12 @@ export function initReading(minutes: number): void {
     ticks.forEach((t, i) => t.classList.toggle('past', marks_[i]! <= p + 0.001));
     const current = marks_.filter((m) => m <= p + 0.001).length - 1;
     tocLinks.forEach((a, i) => { a.classList.toggle('now', i === current); if (i === current) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current'); });
+    if (dot && rail) {
+      const n = nodeAt(chapterNode(marks_[Math.max(0, current)]!));
+      dot.style.left = `${(rail.getBoundingClientRect().width + 6).toFixed(1)}px`; // the dock's edge, at the node's height
+      dot.style.top = `${(n.y * 100).toFixed(2)}%`;
+      dot.hidden = current < 0;
+    }
     return n ? `${n}/${marks_.length} · ` : '';
   };
 
@@ -114,6 +130,20 @@ export function initReading(minutes: number): void {
   if (site && h1 && 'IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => site.classList.toggle('reading', !e!.isIntersecting && e!.boundingClientRect.top < 0))
       .observe(h1);
+  }
+  // Dock magnification: labels near the pointer grow, like the macOS dock.
+  const dock = document.querySelector<HTMLElement>('.rail');
+  if (dock && tocLinks.length) {
+    const items = tocLinks.map((a) => a.parentElement as HTMLElement);
+    dock.addEventListener('pointermove', (e) => {
+      if (reduced()) return;
+      for (const li of items) {
+        const r = li.getBoundingClientRect();
+        const d = Math.abs(e.clientY - (r.top + r.height / 2));
+        li.style.setProperty('--s', (1 + 0.35 * Math.max(0, 1 - d / 110)).toFixed(3));
+      }
+    });
+    dock.addEventListener('pointerleave', () => items.forEach((li) => li.style.removeProperty('--s')));
   }
   requestAnimationFrame(update); // first layout read after first paint, not during load
 }

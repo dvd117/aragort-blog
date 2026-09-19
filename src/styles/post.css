@@ -11,13 +11,19 @@
   .rail { display: block; position: sticky; top: 10vh; align-self: start; grid-column: 1; grid-row: 1 / span 3; height: 78vh; }
   .rail .net { height: 78vh; width: auto; max-width: 150px; }
   /* The chapters sit beside the net, each at the height where it begins (set by reading.ts). */
-  .rail-toc { position: absolute; top: 0; left: 100px; right: 0; height: 100%; }
+  /* The dock: at rest only the net, with a dot beside the current chapter's node. Hover or
+     focus the rail and each chapter opens beside its node; the ones near the pointer grow. */
+  .rail-dot { position: absolute; width: 5px; height: 5px; margin: -2.5px 0 0; border-radius: 50%; background: var(--hue-ui); pointer-events: none; transition: top 240ms cubic-bezier(.2, 0, 0, 1); }
+  .rail-toc { position: absolute; top: 0; left: calc(100% - 14px); width: 17rem; height: 100%; z-index: 5; pointer-events: none; }
   .rail-toc ol { list-style: none; margin: 0; padding: 0; }
-  .rail-toc li { position: absolute; left: 0; right: 0; transform: translateY(-50%); }
-  .rail-toc a { display: block; font: 500 .8125rem/1.25 var(--ui); color: var(--fg-2); text-decoration: none; padding: .2rem 0; }
-  .rail-toc a:hover { color: var(--fg); }
-  .rail-toc a.now { color: var(--fg); }
-  .rail-toc .num { display: block; font: 600 .6875rem/1 var(--mono); color: var(--hue); margin-bottom: .15rem; }
+  .rail-toc li { position: absolute; left: 0; transform: translateY(-50%) scale(var(--s, 1)); transform-origin: left center; transition: transform 120ms ease-out; }
+  .rail-toc a { display: flex; align-items: baseline; gap: .55rem; max-width: 16rem; padding: .45rem .8rem; border: 1px solid var(--rule); border-radius: 10px; background: var(--panel); font: 500 .875rem/1.25 var(--ui); color: var(--fg-2); text-decoration: none; opacity: 0; translate: -8px 0; transition: opacity 160ms ease, translate 200ms cubic-bezier(.2, 0, 0, 1), color 120ms ease; }
+  .rail:hover .rail-toc, .rail:focus-within .rail-toc { pointer-events: auto; }
+  .rail:hover .rail-toc a, .rail:focus-within .rail-toc a { opacity: 1; translate: 0 0; }
+  .rail-toc li:nth-child(2) a { transition-delay: 30ms; } .rail-toc li:nth-child(3) a { transition-delay: 60ms; } .rail-toc li:nth-child(n+4) a { transition-delay: 90ms; }
+  .rail-toc a:hover, .rail-toc a:focus-visible { color: var(--fg); border-color: var(--fg-2); }
+  .rail-toc a.now { color: var(--fg); border-color: var(--hue-ui); }
+  .rail-toc .num { flex: none; font: 600 .75rem/1 var(--mono); color: var(--hue); }
   .post[data-has-rail-toc] .toc { display: none; }
 }
 
@@ -190,3 +196,6 @@
 @media (max-width: 899px) and (max-height: 500px) and (orientation: landscape) { .post-head { padding-top: 1.5rem; padding-bottom: 1.5rem; } .post-head h1 { font-size: clamp(2.2rem, 13vh, 4rem); max-width: 18ch; } }
 /* On desktop posts the hero goes to the rail, not to the header mark. */
 @media (min-width: 1000px) { .site .mark.vt-net { view-transition-name: none; } }
+/* Reduced motion: the dock simply appears, no slide and no magnification. */
+@media (prefers-reduced-motion: reduce) { .rail-toc li, .rail-toc a, .rail-dot { transition: none; translate: none; } }
+:root[data-motion="reduce"] .rail-toc li, :root[data-motion="reduce"] .rail-toc a, :root[data-motion="reduce"] .rail-dot { transition: none; translate: none; }
