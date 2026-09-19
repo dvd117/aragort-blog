@@ -71,5 +71,13 @@ export function initReading(minutes: number): void {
   addEventListener('resize', update);
   document.addEventListener('ajustes:change', update);
   card?.addEventListener('focusin', finish); // keyboard readers who jump to the end
+
+  // The header carries the post title once the page's own title has scrolled away.
+  const site = document.querySelector<HTMLElement>('header.site');
+  const h1 = document.querySelector<HTMLElement>('.post-head h1');
+  if (site && h1 && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => site.classList.toggle('reading', !e!.isIntersecting && e!.boundingClientRect.top < 0))
+      .observe(h1);
+  }
   requestAnimationFrame(update); // first layout read after first paint, not during load
 }

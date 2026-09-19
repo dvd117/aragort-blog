@@ -28,7 +28,7 @@ const version = versionLine(postVersion(post.file, post.date));
 const source = await readFile(post.file, 'utf8');
 const filename = `${post.id}.md`;
 ---
-<Base title={post.title} description={post.description} current="escritos" type="article" ogImage={`/og/${post.slug}.png`} hue={post.hue} minutes={post.minutes}>
+<Base title={post.title} description={post.description} current="escritos" type="article" ogImage={`/og/${post.slug}.png`} hue={post.hue} minutes={post.minutes} postTitle={post.title}>
   <article class="wrap post" data-slug={post.slug} data-minutes={post.minutes}>
     <header class="post-head">
       <a class="back" href="/">← Escritos</a>
