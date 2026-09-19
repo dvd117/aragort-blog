@@ -5,17 +5,18 @@ import { getPosts } from '../lib/collection';
 import { formatDateEs } from '../lib/posts';
 import { nets } from '../assets/net/geometry';
 import { exitPath } from '../lib/netpath';
+import { LEDE } from '../lib/site';
 import '../styles/index.css';
 
 const posts = await getPosts();
 const exit = exitPath(nets.hero).join(',');
 ---
-<Base title="David Aragort" current="escritos" heroNet>
+<Base title="David Aragort" description={LEDE} current="escritos" heroNet ogImage="/og/index.png" ogAlt={`David Aragort: ${LEDE}`}>
   <div class="index wrap" data-netnav-root>
     <section class="hero">
       <div class="hero-title">
         <h1 style="view-transition-name: page-title">Escritos</h1>
-        <p class="lede">Escribo sobre el país que podemos ser. A veces con propuestas, a veces con lo que aprendí haciendo.</p>
+        <p class="lede">{LEDE}</p>
       </div>
       <div class="net-wrap" data-netnav data-exit={exit}>
         <div class="hero-net" style="view-transition-name: net"><Net name="hero" /></div>

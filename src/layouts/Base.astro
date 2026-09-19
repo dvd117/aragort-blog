@@ -10,12 +10,14 @@ interface Props {
   description?: string;
   current?: 'escritos' | 'sobre-mi';
   ogImage?: string;
+  /** Alt text for the OG card; defaults to the page title. */
+  ogAlt?: string;
   type?: 'website' | 'article';
   hue?: string;
   /** The index's hero net takes the shared `net` name; elsewhere the header mark does. */
   heroNet?: boolean;
 }
-const { title, description = 'Escritos de David Aragort.', current, ogImage, type = 'website', hue, heroNet = false } = Astro.props;
+const { title, description = 'Escritos de David Aragort.', current, ogImage, ogAlt, type = 'website', hue, heroNet = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort`;
 ---
@@ -36,8 +38,17 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonical} />
   <meta property="og:locale" content="es_VE" />
-  {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
-  {ogImage && <meta name="twitter:card" content="summary_large_image" />}
+  {ogImage && (
+    <>
+      <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={ogAlt ?? title} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
+    </>
+  )}
   <!-- Reading settings before first paint: no flash. Generated from src/lib/settings.ts. -->
   <script is:inline set:html={headScript()} />
   <!-- JS-only controls take their final layout before first paint (no layout shift). -->

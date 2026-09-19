@@ -26,16 +26,23 @@ function markSvg(): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 ${g.w + 4} ${g.h + 4}">${lines}${dots}</svg>`;
 }
 
-let font: Promise<Buffer> | undefined;
+let fonts: Promise<{ bold: Buffer; regular: Buffer }> | undefined;
 // Relative to the project root: the build runs there, and bundling moves import.meta.url.
-const loadFont = () => (font ??= readFile(resolve('src/assets/og/geist-700.ttf')));
+const loadFonts = () =>
+  (fonts ??= Promise.all([
+    readFile(resolve('src/assets/og/geist-700.ttf')),
+    readFile(resolve('src/assets/og/geist-400.ttf')),
+  ]).then(([bold, regular]) => ({ bold, regular })));
 
 type Node = { type: string; props: Record<string, unknown> };
 const el = (type: string, style: Record<string, unknown>, children?: unknown, extra: Record<string, unknown> = {}): Node =>
   ({ type, props: { style, children, ...extra } });
 
-export async function renderOgImage(title: string): Promise<Uint8Array> {
-  const data = await loadFont();
+export const OG_SIZE = { width: 1200, height: 630 } as const;
+
+/** A 1200x630 card: the net mark, a title, an optional line under it, and the site. */
+export async function renderOgImage(title: string, subtitle?: string): Promise<Uint8Array> {
+  const { bold, regular } = await loadFonts();
   const mark = `data:image/svg+xml;base64,${Buffer.from(markSvg()).toString('base64')}`;
   const size = title.length > 60 ? 84 : title.length > 36 ? 104 : 124;
   const tree = el('div', {
@@ -43,18 +50,21 @@ export async function renderOgImage(title: string): Promise<Uint8Array> {
     background: DARK.bg, color: DARK.fg, padding: '64px 80px',
   }, [
     el('img', { width: 160, height: 120 }, undefined, { src: mark, width: 160, height: 120 }),
-    el('div', { display: 'flex', fontFamily: 'Site', fontWeight: 700, fontSize: size, lineHeight: 0.98, letterSpacing: '-0.04em', maxWidth: 1040 }, title),
-    el('div', { display: 'flex', justifyContent: 'space-between', fontFamily: 'Site', fontWeight: 700, fontSize: 30, color: DARK.muted }, [
-      el('span', {}, 'David Aragort'),
+    el('div', { display: 'flex', flexDirection: 'column', gap: 28 }, [
+      el('div', { display: 'flex', fontFamily: 'Geist', fontWeight: 700, fontSize: size, lineHeight: 0.98, letterSpacing: '-0.045em', maxWidth: 1040 }, title),
+      ...(subtitle ? [el('div', { display: 'flex', fontFamily: 'Geist', fontWeight: 400, fontSize: 40, lineHeight: 1.3, color: DARK.muted, maxWidth: 940 }, subtitle)] : []),
+    ]),
+    el('div', { display: 'flex', justifyContent: 'space-between', fontFamily: 'Geist', fontWeight: 700, fontSize: 30, color: DARK.muted }, [
+      el('span', {}, title === 'David Aragort' ? '' : 'David Aragort'), // no name twice on the landing card
       el('span', { color: DARK.ochre }, 'aragort.com'),
     ]),
   ]);
   const svg = await satori(tree as Parameters<typeof satori>[0], {
-    width: 1200,
-    height: 630,
+    ...OG_SIZE,
     fonts: [
-      { name: 'Site', data, weight: 700, style: 'normal' },
+      { name: 'Geist', data: bold, weight: 700, style: 'normal' },
+      { name: 'Geist', data: regular, weight: 400, style: 'normal' },
     ],
   });
-  return new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render().asPng();
+  return new Resvg(svg, { fitTo: { mode: 'width', value: OG_SIZE.width } }).render().asPng();
 }
