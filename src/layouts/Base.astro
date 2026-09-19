@@ -3,7 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { headScript } from '../lib/settings';
-import { lastHueScript } from '../lib/lasthue';
+import { hueScript } from '../lib/lasthue';
 
 
 interface Props {
@@ -27,7 +27,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort`;
 ---
 <!doctype html>
-<html lang="es" data-hue={hue}>
+<html lang="es" data-hue={hue} data-hue-base={hue}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -56,8 +56,9 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
   )}
   <!-- Reading settings before first paint: no flash. Generated from src/lib/settings.ts. -->
   <script is:inline set:html={headScript()} />
-  <!-- A page with no hue of its own opens in the last post's hue. Also before first paint. -->
-  {!hue && <script is:inline set:html={lastHueScript()} />}
+  <!-- Which hue rules this page: the post's own or the last one read, rolled by the
+       visit's offset. Before first paint, so no hue is ever shown and then dropped. -->
+  <script is:inline set:html={hueScript()} />
   <!-- JS-only controls take their final layout before first paint (no layout shift). -->
   <script is:inline>document.documentElement.classList.add('js')</script>
   <!-- Prerender same-origin pages on hover, pointerdown or focus (Chromium). Other browsers ignore it. -->

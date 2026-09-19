@@ -140,16 +140,18 @@ a { color: inherit; }
   transition: none !important; animation: none !important; scroll-behavior: auto !important;
 }
 
-/* The net, after Gego's Reticulárea: thin wires, hollow nodes, ochre where lit. */
+/* The net, after Gego's Reticulárea: thin wires, hollow nodes, the ruling hue where lit.
+   Every net on the page -- header mark, hero, rail, portrait, footer mark -- lights in
+   `--hue-ui`, so they all change together and none of them is ever a colour of its own. */
 .net { display: block; overflow: visible; }
 .net line { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .net circle { fill: var(--bg); stroke: var(--net); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.net .on { stroke: var(--ochre); stroke-opacity: 1; }
-.net circle.on { fill: var(--ochre); }
+.net .on { stroke: var(--hue-ui); stroke-opacity: 1; }
+.net circle.on { fill: var(--hue-ui); }
 .net.live line, .net.live circle { transition: stroke 140ms ease, fill 140ms ease, stroke-opacity 140ms ease; }
-/* The net answers (netlive.ts): a node glows in ochre and fades over 600ms. */
-.net .glow { stroke: var(--ochre); stroke-opacity: 1; transition-duration: 80ms; }
-.net circle.glow { fill: var(--ochre); }
+/* The net answers (netlive.ts): a node glows in the ruling hue and fades over 600ms. */
+.net .glow { stroke: var(--hue-ui); stroke-opacity: 1; transition-duration: 80ms; }
+.net circle.glow { fill: var(--hue-ui); }
 .net[data-respond] line, .net[data-respond] circle { transition: stroke 600ms ease, fill 600ms ease, stroke-opacity 600ms ease; }
 .net[data-respond] .glow { transition-duration: 80ms; } /* in fast, out over 600ms */
 
