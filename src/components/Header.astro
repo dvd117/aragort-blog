@@ -2,11 +2,11 @@
 import ReadingSettings from './ReadingSettings.astro';
 import Net from './Net.astro';
 
-interface Props { current?: 'escritos' | 'sobre-mi'; }
-const { current } = Astro.props;
+interface Props { current?: 'escritos' | 'sobre-mi'; netMark?: boolean; }
+const { current, netMark = true } = Astro.props;
 ---
 <header class="site wrap">
-  <a class="brand" href="/"><Net name="mark" />David Aragort</a>
+  <a class="brand" href="/"><span class="mark" style={netMark ? 'view-transition-name: net' : undefined}><Net name="mark" /></span>David Aragort</a>
   <nav aria-label="Principal">
     <a href="/" aria-current={current === 'escritos' ? 'page' : undefined}>Escritos</a>
     <a href="/sobre-mi/" aria-current={current === 'sobre-mi' ? 'page' : undefined}>Sobre mí</a>
@@ -17,10 +17,11 @@ const { current } = Astro.props;
 <style>
   .site { position: relative; display: flex; align-items: center; gap: 1rem 1.5rem; flex-wrap: wrap; padding-top: 1.25rem; padding-bottom: 1.25rem; }
   .brand { display: inline-flex; align-items: center; gap: .7rem; text-decoration: none; font-weight: 600; font-size: 1.0625rem; letter-spacing: -.01em; margin-right: auto; }
+  .mark { display: block; }
   .brand :global(.net) { width: 38px; height: 29px; }
   nav { display: flex; gap: 1.25rem; }
   nav a { text-decoration: none; color: var(--fg-2); padding: .35rem 0; }
   nav a:hover { color: var(--fg); }
-  nav a[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -1px 0 var(--fg); }
+  nav a[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -1px 0 var(--fg); view-transition-name: nav-current; }
   @media (max-width: 599px) { nav { order: 3; width: 100%; } }
 </style>

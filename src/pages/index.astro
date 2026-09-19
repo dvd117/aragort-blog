@@ -3,28 +3,28 @@ import Base from '../layouts/Base.astro';
 import Net from '../components/Net.astro';
 import { getPosts } from '../lib/collection';
 import { formatDateEs } from '../lib/posts';
+import { nets } from '../assets/net/geometry';
+import { pathFor } from '../lib/netpath';
 import '../styles/index.css';
 
 const posts = await getPosts();
 ---
-<Base title="David Aragort" current="escritos">
-  <section class="hero wrap">
-    <div>
-      <h1>Escritos</h1>
-      {/* TODO(david): one-line lede for the index goes here. Nothing renders until it is written. */}
+<Base title="David Aragort" current="escritos" heroNet>
+  <div class="index wrap">
+    <div class="hero-title">
+      <h1 style="view-transition-name: page-title">Escritos</h1>
+      <p class="lede">Escribo sobre el país que podemos ser. A veces con propuestas, a veces con lo que aprendí haciendo.</p>
     </div>
-    <div class="net-wrap"><Net name="hero" /></div>
-  </section>
+    <div class="net-wrap" data-netnav><div class="hero-net" style="view-transition-name: net"><Net name="hero" /></div></div>
 
-  <div class="wrap">
     {posts.length === 0 ? (
       <p class="empty">Todavía no hay escritos publicados.</p>
     ) : (
       <ol class="entries">
         {posts.map((p) => (
-          <li class:list={['entry', { draft: p.draft }]} data-hue={p.hue}>
-            <p class="d"><span class="hue-dot" aria-hidden="true"></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
-            <a class="t" href={`/escritos/${p.slug}/`}>{p.title}</a>
+          <li class:list={['entry', { draft: p.draft }]} data-hue={p.hue} data-path={pathFor(nets.hero, p.slug).join(',')}>
+            <p class="d"><span class="hue-dot" aria-hidden="true" style={`view-transition-name: dot-${p.slug}`}></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
+            <a class="t" href={`/escritos/${p.slug}/`} style={`view-transition-name: t-${p.slug}`}>{p.title}</a>
             {p.description && <p class="ex">{p.description}</p>}
             {p.draft && <span class="tag">borrador</span>}
           </li>
@@ -33,3 +33,8 @@ const posts = await getPosts();
     )}
   </div>
 </Base>
+
+<script>
+  import { initNetNav } from '../scripts/netnav';
+  initNetNav();
+</script>
