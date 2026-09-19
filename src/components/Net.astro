@@ -11,16 +11,50 @@ interface Props {
   respond?: boolean;
   /** Nodes that never drift (the exit node the index wire hangs from). */
   pin?: number[];
+  /**
+   * Paint the net in the flag's three bands by height: amarillo over azul over rojo.
+   * Every net takes it now -- the mark included -- so the flag is the site's one identity
+   * and not a thing that only the big nets do.
+   */
+  flag?: boolean;
+  /**
+   * The flag, unlit: the bands are there but drawn in the net's own grey, and each one
+   * only takes its colour where the net is lit. The rail reads as a flag being painted
+   * as you go down the text rather than one that is already finished.
+   */
+  dim?: boolean;
 }
-const { name, class: className, progress = false, respond = false, pin } = Astro.props;
+const { name, class: className, progress = false, respond = false, pin, flag = false, dim = false } = Astro.props;
 const g = nets[name];
 const lit = new Set<number>(g.lit);
+// Which third of the net a y falls in. A wire takes the band of its midpoint, so a wire
+// that crosses a boundary picks one side rather than splitting.
+const bandOf = (y: number) => Math.min(2, Math.floor((y / g.h) * 3));
+const band = (y: number) => (flag ? String(bandOf(y)) : undefined);
+/**
+ * The stars. The flag carries eight of them in the blue, in an arc, so the eight nodes of
+ * the middle band nearest the net's centre are drawn with a white core. On the hero the
+ * middle band holds exactly eight; on a smaller net it holds fewer and they all become
+ * stars, which is the same idea at the size the net can carry.
+ */
+const stars = new Set<number>();
+if (flag) {
+  const cx = g.w / 2, cy = g.h / 2;
+  g.nodes
+    .map(([x, y], i) => ({ i, d: Math.hypot(x - cx, y - cy), y }))
+    .filter((n) => bandOf(n.y) === 1)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, 8)
+    .forEach((n) => stars.add(n.i));
+}
 ---
 <svg
   class:list={['net', className]}
   viewBox={`0 0 ${g.w} ${g.h}`}
   data-progress={progress ? '' : undefined}
   data-respond={respond ? '' : undefined}
+  data-flag={flag ? '' : undefined}
+  data-dim={dim ? '' : undefined}
   data-pin={pin?.length ? pin.join(',') : undefined}
   aria-hidden="true"
   focusable="false"
@@ -29,10 +63,17 @@ const lit = new Set<number>(g.lit);
     <line
       x1={g.nodes[a]![0]} y1={g.nodes[a]![1]} x2={g.nodes[b]![0]} y2={g.nodes[b]![1]}
       data-a={a} data-b={b}
+      data-band={band((g.nodes[a]![1] + g.nodes[b]![1]) / 2)}
       class={lit.has(a) && lit.has(b) ? 'on' : undefined}
     />
   ))}
   {g.nodes.map(([x, y], i) => (
-    <circle cx={x} cy={y} r={g.r} data-o={i} class={lit.has(i) ? 'on' : undefined} />
+    <circle
+      cx={x} cy={y} r={g.r}
+      data-o={i}
+      data-band={band(y)}
+      data-star={stars.has(i) ? '' : undefined}
+      class={lit.has(i) ? 'on' : undefined}
+    />
   ))}
 </svg>

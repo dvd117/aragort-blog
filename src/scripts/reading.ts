@@ -1,10 +1,14 @@
 /**
  * Motion while reading, driven by one scroll position:
- * - desktop rail: nodes light in reading order (static under reduced motion). The light is
- *   a high-water mark: it holds at the furthest you have read and never recedes, so a jump
- *   back with the dock does not unread the text;
- * - the progress line along the header's bottom edge: position, always, no transition;
- * - the header mark: the rail in miniature, in the post's hue, with "quedan N min" beside it;
+ * - desktop rail: the flag is drawn in grey and painted as you go -- node by node in
+ *   reading order, each one taking its own band's colour, so a post is read amarillo,
+ *   then azul, then rojo. It follows where you are in both directions: scrolling back up
+ *   gives the rail back, because a rail that stayed full after one pass stopped telling
+ *   you anything (static under reduced motion);
+ * - the progress line along the header's bottom edge: the same three bands, uncovered
+ *   left to right. Its notches are the chapters, and on a phone they are the dock --
+ *   tap one to go there, press or hover to open its number and title;
+ * - the header mark: the rail in miniature, with "quedan N min" beside it;
  * - at the end: every net completes with one short pulse, and the end card appears.
  */
 import { reduced } from './motion';
@@ -26,10 +30,9 @@ export function initReading(minutes: number): void {
   const nets = [...marks, ...(rail ? [rail] : [])];
 
   let complete = false;
-  // The light is a high-water mark: it shows the furthest you have read, and never
-  // recedes. The chapter dot and "quedan N min" follow where you actually are.
-  let peak = 0;
   let chapterOf: (p: number) => string = () => '';
+  // A phone has no room for the word: "2/4 · 6 min" instead of "2/4 · quedan 6 min".
+  const terse = matchMedia('(max-width: 560px)');
   let queued = false;
   card?.classList.add('pending');
 
@@ -42,42 +45,42 @@ export function initReading(minutes: number): void {
     }
   };
 
+  // Light every net to the same fraction of itself. The rail is grey until reading
+  // reaches a node; the colour a node takes is its band's, not one ruling hue.
+  const lightTo = (k: number, still: boolean) => {
+    lightMarks(k);
+    if (!rail) return;
+    const upTo = still ? 0 : Math.round(k * railNodes.length);
+    railNodes.forEach((c) => c.classList.toggle('on', Number(c.dataset.o) < upTo));
+    railWires.forEach((l) => l.classList.toggle('on', Number(l.dataset.a) < upTo && Number(l.dataset.b) < upTo));
+  };
+
   const finish = () => {
     if (complete) return;
     complete = true;
-    peak = 1;
-    lightMarks(1);
-    railNodes.forEach((c) => c.classList.add('on'));
-    railWires.forEach((l) => l.classList.add('on'));
     if (!reduced()) nets.forEach((n) => { n.classList.add('pulse'); setTimeout(() => n.classList.remove('pulse'), 400); });
     card?.classList.add('show');
-    chapterOf(1); // every notch past, the last chapter current
-    if (left) left.textContent = 'terminado';
   };
 
   const update = () => {
     queued = false;
     const r = grid.getBoundingClientRect();
     const p = Math.min(1, Math.max(0, (innerHeight * 0.65 - r.top) / r.height));
-    bar.style.transform = `scaleX(${p.toFixed(4)})`;
+    // A clip, not a scale: the bar carries the flag's three bands and a transform would
+    // squash them into the read part instead of uncovering them.
+    bar.style.clipPath = `inset(0 ${((1 - p) * 100).toFixed(2)}% 0 0)`;
 
     const end = prose.getBoundingClientRect().bottom <= innerHeight - 24;
     if (end) finish();
     const still = reduced();
     rail?.classList.toggle('live', !still);
-    if (p > peak) {
-      peak = p;
-      lightMarks(peak);
-      if (rail) {
-        const k = still ? 0 : Math.round(peak * railNodes.length);
-        railNodes.forEach((c) => c.classList.toggle('on', Number(c.dataset.o) < k));
-        railWires.forEach((l) => l.classList.toggle('on', Number(l.dataset.a) < k && Number(l.dataset.b) < k));
-      }
-    }
+    // Everything follows where you are, both ways. Reading back up gives the rail and the
+    // mark back, so they always answer "where am I" and never "how far did I once get".
+    lightTo(end ? 1 : p, still);
     // Where you are now: the current chapter, its dot on the rail, and the time left.
-    // These move both ways, so jumping back with the dock is never a dead end.
-    if (left) left.textContent = end ? `${chapterOf(p)}terminado` : `${chapterOf(p)}quedan ${Math.max(1, Math.ceil(minutes * (1 - p)))} min`;
-
+    if (left) left.textContent = end
+      ? `${chapterOf(1)}terminado`
+      : `${chapterOf(p)}${terse.matches ? '' : 'quedan '}${Math.max(1, Math.ceil(minutes * (1 - p)))} min`;
   };
 
   addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
@@ -101,16 +104,72 @@ export function initReading(minutes: number): void {
   const nodeAt = (i: number) => ({ y: (railBase[i]?.[1] ?? 0) / (vb?.height || 1) });
   let ticks: HTMLElement[] = [];
   if (heads.length >= 3 && siteHeader) {
-    const host = document.createElement('div');
+    // The chapters on the progress line. On a phone this is the rail's dock: each notch
+    // is a link to its chapter with a 40px tap target around it, and a press or a hover
+    // opens its number and title under the line. On desktop the rail carries the dock, so
+    // the host is made inert there -- the notches stay as marks and the same chapters are
+    // not in the tab order twice.
+    const host = document.createElement('nav');
     host.className = 'ticks';
-    host.setAttribute('aria-hidden', 'true');
-    ticks = heads.map(() => host.appendChild(document.createElement('i')));
+    host.setAttribute('aria-label', 'Capítulos');
+    ticks = heads.map((h, i) => {
+      const a = document.createElement('a');
+      a.className = 'tick';
+      a.href = `#${h.id}`;
+      const notch = document.createElement('i');
+      notch.setAttribute('aria-hidden', 'true');
+      const tt = document.createElement('span');
+      tt.className = 'tt';
+      const num = document.createElement('b');
+      num.textContent = String(i + 1).padStart(2, '0');
+      num.setAttribute('aria-hidden', 'true');
+      const ttl = document.createElement('span');
+      ttl.textContent = h.textContent ?? '';
+      tt.append(num, ttl);
+      a.append(notch, tt);
+      return host.appendChild(a);
+    });
     siteHeader.append(host);
+
+    // A tap has no hover to show the label with, so the one you pressed opens for a
+    // moment on the way to its chapter.
+    let openTimer = 0;
+    host.addEventListener('pointerdown', (e) => {
+      const t = (e.target as Element).closest<HTMLElement>('.tick');
+      if (!t) return;
+      ticks.forEach((x) => x.classList.remove('is-open'));
+      t.classList.add('is-open');
+      clearTimeout(openTimer);
+      openTimer = window.setTimeout(() => t.classList.remove('is-open'), 1600);
+    });
+
+    const dockMq = matchMedia('(min-width: 1000px)');
+    const syncDock = () => { host.inert = dockMq.matches && tocLinks.length > 0; };
+    dockMq.addEventListener('change', syncDock);
+    syncDock();
+
     const place = () => {
       const g = grid.getBoundingClientRect();
       marks_ = heads.map((h) => (h.getBoundingClientRect().top - g.top) / g.height);
       // A chapter that opens the text needs no notch at 0%.
-      ticks.forEach((t, i) => { t.style.left = `${(marks_[i]! * 100).toFixed(2)}%`; t.hidden = marks_[i]! < 0.02; });
+      ticks.forEach((t, i) => {
+        const m = marks_[i]!;
+        t.style.left = `${(m * 100).toFixed(2)}%`;
+        t.hidden = m < 0.02;
+        // Near either end a centred label would hang off the screen; those two anchor to
+        // the gutter they are nearest instead.
+        t.classList.toggle('at-start', m < 0.18);
+        t.classList.toggle('at-end', m > 0.82);
+      });
+      // The chapter numbers in the text walk the flag with the reader: the headings in
+      // the first third are amarillo, the middle azul, the last rojo. Fixed by position
+      // in the text, so a number never changes colour while it is on the screen.
+      heads.forEach((h, i) => {
+        const band = String(Math.min(2, Math.floor(marks_[i]! * 3)));
+        h.dataset.band = band;
+        ticks[i]!.dataset.band = band;
+        tocLinks[i]?.setAttribute('data-band', band);
+      });
       tocLinks.forEach((a, i) => { (a.parentElement as HTMLElement).style.top = `${(nodeAt(chapterNode(marks_[i]!)).y * 100).toFixed(2)}%`; });
       update();
     };

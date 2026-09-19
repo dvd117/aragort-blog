@@ -1,7 +1,6 @@
 ---
 title: "Entrada de prueba con En corto"
 description: "Entrada de prueba: resumen arriba del texto."
-hue: teal
 resumen:
   - "Primera idea de prueba."
   - "Segunda idea de prueba, un poco más larga para ver el corte."

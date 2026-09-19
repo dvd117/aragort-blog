@@ -89,9 +89,31 @@
 /* UI marks (dots, nodes, rails, progress, rules) need 3:1, not 4.5:1, so in the light
    themes they can be more saturated than the hue as text. Dark and contrast reuse the text hue. */
 :root { --hu-amarillo: var(--h-amarillo); --hu-azul: var(--h-azul); --hu-rojo: var(--h-rojo); }
-:root[data-theme="light"] { --hu-amarillo: #b8801b; --hu-azul: #2f6fc4; --hu-rojo: #cf4435; }
-:root[data-theme="sepia"] { --hu-azul: #2f6fc4; --hu-rojo: #cf4435; }
-@media (prefers-color-scheme: light) { :root:not([data-theme]) { --hu-amarillo: #b8801b; --hu-azul: #2f6fc4; --hu-rojo: #cf4435; } }
+:root[data-theme="light"] { --hu-amarillo: #a86f10; --hu-azul: #2464be; --hu-rojo: #c63a29; }
+:root[data-theme="sepia"] { --hu-azul: #2464be; --hu-rojo: #c63a29; }
+@media (prefers-color-scheme: light) { :root:not([data-theme]) { --hu-amarillo: #a86f10; --hu-azul: #2464be; --hu-rojo: #c63a29; } }
+
+/* The flag on the net, in two strengths.
+   --hr-*  the band at rest: the colour is there but held back, so three bands read as one
+           quiet drawing rather than as a flag painted on the screen.
+   --hl-*  the band with the power in it. Hovering an entry, or reading past a node, does
+           not change a band's colour any more -- it turns that band's own colour up.
+           Brighter than rest on a dark screen, darker than rest on paper, which is the
+           only way a colour gains presence in each. Light needs the bigger step: on
+           #f7f6f2 a mid-tone band all but disappears, which is what it was doing. */
+:root { --hr-amarillo: var(--h-amarillo); --hr-azul: var(--h-azul); --hr-rojo: var(--h-rojo);
+        --hl-amarillo: #ffc75e; --hl-azul: #93c2ff; --hl-rojo: #ff9182; --star: #ffffff; }
+:root[data-theme="light"] { --hr-amarillo: var(--hu-amarillo); --hr-azul: var(--hu-azul); --hr-rojo: var(--hu-rojo);
+        --hl-amarillo: #7a4a00; --hl-azul: #12408f; --hl-rojo: #9d1e12; --star: var(--hu-azul); }
+@media (prefers-color-scheme: light) { :root:not([data-theme]) { --hr-amarillo: var(--hu-amarillo); --hr-azul: var(--hu-azul); --hr-rojo: var(--hu-rojo);
+        --hl-amarillo: #7a4a00; --hl-azul: #12408f; --hl-rojo: #9d1e12; --star: var(--hu-azul); } }
+:root[data-theme="sepia"] { --hr-amarillo: var(--hu-amarillo); --hr-azul: var(--hu-azul); --hr-rojo: var(--hu-rojo);
+        --hl-amarillo: #6d4200; --hl-azul: #12408f; --hl-rojo: #9d1e12; --star: var(--hu-azul); }
+/* Alto contraste keeps its contract: nothing rests in colour, and the lit band is the
+   theme's own bright hue. */
+:root[data-theme="contrast"] { --hr-amarillo: var(--net); --hr-azul: var(--net); --hr-rojo: var(--net);
+        --hl-amarillo: var(--h-amarillo); --hl-azul: var(--h-azul); --hl-rojo: var(--h-rojo); --star: #ffffff; }
+
 :root, [data-hue="amarillo"] { --hue: var(--h-amarillo); --hue-band: var(--hb-amarillo); --hue-ui: var(--hu-amarillo); }
 [data-hue="azul"] { --hue: var(--h-azul); --hue-band: var(--hb-azul); --hue-ui: var(--hu-azul); }
 [data-hue="rojo"] { --hue: var(--h-rojo); --hue-band: var(--hb-rojo); --hue-ui: var(--hu-rojo); }
@@ -143,18 +165,60 @@ a { color: inherit; }
   transition: none !important; animation: none !important; scroll-behavior: auto !important;
 }
 
-/* The net, after Gego's Reticulárea: thin wires, hollow nodes, the ruling hue where lit.
-   Every net on the page -- header mark, hero, rail, portrait, footer mark -- lights in
-   `--hue-ui`, so they all change together and none of them is ever a colour of its own. */
+/* The net, after Gego's Reticulárea: thin wires, hollow nodes, the flag's three bands by
+   height. Every net on the page -- header mark, hero, rail, portrait, footer mark, the
+   signature -- carries the same three bands, so the flag is the site's identity at every
+   size rather than something only the big nets do. */
+/* Quién escribe: the same block ends the landing and every post -- the wordmark (the mark
+   beside David's name) over the sentence and the way through to "Sobre mí"
+   (Signature.astro). Only the landing's copy carries the thread down its left edge. */
+.who { position: relative; margin: 2.5rem 0 0; padding: 2rem 0 0 1.75rem; color: var(--fg-2); font-size: 1rem; line-height: 1.5; }
+.who-name { display: flex; align-items: center; gap: .75rem; margin: 0 0 .75rem; color: var(--fg); font-family: var(--display); font-weight: var(--display-weight); font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem); line-height: 1; letter-spacing: -.035em; }
+.who-name .net { flex: none; width: 52px; height: 39px; }
+.who p.who-text { margin: 0; max-width: 44rem; }
+.who a { color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
+.who a:hover { text-decoration-thickness: 2px; text-decoration-color: var(--hue); }
+.who-thread { margin-top: 0; }
+.who-thread::before { content: ""; position: absolute; left: 5px; top: 0; bottom: 0; width: 1px; background: var(--net); opacity: var(--net-alpha); }
+
 .net { display: block; overflow: visible; }
 .net line { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .net circle { fill: var(--bg); stroke: var(--net); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.net .on { stroke: var(--hue-ui); stroke-opacity: 1; }
-.net circle.on { fill: var(--hue-ui); }
+
+/* The flag on every net, from the 48px mark to the hero: three bands by height, amarillo
+   over azul over rojo. At rest the band holds its colour back (--hr-*); anything lit --
+   an entry's region on the landing, a node you have read past on the rail or the mark --
+   turns that band's own colour up (--hl-*) instead of repainting it in one ruling hue.
+   The light travels through the net and the flag gains power where it arrives. */
+.net[data-flag] line[data-band="0"], .net[data-flag] circle[data-band="0"] { stroke: var(--hr-amarillo); }
+.net[data-flag] line[data-band="1"], .net[data-flag] circle[data-band="1"] { stroke: var(--hr-azul); }
+.net[data-flag] line[data-band="2"], .net[data-flag] circle[data-band="2"] { stroke: var(--hr-rojo); }
+/* On paper a coloured hairline at half strength all but vanishes -- which is what the
+   bands were doing in the light themes. There they are drawn nearer full strength. */
+:root[data-theme="light"] .net[data-flag] line[data-band],
+:root[data-theme="sepia"] .net[data-flag] line[data-band] { stroke-opacity: .8; }
+@media (prefers-color-scheme: light) { :root:not([data-theme]) .net[data-flag] line[data-band] { stroke-opacity: .8; } }
+/* The rail: the flag is drawn but unpainted -- grey until reading reaches it. */
+.net[data-dim] line[data-band], .net[data-dim] circle[data-band] { stroke: var(--net); }
+/* The eight stars in the blue: a white core in the middle band, kept when lit -- what a
+   star gains is a brighter ring, never a filled-in centre.
+   On paper white is the page, so there the star fills in its own azul instead. Eight
+   solid points among hollow rings is the same reading; a white core would be nothing. */
+.net[data-flag] circle[data-star] { fill: var(--star); }
+
+.net :is(line, circle).on, .net :is(line, circle).path, .net :is(line, circle).p, .net :is(line, circle).glow { stroke: var(--hue-ui); stroke-opacity: 1; }
+.net circle:is(.on, .path, .p, .glow) { fill: var(--hue-ui); }
+.net[data-flag] :is(line, circle):is(.on, .path, .p, .glow)[data-band="0"] { stroke: var(--hl-amarillo); stroke-opacity: 1; }
+.net[data-flag] :is(line, circle):is(.on, .path, .p, .glow)[data-band="1"] { stroke: var(--hl-azul); stroke-opacity: 1; }
+.net[data-flag] :is(line, circle):is(.on, .path, .p, .glow)[data-band="2"] { stroke: var(--hl-rojo); stroke-opacity: 1; }
+.net[data-flag] circle:is(.on, .path, .p, .glow)[data-band="0"] { fill: var(--hl-amarillo); }
+.net[data-flag] circle:is(.on, .path, .p, .glow)[data-band="1"] { fill: var(--hl-azul); }
+.net[data-flag] circle:is(.on, .path, .p, .glow)[data-band="2"] { fill: var(--hl-rojo); }
+.net[data-flag] circle[data-star]:is(.on, .path, .p, .glow) { fill: var(--star); }
+
 .net.live line, .net.live circle { transition: stroke 140ms ease, fill 140ms ease, stroke-opacity 140ms ease; }
-/* The net answers (netlive.ts): a node glows in the ruling hue and fades over 600ms. */
-.net .glow { stroke: var(--hue-ui); stroke-opacity: 1; transition-duration: 80ms; }
-.net circle.glow { fill: var(--hue-ui); }
+/* The net answers (netlive.ts): a node glows in its band and fades over 600ms. */
+.net .glow { transition-duration: 80ms; }
 .net[data-respond] line, .net[data-respond] circle { transition: stroke 600ms ease, fill 600ms ease, stroke-opacity 600ms ease; }
 .net[data-respond] .glow { transition-duration: 80ms; } /* in fast, out over 600ms */
 
@@ -162,8 +226,8 @@ a { color: inherit; }
    - index <-> post: the entry's title and hue dot become the post's title and dot;
    - the index's hero net shrinks into the header mark (and grows back); on desktop posts
      it becomes the rail instead (netmorph.ts);
-   - "Escritos" <-> "Sobre mí": the page title morphs, and the nav's raised tab slides
-     from one to the other (it is the group named nav-current);
+   - "Escritos" <-> "Sobre mí": the page title morphs; the nav's raised tab does not
+     travel -- it swaps like the post's Formato/Markdown toggle;
    - every page rises 6px over the old one, which stays solid.
    All between 120 and 320ms, and none of it under reduced motion. */
 @view-transition { navigation: auto; }
@@ -172,7 +236,6 @@ a { color: inherit; }
    sequence: the old wrap fades out in the first 40%, the new wrap in over the last 60%. */
 ::view-transition-group(*) { animation-duration: 300ms; animation-timing-function: cubic-bezier(.2, 0, 0, 1); }
 ::view-transition-group(net) { animation-duration: 320ms; }
-::view-transition-group(nav-current) { animation-duration: 240ms; }
 ::view-transition-old(root) { animation: none; }
 ::view-transition-new(root) { animation: 200ms cubic-bezier(.2, 0, 0, 1) both vt-rise-in; }
 ::view-transition-old(*.title) { animation: 120ms linear both vt-out; }
@@ -193,8 +256,32 @@ a { color: inherit; }
 .to-top[hidden] { display: none; }
 main:focus { outline: none; }
 
-/* Chapter notches on the header's progress line (drawn by reading.ts). */
-.site .ticks { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; }
-.site .ticks i { position: absolute; top: -3px; width: 2px; height: 8px; margin-left: -1px; background: var(--fg-2); border-radius: 1px; }
+/* The chapters on the header's progress line (built by reading.ts). On a phone this is
+   the rail's dock: each notch is a tap target that takes you to its chapter, and a press
+   or a hover opens the number and the title under the line. On desktop the rail already
+   carries the dock, so here the notches go back to being notches. */
+.site .ticks { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; z-index: 2; }
+.site .tick { position: absolute; top: -4px; width: 40px; height: 30px; margin-left: -20px; pointer-events: auto; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.site .tick i { position: absolute; left: 50%; top: 1px; width: 2px; height: 8px; margin-left: -1px; background: var(--fg-2); border-radius: 1px; transition: background-color 140ms ease, height 140ms ease; }
+.site .tick.past i { background: var(--hue-ui); }
+.site .tick[hidden] { display: none; }
+/* The label: number and title, under the line, in the panel's chrome so it reads as a
+   thing that opened rather than as text lying on the page. */
+.site .tick .tt { position: absolute; top: 15px; left: 50%; transform: translateX(-50%) translateY(-4px); display: flex; align-items: baseline; gap: .4rem; max-width: min(17rem, 72vw); padding: .4rem .65rem; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--fg); font: 500 .8125rem/1.2 var(--ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; pointer-events: none; transition: opacity 140ms ease, transform 140ms cubic-bezier(.2, 0, 0, 1); }
+.site .tick[data-band="0"] { --hue: var(--h-amarillo); --hue-ui: var(--hu-amarillo); }
+.site .tick[data-band="1"] { --hue: var(--h-azul); --hue-ui: var(--hu-azul); }
+.site .tick[data-band="2"] { --hue: var(--h-rojo); --hue-ui: var(--hu-rojo); }
+.site .tick .tt b { flex: none; font: 600 .75rem/1.2 var(--mono); color: var(--hue); }
+.site .tick:hover .tt, .site .tick:focus-visible .tt, .site .tick.is-open .tt { opacity: 1; transform: translateX(-50%) translateY(0); }
+.site .tick:hover i, .site .tick:focus-visible i, .site .tick.is-open i { background: var(--hue-ui); height: 11px; }
+/* The first and last chapters would push their label off the screen if it stayed centred. */
+.site .tick.at-start .tt { left: var(--gutter); transform: translateX(0) translateY(-4px); }
+.site .tick.at-start:hover .tt, .site .tick.at-start:focus-visible .tt, .site .tick.at-start.is-open .tt { transform: translateX(0) translateY(0); }
+.site .tick.at-end .tt { left: auto; right: var(--gutter); transform: translateX(0) translateY(-4px); }
+.site .tick.at-end:hover .tt, .site .tick.at-end:focus-visible .tt, .site .tick.at-end.is-open .tt { transform: translateX(0) translateY(0); }
+/* Desktop keeps the rail's dock; up here the notches are read-only again. */
+@media (min-width: 1000px) {
+  .site .tick { pointer-events: none; width: 2px; margin-left: -1px; height: 8px; top: -3px; }
+  .site .tick .tt { display: none; }
+}
 .site .mark.vt-net { view-transition-name: net; }
-.site .ticks i.past { background: var(--hue-ui); }

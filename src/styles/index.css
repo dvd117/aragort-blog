@@ -49,12 +49,15 @@
 .tag { font-size: .875rem; color: var(--fg-2); }
 .empty { font-family: var(--read); font-size: 1.125rem; color: var(--fg-2); }
 
-/* Lit: the net path, the wire and the thread segment, in the entry's hue. */
-.net-wrap .net .path { stroke: var(--hue-ui); stroke-opacity: 1; transition: stroke 120ms ease, fill 120ms ease; transition-delay: calc(var(--i, 0) * 30ms); }
-.net-wrap .net circle.path { fill: var(--hue-ui); }
+/* Lit: the net's own bands gain power where the route reaches them (colours in
+   global.css); here they only get the order they arrive in -- one node after another,
+   30ms apart, so the light reads as travelling rather than switching on.
+   The wire and the thread segment are the one line that belongs to a single entry, so
+   they are drawn in that entry's hue (--trail, set by netnav.ts). */
+.net-wrap .net .path { stroke-opacity: 1; transition: stroke 120ms ease, fill 120ms ease, stroke-opacity 120ms ease; transition-delay: calc(var(--i, 0) * 30ms); }
 .wire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
 .wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
-.wire .lit { fill: none; stroke: var(--hue-ui); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset 220ms cubic-bezier(.2, 0, 0, 1); }
+.wire .lit { fill: none; stroke: var(--trail, var(--hue-ui)); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset 220ms cubic-bezier(.2, 0, 0, 1); }
 
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */
@@ -71,8 +74,11 @@
      the box to the list instead would leave a gap between it and everything else. */
   .filter { margin-bottom: 1.5rem; }
   .node { left: calc(-2.25rem + 5.5px - 6px); }
-  .entry { grid-template-columns: 13rem 1fr; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
-  .entry .ex, .entry .tag { grid-column: 2; }
+  /* Date | text | "Leer". The third track is only as wide as "Leer * N min", so the text
+     keeps the room it had and the link fills the band that used to sit empty beside the
+     bullets. */
+  .entry { grid-template-columns: 13rem minmax(0, 1fr) auto; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
+  .entry .t, .entry .ex, .entry .tag { grid-column: 2 / -1; }
   .entry .t { font-size: clamp(1.9rem, 3.2vw, 2.9rem); }
 }
 
@@ -85,21 +91,29 @@
 .teaser li::marker { color: var(--hue-ui); }
 .more { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; margin-top: .8rem; font: 600 1rem/1 var(--ui); color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .22em; }
 .more:hover { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
-/* Quién escribe: the mark beside its sentence; the thread runs past it, down to the footer mark. */
+/* Quién escribe on the landing: the thread runs past it, down to the footer mark. The
+   block itself is shared with the post (Signature.astro, styled in global.css). */
 .index:has(.who) .entries::before { bottom: 0; }
-.who { position: relative; display: flex; gap: 1rem; align-items: flex-start; margin: 0; padding: 2rem 0 0 1.75rem; color: var(--fg-2); font-size: 1rem; line-height: 1.5; }
-.who::before { content: ""; position: absolute; left: 5px; top: 0; bottom: 0; width: 1px; background: var(--net); opacity: var(--net-alpha); }
-.who .net { flex: none; width: 42px; height: 31.5px; margin-top: .15rem; }
-.who p { margin: 0; max-width: 44rem; }
-.who a { color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
 /* The thread ends at the footer mark's top-left node. */
 body:has(.index .who) .site-foot { position: relative; }
 /* Down to the mark's top-left node: the footer's padding, the mark's offset inside its
    row (centred in --foot-row), and the node's own 2.4px inside the 29px mark. */
 body:has(.index .who) .site-foot::before { content: ""; position: absolute; left: calc(var(--gutter) + 5px); top: 0; height: calc(4rem + (var(--foot-row) - 29px) / 2 + 2.4px); width: 1px; background: var(--net); opacity: var(--net-alpha); }
 body:has(.index .who) .site-foot .net { margin-left: 3.1px; }
+/* Wide enough for two: the bullets keep their measure and "Leer" sits out at the right,
+   on the first bullet's baseline, instead of stacking under a half-empty row. Below this
+   there is no room for a second column and it goes back under the list. */
+@media (min-width: 700px) {
+  .entry.feature .teaser { grid-column: 2; }
+  .entry.feature .more { grid-column: 3; justify-self: end; margin-top: .9rem; }
+}
+@media (min-width: 700px) and (max-width: 899px) {
+  .entry.feature { grid-template-columns: minmax(0, 1fr) auto; column-gap: 2rem; align-items: baseline; }
+  .entry.feature .d, .entry.feature .t, .entry.feature .ex, .entry.feature .tag { grid-column: 1 / -1; }
+  .entry.feature .teaser { grid-column: 1; }
+  .entry.feature .more { grid-column: 2; }
+}
 @media (min-width: 900px) {
-  .entry.feature .teaser, .entry.feature .more { grid-column: 2; }
   .who { padding-left: calc(13rem + 2rem + 2.25rem); }
 }
 

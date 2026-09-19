@@ -2,7 +2,6 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { parsePostFilename } from './lib/posts';
-import { HUES } from './lib/hue';
 
 const posts = defineCollection({
   loader: glob({
@@ -19,7 +18,6 @@ const posts = defineCollection({
     title: z.string().min(1),
     description: z.string().optional(),
     draft: z.boolean().optional(),
-    hue: z.enum(HUES).optional(),
     /** "En corto": two or three short lines shown under the title. */
     resumen: z.array(z.string().min(1)).min(1).max(5).optional(),
   }),

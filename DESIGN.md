@@ -199,8 +199,13 @@ decoration that means nothing.
   node take the ruling hue like everything else.
 - **The three post hues are the flag's**, in the order they appear on it: amarillo, azul,
   rojo, muted to the page. A quiet reference, not a flag drawn on the screen. Each belongs
-  to one post, set in frontmatter or hashed from the slug. A hue colours its post's rail, progress line,
+  to one post by its place in the list. A hue colours its post's rail, progress line,
   footnote markers, note edge, links, chapter numbers and the dot beside its date.
+- **The big nets are drawn as the flag.** The hero (landing and Sobre mí portrait) takes
+  its resting colour in three bands by height -- amarillo over azul over rojo, each node
+  and wire in the band its midpoint falls in. The small marks do not: three bands in 48px
+  would be mush, so they keep the ruling hue. Anything lit still goes to the ruling hue, so
+  the trail reads on top of the bands instead of dissolving into them.
 - **One hue rules the page at a time.** The hue lives on `<html>`, so everything on the
   page shares it -- links, dots, rules, and every net on the page: header mark, hero,
   rail, portrait, footer mark. No page ever shows two hues, and no mark keeps a colour of
@@ -208,8 +213,10 @@ decoration that means nothing.
   cursor, so a post's colour is hidden until you reach for it and then takes the whole
   page. On the landing and Sobre mí before any hover it is the hue of the last post read
   on this device, so leaving a post does not lose its colour.
-- **The order never shuffles.** A post's hue is fixed at build time and stays put: the
-  flag's order is the point, so there is nothing to randomise.
+- **The order never shuffles.** Down the list the hues run amarillo -> azul -> rojo ->
+  amarillo, by position: the newest post is amarillo, the one under it azul, then rojo, and
+  round again. Nothing is hashed and nothing is rolled -- the flag's order is the point, so
+  there is nothing to randomise. It is fixed at build time, so it works with JS off.
 - **Colour means something.** Colour on the letters means clickable: links are set in the
   hue with a faint hue underline that goes solid and 2px on hover. Colour behind the
   letters means emphasis: bold keeps its hue band, text in `fg`. In Alto contraste bold is
@@ -241,7 +248,8 @@ decoration that means nothing.
 - **Layout by shape, not width.** Short landscape (height ≤ 500px) gets a compact
   two-column composition: title left, net contained right, never bleeding past the list.
 - **Header:** 58px with a 42px mark on desktop, 56px with a 38px mark on a phone. Reading a
-  post on a phone: mark · title and time left · Aa. No nav links while reading.
+  post on a phone: mark · title and time left · Sobre mí · Aa. The nav is one short pill
+  now, so it stays while reading -- it is the only way to "Sobre mí" from a post.
 - **Landing, phone:** the net bleeds off the right edge behind the title; a wire leaves
   its exit node and becomes the thread down the left gutter; each entry hangs on the
   thread by its hue node.
@@ -264,10 +272,23 @@ decoration that means nothing.
   a dock: each number grows into a pill with its title, the ones near the pointer magnified. From 1100px, footnotes
   move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
 - **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
-  sticky on the left and the thread runs on the right.
-- **Nav:** a segmented control, the same shape as the post's Formato/Markdown toggle -- one
-  pill on a panel, the current page raised. Moving between the two slides the raised tab
-  across, carried by the page transition rather than by script.
+  sticky on the left and the thread runs on the right. The same content is also the panel
+  the header opens (below); in the panel it stays one column at every width.
+- **Nav:** one item. The post's Formato/Markdown toggle with a single segment -- a pill on
+  a panel that raises while "Sobre mí" is open or is the page you are on, with no
+  transition: it swaps the way the toggle's buttons do, at once. "Escritos" is gone from
+  here; the wordmark is already the way home, and on the landing the tab only repeated the
+  title under it.
+- **"Sobre mí" is a panel, not a departure.** It slides in from the left over what you are
+  reading -- a column at 30rem on desktop, the whole screen as a sheet under 600px -- so
+  one press of "Volver" puts you back on the same line instead of costing a page load. The
+  URL never changes: the panel is a view of this page, not a place. It is a `<dialog>`, so
+  Escape, the focus trap and the backdrop are the browser's; Back closes it too. Without JS
+  the header's link goes to /sobre-mi/, which is still a real page for direct links,
+  sharing and search.
+- **Quién escribe:** one block ends both the landing and every post -- the mark beside
+  David's own sentence and the way through to "Sobre mí". The post's one-line signature is
+  gone; the two pages end the same way.
 - **Footer:** the mark, "David Aragort" and three icon links, all on one centre line (the
   mark sits in a box the height of an icon link and pinned to the top of the row, so the
   landing's thread always meets its top-left node in the same place) — GitHub (the source of this
@@ -290,9 +311,9 @@ below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir mov
 - **Between pages:** cross-document View Transitions, CSS only. An index title becomes the
   post title; titles hand over in sequence (old out in the first 40%, new in over the last
   60%) so two line breaks never overlap. The old page stays opaque while the new one fades
-  in on top (200ms, 6px rise). Escritos and Sobre mí morph into each other, and the nav's
-  raised tab slides between them (240ms) rather than snapping. Same-origin
-  pages are prerendered on hover or focus.
+  in on top (200ms, 6px rise). The nav's raised tab does not travel between pages -- it
+  swaps like the Formato/Markdown toggle. Same-origin pages are prerendered on hover or
+  focus.
 - **The net becomes the rail:** on desktop the hero's nodes glide into the post's rail
   (~450ms; each rail node starts from the hero node at the same place in reading order). On a phone the
   hero shrinks into the header mark.
@@ -334,8 +355,8 @@ below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir mov
 4. **The net only came alive on hover:** it drifts and answers everyone (`netlive.ts`).
 5. **The landing felt empty with one post:** it features the latest post under three
    (`index.astro`).
-6. **The phone header was loaded while reading:** the nav steps aside while reading
-   (`Header.astro`).
+6. **The phone header was loaded while reading:** the nav was two items competing with the
+   post title; it is one now and fits (`Header.astro`).
 
 ## Motion (rule)
 

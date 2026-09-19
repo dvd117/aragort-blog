@@ -6,10 +6,10 @@
  */
 import { reduced } from './motion';
 
-export function initAbout(): void {
-  const thread = document.querySelector<HTMLElement>('[data-about-thread]');
-  const items = [...document.querySelectorAll<HTMLElement>('.node-item')];
-  const portrait = document.querySelector<HTMLElement>('.portrait-net');
+export function initAbout(root: ParentNode = document): void {
+  const thread = root.querySelector<HTMLElement>('[data-about-thread]');
+  const items = [...root.querySelectorAll<HTMLElement>('.about-node-item')];
+  const portrait = root.querySelector<HTMLElement>('.portrait-net');
   if (!thread || items.length === 0) return;
 
   // Portrait: light the path from the net's lit node to the exit node.
@@ -31,7 +31,7 @@ export function initAbout(): void {
 
   const grow = () => {
     const lit = items.filter((i) => i.classList.contains('is-lit'));
-    const last = lit.at(-1)?.querySelector<HTMLElement>('.node');
+    const last = lit.at(-1)?.querySelector<HTMLElement>('.about-node');
     if (!last) { thread.style.setProperty('--lit', '0px'); return; }
     const t = thread.getBoundingClientRect();
     const n = last.getBoundingClientRect();
@@ -48,7 +48,7 @@ export function initAbout(): void {
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-lit'); io.unobserve(e.target); }
     grow();
-  }, { rootMargin: '0px 0px -30% 0px' });
+  }, { root: root instanceof Element ? root.querySelector('.drawer-body') : null, rootMargin: '0px 0px -30% 0px' });
   items.forEach((i) => io.observe(i));
   addEventListener('resize', grow);
 }

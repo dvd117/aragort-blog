@@ -1,10 +1,10 @@
 /**
  * Which hue rules a page.
  *
- * Every post owns one of the flag's three, fixed at build time (frontmatter, or hashed
- * from the slug) and never shuffled: the order is the flag's and it stays put. The hue
- * lives on `<html data-hue>`, which is what every stylesheet reads, so one colour rules
- * the whole page at a time.
+ * Every post owns one of the flag's three, fixed at build time by its place in the list
+ * (see hue.ts) and never shuffled: the order is the flag's and it stays put. The hue lives
+ * on `<html data-hue>`, which is what every stylesheet reads, so one colour rules the whole
+ * page at a time.
  *
  * A page with no post of its own (the landing, "Sobre mí") takes the hue of the last post
  * read on this device, so leaving a post and coming back to the landing keeps its colour.
