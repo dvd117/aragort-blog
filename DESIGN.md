@@ -194,17 +194,25 @@ decoration that means nothing.
   dark), then dark. The base CSS is dark. Dark is OLED black (`#000`), with reading text
   at `#cfccc4` against halation; panels (`#101113`) and rules (`#24272c`) still separate
   from black. "Sistema" is the first option in Ajustes.
-- **Ochre** is the brand: the wordmark node, the focus ring and global UI marks. It is
-  also the hue the site falls back to before any post has been read.
+- **Ochre** is the focus ring and the favicon, and the hue the order starts from before
+  it is rolled. It is no longer a fixed brand colour on the page: the wordmark node and
+  every other lit node take the ruling hue like everything else.
 - **The five post hues** (ochre, teal, brick, sky, moss) each belong to one post, set in
   frontmatter or hashed from the slug. A hue colours its post's rail, progress line,
   footnote markers, note edge, links, chapter numbers and the dot beside its date.
 - **One hue rules the page at a time.** The hue lives on `<html>`, so everything on the
-  page shares it: no page ever shows five hues at once. On a post it is the post's own.
-  On the landing it follows the entry under the cursor, and every entry, node, link and
-  lit wire moves with it. On the landing and Sobre mí before any hover it is the hue of
-  the last post read on this device (`src/lib/lasthue.ts`, applied before first paint);
-  ochre until there is one.
+  page shares it -- links, dots, rules, and every net on the page: header mark, hero,
+  rail, portrait, footer mark. No page ever shows two hues, and no mark keeps a colour of
+  its own. On a post it is the post's. On the landing it follows the entry under the
+  cursor, so a post's colour is hidden until you reach for it and then takes the whole
+  page. On the landing and Sobre mí before any hover it is the hue of the last post read
+  on this device, so leaving a post does not lose its colour.
+- **The starting point rolls each visit.** A post's hue in the frontmatter or from its
+  slug is a *base*. What a visitor sees is that base moved forward by one offset, drawn
+  once per visit and kept for the tab: the five keep their order, only where the order
+  begins moves. The same post is teal one visit and sky the next, while two posts that
+  were neighbours still are. Base on `<html data-hue-base>`, rolled hue on `data-hue`;
+  both written by one inline script before first paint (`src/lib/lasthue.ts`).
 - **Colour means something.** Colour on the letters means clickable: links are set in the
   hue with a faint hue underline that goes solid and 2px on hover. Colour behind the
   letters means emphasis: bold keeps its hue band, text in `fg`. In Alto contraste bold is
@@ -240,6 +248,11 @@ decoration that means nothing.
 - **Landing, phone:** the net bleeds off the right edge behind the title; a wire leaves
   its exit node and becomes the thread down the left gutter; each entry hangs on the
   thread by its hue node.
+- **Filtrar escritos:** one box between the hero and the list, on the thread's left edge.
+  It narrows the list as you type over what the landing already shows -- title,
+  description, En corto and the date -- accent- and case-insensitive, so "deje" finds
+  "dejé". It is built by `src/scripts/filter.ts`, so it is never there without the JS to
+  drive it, and Escape clears it. No search index is shipped; post bodies are not searched.
 - **Landing, desktop (≥900px):** two columns, the title and lede on the left (as wide as
   they need) and the net taking the rest of the width on the right, at fuller strength.
 - **Every post is expanded on the landing:** date, near-display title, description, its
