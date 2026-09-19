@@ -177,16 +177,16 @@
 .toc li::marker { color: var(--hue-ui); font-variant-numeric: tabular-nums; }
 .toc a { color: var(--fg); text-decoration: none; }
 .toc a:hover { text-decoration: underline; text-decoration-color: var(--hue); }
-/* The text walks the flag with the reader. Every top-level block of the prose is given
-   the band of the third it sits in (reading.ts), and everything coloured inside it
-   follows: links, the bold band, the pull quote, list markers, note rules, the chapter
-   number in the margin -- and the rail's dock and the header's notch for that chapter.
-   The band is the block's, so a paragraph is one colour from its first word to its last
-   and the change always falls at a paragraph seam. It is set on layout, never on scroll:
-   nothing recolours while you are reading it. */
-.prose > [data-band="0"], .rail-toc a[data-band="0"] { --hue: var(--h-amarillo); --hue-band: var(--hb-amarillo); --hue-ui: var(--hu-amarillo); }
-.prose > [data-band="1"], .rail-toc a[data-band="1"] { --hue: var(--h-azul); --hue-band: var(--hb-azul); --hue-ui: var(--hu-azul); }
-.prose > [data-band="2"], .rail-toc a[data-band="2"] { --hue: var(--h-rojo); --hue-band: var(--hb-rojo); --hue-ui: var(--hu-rojo); }
+/* The flag stays on the drawing, not on the text. The prose blocks still carry their
+   band (reading.ts sets it, and the rail's dock and the header's notches read it), but
+   everything coloured inside the text -- links, the bold band, the pull quote, list
+   markers, note rules, the chapter number -- is the post's one hue from the first word to
+   the last. Three colours walking down a paragraph made the reading column restless: the
+   reader kept noticing the colour changing rather than the text it was on. The net, the
+   rail and the progress line carry the flag; the text carries the post. */
+.rail-toc a[data-band="0"] { --hue: var(--h-amarillo); --hue-band: var(--hb-amarillo); --hue-ui: var(--hu-amarillo); }
+.rail-toc a[data-band="1"] { --hue: var(--h-azul); --hue-band: var(--hb-azul); --hue-ui: var(--hu-azul); }
+.rail-toc a[data-band="2"] { --hue: var(--h-rojo); --hue-band: var(--hb-rojo); --hue-ui: var(--hu-rojo); }
 /* ## chapters. */
 .prose h2 { font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.45em; line-height: 1.12; color: var(--fg); margin: 2.2em 0 .7em; scroll-margin-top: 80px; }
 /* Chapter numbers: 01, 02… in the hue. The number is decoration: hidden from screen readers. */
