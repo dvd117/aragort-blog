@@ -39,6 +39,8 @@
 .entries { position: relative; list-style: none; margin: 0; padding: 0 0 0 1.75rem; }
 .entries::before { content: ""; position: absolute; left: 5px; top: 0; bottom: 1.2rem; width: 1px; background: var(--net); opacity: var(--net-alpha); }
 .entry { position: relative; display: grid; gap: .2rem; padding: .85rem 0 1.25rem; }
+/* Buscar hides an entry with [hidden]; .entry sets display, so say it again louder. */
+.entry[hidden] { display: none; }
 /* The node sits on the thread, centred on its date line. */
 .node { position: absolute; left: calc(-1.75rem + 5.5px - 6px); top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; background: var(--hue-ui); box-shadow: 0 0 0 3px var(--bg); }
 .entry .d { position: relative; font-size: .875rem; color: var(--fg-2); margin: 0; line-height: 1.4; }
