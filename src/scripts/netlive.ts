@@ -1,11 +1,15 @@
 /**
  * The net, alive (DESIGN.md, "Motion"). Every .net on the page drifts in 3D: each node
  * has a fixed depth, the net turns a few degrees, and a gentle perspective moves near
- * nodes more than far ones. The cursor (desktop) or the scroll (phone) tilts it. Nets
- * with data-respond (hero, portrait) also answer: the node under the cursor glows, a tap
- * sends a pulse, and the first page of a session opens with one pulse from the ochre
- * node. One rAF loop per page at 30fps, stopped off screen, in a hidden tab and under
- * reduced motion. On posts the amplitude is halved and the net holds still while you scroll.
+ * nodes more than far ones. On top of the drift each node hangs on a spring, so every
+ * force moves it with inertia:
+ * - gravity: the cursor (desktop) or a finger on the net (phone) pulls nearby nodes in;
+ * - a click or a tap sends a ring outward from that point, and the nodes spring back;
+ * - on a phone, scrolling swings the net against its motion (near nodes more), then it settles.
+ * Nets with data-respond (hero, portrait) also glow under the cursor, and the first page
+ * of a session opens with one pulse from the ochre node. One rAF loop per page at 30fps,
+ * stopped off screen, in a hidden tab and under reduced motion. On posts the amplitude
+ * is halved and the net holds still while you scroll.
  */
 import { reduced } from './motion';
 
@@ -13,6 +17,7 @@ type Pt = [number, number];
 interface Live {
   svg: SVGSVGElement; w: number; h: number;
   base: Pt[]; rest: Pt[]; z: number[];
+  pos: Pt[]; vel: Pt[];
   circles: SVGCircleElement[];
   lines: { el: SVGLineElement; a: number; b: number }[];
   adj: number[][];
@@ -23,6 +28,16 @@ interface Live {
 const FRAME = 1000 / 30;
 const PERIOD_A = 19000, PERIOD_B = 23000;
 const MAX_DEG = 2.5, TILT_DEG = 1;
+// Springs, per 30fps frame: a little overshoot, settled in about a second.
+const K = 0.16, DAMP = 0.26;
+// Gravity: nodes within PULL_R px lean toward the pointer, up to PULL_MAX px.
+const PULL_R = 160, PULL_MAX = 20;
+// The ring: pushes nodes within RING_R px outward, travelling at RING_SPEED px/ms.
+const RING_R = 280, RING_KICK = 9, RING_SPEED = 0.9;
+// Scroll swing (phone): px of kick per px scrolled, and its cap per frame.
+const SWING = 0.05, SWING_MAX = 6;
+// Nothing strays further than this from where the drift puts it.
+const MAX_OFF = 30;
 const SESSION_KEY = 'aragort-net-pulsed';
 const rad = (d: number) => (d * Math.PI) / 180;
 const depth = (i: number) => ((Math.imul(i + 1, 2654435761) >>> 0) % 1000) / 500 - 1;
@@ -32,6 +47,8 @@ const nets: Live[] = [];
 let amp = 1, onPost = false;
 let tiltX = 0, tiltY = 0, targetX = 0, targetY = 0;
 let clock = 0, last = 0, lastScroll = -Infinity, scheduled = false;
+let pointer: { x: number; y: number } | null = null;
+const kicks: { n: Live; i: number; at: number; v: Pt }[] = [];
 const timers = new Map<Element, number>();
 
 function angles(t: number): [number, number] {
@@ -70,6 +87,12 @@ function draw(n: Live, pts: Pt[]): void {
   }
 }
 
+/** Screen px per viewBox unit, and the inverse screen transform. */
+function scale(n: Live): { px: number; inv: DOMMatrix } | null {
+  const m = n.svg.getScreenCTM();
+  return m ? { px: Math.hypot(m.a, m.b) || 1, inv: m.inverse() } : null;
+}
+
 function register(svg: SVGSVGElement): Live {
   const vb = svg.viewBox.baseVal;
   const circles = [...svg.querySelectorAll<SVGCircleElement>('circle')];
@@ -78,7 +101,9 @@ function register(svg: SVGSVGElement): Live {
   const adj: number[][] = base.map(() => []);
   for (const { a, b } of lines) { adj[a]?.push(b); adj[b]?.push(a); }
   const n: Live = {
-    svg, w: vb.width, h: vb.height, base, rest: [], z: base.map((_, i) => depth(i)), circles, lines, adj,
+    svg, w: vb.width, h: vb.height, base, rest: [], z: base.map((_, i) => depth(i)),
+    pos: base.map(([x, y]) => [x, y]), vel: base.map(() => [0, 0]),
+    circles, lines, adj,
     pinned: new Set((svg.dataset.pin ?? '').split(',').filter(Boolean).map(Number)),
     responsive: svg.hasAttribute('data-respond'), visible: false,
   };
@@ -90,9 +115,43 @@ function register(svg: SVGSVGElement): Live {
 const shouldRun = () => !reduced() && !document.hidden && nets.some((n) => n.visible);
 function schedule(): void { if (!scheduled) { scheduled = true; requestAnimationFrame(frame); } }
 
+/** One spring step for one net: pull toward the drift target plus the pointer's gravity. */
+function step(n: Live, target: Pt[], now: number): void {
+  const s = pointer ? scale(n) : null;
+  const p = s && pointer ? new DOMPoint(pointer.x, pointer.y).matrixTransform(s.inv) : null;
+  const R = s ? PULL_R / s.px : 0, maxPull = s ? (PULL_MAX * amp) / s.px : 0, cap = MAX_OFF / (s?.px ?? scale(n)?.px ?? 1);
+  for (let i = 0; i < n.pos.length; i++) {
+    if (n.pinned.has(i)) { n.pos[i] = [...n.base[i]!]; n.vel[i] = [0, 0]; continue; }
+    let [tx, ty] = target[i]!;
+    const [x, y] = n.pos[i]!;
+    if (p) {
+      const dx = p.x - x, dy = p.y - y, d = Math.hypot(dx, dy);
+      if (d > 0.01 && d < R) { const f = Math.min(d, maxPull * (1 - d / R) ** 2) / d; tx += dx * f; ty += dy * f; }
+    }
+    const v = n.vel[i]!;
+    v[0] += K * (tx - x) - DAMP * v[0];
+    v[1] += K * (ty - y) - DAMP * v[1];
+    let nx = x + v[0], ny = y + v[1];
+    const ox = nx - target[i]![0], oy = ny - target[i]![1], o = Math.hypot(ox, oy);
+    if (o > cap) { nx = target[i]![0] + (ox * cap) / o; ny = target[i]![1] + (oy * cap) / o; }
+    n.pos[i] = [nx, ny];
+  }
+  // Ring kicks whose moment has come.
+  for (let k = kicks.length - 1; k >= 0; k--) {
+    const kick = kicks[k]!;
+    if (kick.n !== n || kick.at > now) continue;
+    const v = n.vel[kick.i]!; v[0] += kick.v[0]; v[1] += kick.v[1];
+    kicks.splice(k, 1);
+  }
+}
+
 function frame(now: number): void {
   scheduled = false;
-  if (!shouldRun()) { if (reduced()) nets.forEach((n) => { n.morph = undefined; draw(n, n.base); }); return; }
+  if (!shouldRun()) {
+    if (reduced()) nets.forEach((n) => { n.morph = undefined; n.pos = n.base.map(([x, y]) => [x, y]); n.vel = n.base.map(() => [0, 0]); draw(n, n.base); });
+    kicks.length = 0;
+    return;
+  }
   schedule();
   if (now - last < FRAME) return;
   const dt = Math.min(100, now - last);
@@ -103,13 +162,14 @@ function frame(now: number): void {
   tiltY += (targetY - tiltY) * 0.08;
   for (const n of nets) {
     if (!n.visible || (frozen && !n.morph)) continue;
-    let pts = positions(n, clock);
+    const target = positions(n, clock);
     if (n.morph) {
       const k = Math.min(1, (now - n.morph.start) / n.morph.ms), e = ease(k), from = n.morph.from;
-      pts = pts.map(([x, y], i) => [from[i]![0] + (x - from[i]![0]) * e, from[i]![1] + (y - from[i]![1]) * e]);
+      n.pos = target.map(([x, y], i) => [from[i]![0] + (x - from[i]![0]) * e, from[i]![1] + (y - from[i]![1]) * e]);
+      n.vel = n.base.map(() => [0, 0]);
       if (k >= 1) n.morph = undefined;
-    }
-    draw(n, pts);
+    } else step(n, target, now);
+    draw(n, n.pos);
   }
 }
 
@@ -124,7 +184,7 @@ function glow(n: Live, i: number): void {
   }
 }
 
-/** A pulse: the node, then its neighbours, two more hops out, 90ms apart. */
+/** A pulse of light: the node, then its neighbours, two more hops out, 90ms apart. */
 function pulse(n: Live, start: number, hops = 3): void {
   let ring = [start];
   const seen = new Set(ring);
@@ -133,6 +193,25 @@ function pulse(n: Live, start: number, hops = 3): void {
     setTimeout(() => now.forEach((i) => glow(n, i)), h * 90);
     ring = now.flatMap((i) => n.adj[i]!).filter((j) => !seen.has(j) && (seen.add(j), true));
   }
+}
+
+/** A ring of motion from a screen point: nodes are pushed outward as it reaches them. */
+function ring(x: number, y: number): void {
+  const now = performance.now();
+  for (const n of nets) {
+    if (!n.visible) continue;
+    const s = scale(n);
+    if (!s) continue;
+    const p = new DOMPoint(x, y).matrixTransform(s.inv);
+    n.pos.forEach(([nx, ny], i) => {
+      if (n.pinned.has(i)) return;
+      const dx = nx - p.x, dy = ny - p.y, d = Math.hypot(dx, dy) * s.px;
+      if (d >= RING_R || d < 0.5) return;
+      const kick = (RING_KICK * amp * (1 - d / RING_R)) / s.px;
+      kicks.push({ n, i, at: now + d / RING_SPEED, v: [(dx / Math.hypot(dx, dy)) * kick, (dy / Math.hypot(dx, dy)) * kick] });
+    });
+  }
+  schedule();
 }
 
 /** The node nearest a screen point, within maxPx, or -1. */
@@ -147,6 +226,13 @@ function nearest(n: Live, x: number, y: number, maxPx: number): number {
   });
   return best;
 }
+
+/** Is a screen point on (or within reach of) any visible net? */
+const nearNet = (x: number, y: number, pad: number) => nets.some((n) => {
+  if (!n.visible) return false;
+  const r = n.svg.getBoundingClientRect();
+  return x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad;
+});
 
 export function morphFrom(svg: SVGSVGElement, from: Pt[], ms = 450): void {
   const n = nets.find((x) => x.svg === svg);
@@ -167,32 +253,57 @@ export function initNetLive(): void {
   document.querySelectorAll<SVGSVGElement>('svg.net').forEach((svg) => io.observe(register(svg).svg));
 
   const fine = matchMedia('(pointer: fine)');
+  // Desktop: the cursor tilts the net, pulls nodes in, and lights the nearest one.
   addEventListener('pointermove', (e) => {
-    if (e.pointerType !== 'mouse' || reduced()) return;
-    targetX = ((e.clientX / innerWidth) - 0.5) * 2 * TILT_DEG;
-    targetY = -((e.clientY / innerHeight) - 0.5) * 2 * TILT_DEG;
-    for (const n of nets) if (n.responsive && n.visible) { const i = nearest(n, e.clientX, e.clientY, 36); if (i !== -1) glow(n, i); }
+    if (reduced()) return;
+    if (e.pointerType === 'mouse') {
+      targetX = ((e.clientX / innerWidth) - 0.5) * 2 * TILT_DEG;
+      targetY = -((e.clientY / innerHeight) - 0.5) * 2 * TILT_DEG;
+      pointer = { x: e.clientX, y: e.clientY };
+      for (const n of nets) if (n.responsive && n.visible) { const i = nearest(n, e.clientX, e.clientY, 36); if (i !== -1) glow(n, i); }
+    } else if (pointer) pointer = { x: e.clientX, y: e.clientY }; // a finger held on the net
     schedule();
   }, { passive: true });
+  document.addEventListener('pointerleave', () => { pointer = null; schedule(); });
+  document.documentElement.addEventListener('mouseleave', () => { pointer = null; schedule(); });
+
+  // A click or a tap sends a ring; a finger on the net pulls it like the cursor does.
+  let down: { x: number; y: number; t: number } | null = null;
   addEventListener('pointerdown', (e) => {
-    if (e.pointerType === 'mouse' || reduced()) return;
-    for (const n of nets) {
-      if (!n.responsive || !n.visible) continue;
-      const r = n.svg.getBoundingClientRect();
-      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) continue;
-      const i = nearest(n, e.clientX, e.clientY, 60);
-      if (i !== -1) pulse(n, i, 2);
-    }
+    if (reduced() || !nearNet(e.clientX, e.clientY, 40)) return;
+    if (e.pointerType === 'mouse') { ring(e.clientX, e.clientY); return; }
+    down = { x: e.clientX, y: e.clientY, t: performance.now() };
+    pointer = { x: e.clientX, y: e.clientY };
+    schedule();
   }, { passive: true });
+  const release = (e: PointerEvent) => {
+    if (e.pointerType === 'mouse') return;
+    if (down && performance.now() - down.t < 300 && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 10) ring(e.clientX, e.clientY);
+    down = null; pointer = null; schedule();
+  };
+  addEventListener('pointerup', release, { passive: true });
+  addEventListener('pointercancel', (e) => { if (e.pointerType !== 'mouse') { down = null; pointer = null; schedule(); } }, { passive: true });
+
+  // Phone: scroll tilts the net and swings it against the motion, with inertia.
+  let lastY = scrollY;
   addEventListener('scroll', () => {
     lastScroll = performance.now();
-    if (!fine.matches && !onPost) targetY = Math.sin(scrollY / 500) * TILT_DEG;
+    const dy = scrollY - lastY; lastY = scrollY;
+    if (!fine.matches && !onPost && !reduced()) {
+      targetY = Math.sin(scrollY / 500) * TILT_DEG;
+      const kick = Math.max(-SWING_MAX, Math.min(SWING_MAX, dy * SWING));
+      for (const n of nets) {
+        if (!n.visible) continue;
+        const px = scale(n)?.px ?? 1;
+        n.vel.forEach((v, i) => { if (!n.pinned.has(i)) v[1] += (kick * (1 + n.z[i]! * 0.5)) / px; });
+      }
+    }
     schedule();
   }, { passive: true });
   document.addEventListener('visibilitychange', schedule);
   document.addEventListener('ajustes:change', schedule);
 
-  // One pulse from the ochre node on the first page of a session.
+  // One pulse of light from the ochre node on the first page of a session.
   let pulsed = true;
   try { pulsed = sessionStorage.getItem(SESSION_KEY) === '1'; sessionStorage.setItem(SESSION_KEY, '1'); } catch { /* storage off: skip it */ }
   if (!pulsed && !reduced()) {
