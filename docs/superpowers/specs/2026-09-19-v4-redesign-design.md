@@ -36,14 +36,14 @@ before the next. The order reduces risk: content and colour first, the net engin
      cosas que nadie te pueda quitar."
   2. "Hoy quiero aportar lo que sé y lo que he aprendido haciendo para reconstruir
      Venezuela, y [Ateneo Abierto](https://ateneo-abierto.org) es mi forma de hacerlo."
-  3. "Fui Freedom Fellow de la [Human Rights Foundation](https://youtu.be/oS2N8cz7p4w)
+  3. "Fui [Freedom Fellow](https://youtu.be/oS2N8cz7p4w) de la Human Rights Foundation
      y formo parte del Leadership Council de la
      [Youth Democracy Network](https://youthdemocracynetwork.org/leadershipcouncil)."
-     This is its own paragraph, keeping the `.cred` treatment.
+     This is its own paragraph, keeping the `.cred` treatment. The Freedom Fellow link is
+     David's HRF Ignite Talk.
   4. "Siempre estoy buscando colaborar con gente que, como yo, trabaja por una misión y
      por sus valores. Si te identificas, escríbeme a hola@aragort.com y hablemos."
-  The link text for the HRF talk is the organisation's name; David confirms the exact
-  anchor text in review.
+  Paragraph 2 keeps the comma before "y" on purpose: the clauses have different subjects.
 
 ### 2. Colour semantics and external links
 
