@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Net from '../components/Net.astro';
 import { getPosts } from '../lib/collection';
 import { formatDateEs } from '../lib/posts';
 import '../styles/index.css';
@@ -12,6 +13,7 @@ const posts = await getPosts();
       <h1>Escritos</h1>
       {/* TODO(david): one-line lede for the index goes here. Nothing renders until it is written. */}
     </div>
+    <div class="net-wrap"><Net name="hero" /></div>
   </section>
 
   <div class="wrap">

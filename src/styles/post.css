@@ -3,10 +3,15 @@
 .post-head h1 { font-family: var(--display); font-weight: 400; font-size: clamp(3.2rem, 13vw, 9rem); line-height: .88; letter-spacing: -.035em; margin: 1.25rem 0 0; max-width: 11ch; }
 
 .post-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+.rail { display: none; }
+.progress { position: fixed; inset: 0 0 auto 0; height: 3px; background: var(--ochre); transform-origin: 0 50%; transform: scaleX(0); z-index: 10; pointer-events: none; }
 @media (min-width: 1000px) {
   .post-head { padding-top: 6rem; padding-bottom: 4.5rem; }
   .post-grid { grid-template-columns: 150px minmax(0, 40rem) 1fr; column-gap: 4.5rem; }
   .post-grid > .prose, .post-grid > .sig { grid-column: 2; }
+  .rail { display: block; position: sticky; top: 10vh; align-self: start; grid-column: 1; grid-row: 1 / span 2; }
+  .rail .net { height: 78vh; width: auto; max-width: 150px; }
+  .progress { display: none; }
 }
 
 .prose { font-family: var(--read); font-size: clamp(1.125rem, 1rem + .45vw, 1.3125rem); line-height: 1.62; color: var(--fg-read); max-width: 40rem; }
@@ -17,4 +22,5 @@
 .prose hr { border: 0; height: 1px; background: var(--rule); margin: 2.4em 0; }
 .prose em { font-style: italic; }
 
+.sig .net { width: 44px; height: 33px; }
 .sig { display: flex; align-items: center; gap: .8rem; font-family: var(--display); font-style: italic; font-size: 2.1rem; line-height: 1; margin: 2.5rem 0 0; }

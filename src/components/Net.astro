@@ -1,0 +1,32 @@
+---
+/* The net, after Gego's Reticulárea. Geometry is frozen in src/assets/net/geometry.ts. */
+import { nets, type NetName } from '../assets/net/geometry';
+
+interface Props {
+  name: NetName;
+  class?: string;
+  /** Light nodes in reading order (the post rail). */
+  progress?: boolean;
+}
+const { name, class: className, progress = false } = Astro.props;
+const g = nets[name];
+const lit = new Set<number>(g.lit);
+---
+<svg
+  class:list={['net', className]}
+  viewBox={`0 0 ${g.w} ${g.h}`}
+  data-progress={progress ? '' : undefined}
+  aria-hidden="true"
+  focusable="false"
+>
+  {g.edges.map(([a, b]) => (
+    <line
+      x1={g.nodes[a]![0]} y1={g.nodes[a]![1]} x2={g.nodes[b]![0]} y2={g.nodes[b]![1]}
+      data-a={a} data-b={b}
+      class={lit.has(a) && lit.has(b) ? 'on' : undefined}
+    />
+  ))}
+  {g.nodes.map(([x, y], i) => (
+    <circle cx={x} cy={y} r={g.r} data-o={i} class={lit.has(i) ? 'on' : undefined} />
+  ))}
+</svg>
