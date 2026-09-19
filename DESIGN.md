@@ -315,8 +315,8 @@ Found in review and in the browser. These are bugs in the shipped design, not st
 - **Post meta:** date · N min (no word count). `p.sig` links to Sobre mí.
 - **Header:** 58px with a 42px mark on desktop, 56px with a 38px mark on a phone. The
   mark stays the full 12-node A, and so does the favicon (thinned versions rejected).
-- **Transitions:** titles and the net move without stretching (cross-fade at natural
-  size); the old page stays opaque under the new one (6px rise, 200ms); same-origin
+- **Transitions:** titles hand over with a staggered cross-fade (old out in the first 40%,
+  new in over the last 60%), so two line breaks never overlap; the old page stays opaque under the new one (6px rise, 200ms); same-origin
   pages are prerendered on hover or focus.
 
 Implementation order and verification: `docs/superpowers/specs/2026-09-19-v4-redesign-design.md`.
