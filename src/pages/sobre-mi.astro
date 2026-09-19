@@ -1,16 +1,29 @@
 ---
 import Base from '../layouts/Base.astro';
 ---
-<Base title="Sobre mí" current="sobre-mi">
+<Base title="Sobre mí" current="sobre-mi" description="David Aragort: derechos digitales, seguridad digital y Ateneo Abierto.">
   <section class="wrap about">
-    <h1>Sobre mí</h1>
-    <!-- TODO(david): write this page. The placeholder below is visible on purpose. -->
-    <p class="todo">TODO(david): esta página está pendiente.</p>
+    <h1 style="view-transition-name: page-title">Sobre mí</h1>
+    <div class="about-text">
+      <p>Hola, mi nombre es David Aragort, soy caraqueño y los últimos siete años he trabajado en derechos digitales y ayudado a personas y organizaciones a protegerse en internet, en Venezuela y en otros países de la región. Creo en aprender cosas que nadie te pueda quitar, para no depender de quien controla la herramienta.</p>
+      <p>Hoy quiero aportar lo que sé y lo que he vivido para reconstruir Venezuela, y Ateneo Abierto es mi forma de hacerlo. Fui Freedom Fellow de la Human Rights Foundation y formo parte del Leadership Council de la Youth Democracy Network.</p>
+      <p>Siempre estoy buscando colaborar con gente que, como yo, trabaja por una misión y por sus valores. Si te identificas, escríbeme a <a href="mailto:hola@aragort.com">hola@aragort.com</a> y hablemos.</p>
+      <ul class="elsewhere">
+        <li><a href="https://github.com/dvd117" rel="me">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/davidaragort" rel="me">LinkedIn</a></li>
+      </ul>
+    </div>
   </section>
 </Base>
 
 <style>
-  .about { padding-top: 5rem; padding-bottom: 4rem; }
-  h1 { font-family: var(--display); font-weight: 400; font-size: clamp(3.2rem, 13vw, 8rem); line-height: .88; letter-spacing: -.035em; margin: 0; }
-  .todo { font-family: var(--mono); font-size: 1rem; color: var(--fg-2); border-left: 3px solid var(--ochre); padding: .6rem .9rem; background: var(--panel); max-width: 36rem; margin: 2.5rem 0 0; }
+  .about { padding-top: 3rem; padding-bottom: 4rem; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: clamp(3.2rem, 13vw, 8rem); line-height: .88; letter-spacing: -.035em; margin: 0 0 2.5rem; }
+  .about-text { font-family: var(--read-font); font-size: calc(clamp(1.125rem, 1rem + .45vw, 1.3125rem) * var(--scale)); line-height: var(--leading); letter-spacing: var(--tracking); color: var(--fg-read); max-width: var(--measure); }
+  .about-text p { margin: 0 0 1.1em; }
+  .about-text a { color: var(--fg); text-decoration: underline var(--underline) var(--link); text-underline-offset: .2em; box-shadow: inset 0 -.42em 0 var(--mark); }
+  .about-text a:hover { box-shadow: inset 0 -.42em 0 var(--mark-hover); }
+  .elsewhere { list-style: none; display: flex; gap: 1.5rem; padding: 0; margin: 2rem 0 0; font: 500 1rem/1 var(--ui); }
+  .elsewhere a { box-shadow: none; }
+  @media (min-width: 900px) { .about { padding-top: 6rem; } h1 { margin-bottom: 3.5rem; } }
 </style>

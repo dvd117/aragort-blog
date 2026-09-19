@@ -1,16 +1,30 @@
-.hero { display: grid; gap: 2rem; padding-top: 3rem; padding-bottom: 4.5rem; }
-.hero .net-wrap { order: -1; }
-.hero .net { width: 100%; height: auto; max-height: 220px; }
-.hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(4.4rem, 19vw, 12.5rem); line-height: .84; letter-spacing: -.04em; margin: 0; }
+/* Phone first: title, then the net as a sticky band over the list, then the list.
+   The entry at mid-screen lights its path in the band. */
+.index { display: grid; grid-template-columns: minmax(0, 1fr); padding-top: 2.5rem; }
+.hero-title h1 { font-family: var(--display); font-weight: 400; font-size: clamp(4.4rem, 19vw, 12.5rem); line-height: .84; letter-spacing: -.04em; margin: 0; }
+.lede { font-family: var(--read); font-size: 1.1875rem; line-height: 1.5; color: var(--fg-2); max-width: 30ch; margin: 1.25rem 0 1.75rem; }
+.net-wrap { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--rule); padding: .5rem var(--gutter); margin: 0 calc(-1 * var(--gutter)); }
+.hero-net { width: fit-content; margin: 0 auto; }
+.net-wrap .net { display: block; width: auto; height: 112px; margin: 0 auto; }
+
+/* Desktop: its own composition. Title and net side by side; hover or focus lights a path. */
 @media (min-width: 900px) {
-  .hero { grid-template-columns: 1.15fr 1fr; align-items: end; padding-top: 7rem; padding-bottom: 7rem; gap: 4rem; }
-  .hero .net-wrap { order: 0; }
-  .hero .net { max-height: none; }
+  .index { grid-template-columns: 1.15fr 1fr; column-gap: 4rem; padding-top: 7rem; }
+  .hero-title { align-self: end; padding-bottom: 7rem; }
+  .lede { font-size: 1.3125rem; margin-bottom: 0; }
+  .net-wrap { position: static; grid-column: 2; grid-row: 1; align-self: end; padding: 0 0 7rem; margin: 0; border: 0; background: none; }
+  .hero-net { width: 100%; }
+  .net-wrap .net { width: 100%; height: auto; }
+  .entries, .empty { grid-column: 1 / -1; }
 }
+
+/* Lit path: the post's hue, node by node (120-240ms in total). */
+.net-wrap .net .path { stroke: var(--hue); stroke-opacity: 1; transition: stroke 120ms ease, fill 120ms ease; transition-delay: calc(var(--i, 0) * 30ms); }
+.net-wrap .net circle.path { fill: var(--hue); }
 
 .entries { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
 .entry { display: grid; gap: .35rem; padding: 1.75rem 0 1.9rem; border-bottom: 1px solid var(--rule); }
-.entry .d { font-size: .9375rem; color: var(--fg-2); }
+.entry .d { font-size: .9375rem; color: var(--fg-2); margin: 0; }
 .entry .t { font-family: var(--display); font-size: clamp(2.1rem, 7.5vw, 3.9rem); line-height: .98; letter-spacing: -.02em; text-decoration: none; }
 .entry .t:hover { text-decoration: underline; text-decoration-color: var(--fg-2); text-decoration-thickness: 2px; text-underline-offset: .12em; }
 .entry .ex { font-family: var(--read); font-size: 1.1875rem; color: var(--fg-2); margin: .35rem 0 0; }
@@ -21,5 +35,4 @@
   .entry .ex, .entry .tag { grid-column: 2; }
 }
 .empty { font-family: var(--read); font-size: 1.1875rem; color: var(--fg-2); }
-.entry .d { margin: 0; }
 .hue-dot { display: inline-block; width: .6em; height: .6em; border-radius: 50%; background: var(--hue); margin-right: .5em; vertical-align: .05em; }

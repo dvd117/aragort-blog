@@ -11,11 +11,17 @@ import '../../styles/post.css';
 
 export const getStaticPaths = (async () => {
   const posts = await getPosts();
-  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+  // Neighbours for the end card: the newer post if there is one, else the older.
+  return posts.map((post, i) => {
+    const newer = posts[i - 1];
+    const older = posts[i + 1];
+    const next = newer ? { label: 'Siguiente', slug: newer.slug, title: newer.title } : older ? { label: 'Anterior', slug: older.slug, title: older.title } : null;
+    return { params: { slug: post.slug }, props: { post, next } };
+  });
 }) satisfies GetStaticPaths;
 
-interface Props { post: Post; }
-const { post } = Astro.props;
+interface Props { post: Post; next: { label: string; slug: string; title: string } | null; }
+const { post, next } = Astro.props;
 const { Content } = await render(post.entry);
 const words = new Intl.NumberFormat('es').format(post.words);
 const version = versionLine(postVersion(post.file, post.date));
@@ -24,15 +30,20 @@ const filename = `${post.id}.md`;
 ---
 <Base title={post.title} description={post.description} current="escritos" type="article" ogImage={`/og/${post.slug}.png`} hue={post.hue}>
   <div class="progress" aria-hidden="true"></div>
-  <article class="wrap post">
+  <div class="minibar" data-minibar aria-hidden="true">
+    <span class="mb-mark"><Net name="mark" /></span>
+    <span class="mb-title">{post.title}</span>
+    <span class="mb-left" data-left>quedan {post.minutes} min</span>
+  </div>
+  <article class="wrap post" data-slug={post.slug} data-minutes={post.minutes}>
     <header class="post-head">
       {version && <p class="ver">{version}</p>}
       <p class="meta">
-        <span class="hue-dot" aria-hidden="true"></span>
+        <span class="hue-dot" aria-hidden="true" style={`view-transition-name: dot-${post.slug}`}></span>
         <time datetime={post.date}>{formatDateEs(post.date)}</time> · {post.minutes} min de lectura · {words} palabras
         {post.draft && <span> · borrador</span>}
       </p>
-      <h1>{post.title}</h1>
+      <h1 style={`view-transition-name: t-${post.slug}`}>{post.title}</h1>
       <div class="view" role="group" aria-label="Cómo ver el artículo" hidden>
         <button type="button" data-view="read" aria-pressed="true">Vista leída</button>
         <button type="button" data-view="md" aria-pressed="false">Markdown</button>
@@ -48,9 +59,22 @@ const filename = `${post.id}.md`;
         <pre>{source}</pre>
       </div>
       <p class="sig"><Net name="mark" /><span>David Aragort</span></p>
+      <aside class="done-card" data-done aria-label="Fin del texto">
+        {next && (
+          <p class="dc-next"><span class="dc-label">{next.label}</span> <a href={`/escritos/${next.slug}/`}>{next.title}</a></p>
+        )}
+        <p class="dc-mail"><a href="mailto:hola@aragort.com">Escríbeme</a> <span>hola@aragort.com</span></p>
+      </aside>
     </div>
   </article>
 </Base>
+
+<script>
+  import { initThreads } from '../../scripts/threads';
+  import { initResume } from '../../scripts/resume';
+  initThreads();
+  initResume(document.querySelector<HTMLElement>('.post')?.dataset.slug ?? location.pathname);
+</script>
 
 <script>
   /* Vista leída / Markdown: the real source, in place. Hidden without JS; the .md link still works. */
@@ -64,34 +88,6 @@ const filename = `${post.id}.md`;
 </script>
 
 <script>
-  import { reduced } from '../../scripts/motion';
-  /* Reading progress. Desktop: the rail's nodes light in reading order.
-     Phone: a 3px hairline at the top. Under reduced motion the rail stays fully
-     drawn and static; the hairline still reports position (state, not animation). */
-  const body = document.querySelector<HTMLElement>('.post-grid');
-  const bar = document.querySelector<HTMLElement>('.progress');
-  const rail = document.querySelector<SVGSVGElement>('.rail .net[data-progress]');
-  if (body && bar) {
-    const nodes = rail ? [...rail.querySelectorAll<SVGCircleElement>('circle')] : [];
-    const wires = rail ? [...rail.querySelectorAll<SVGLineElement>('line')] : [];
-    const still = () => reduced();
-    if (rail && !still()) rail.classList.add('live');
-    let queued = false;
-    const update = () => {
-      queued = false;
-      const r = body.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, (innerHeight * 0.65 - r.top) / r.height));
-      bar.style.transform = `scaleX(${p.toFixed(4)})`;
-      if (!rail) return;
-      rail.classList.toggle('live', !still());
-      if (still()) { nodes.forEach((c) => c.classList.remove('on')); wires.forEach((l) => l.classList.remove('on')); return; }
-      const k = Math.round(p * nodes.length);
-      nodes.forEach((c) => c.classList.toggle('on', Number(c.dataset.o) < k));
-      wires.forEach((l) => l.classList.toggle('on', Number(l.dataset.a) < k && Number(l.dataset.b) < k));
-    };
-    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
-    addEventListener('resize', update);
-    document.addEventListener('ajustes:change', update);
-    update();
-  }
+  import { initReading } from '../../scripts/reading';
+  initReading(Number(document.querySelector<HTMLElement>('.post')?.dataset.minutes) || 1);
 </script>
