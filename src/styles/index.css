@@ -52,3 +52,33 @@
   .entry .ex, .entry .tag { grid-column: 2; }
   .entry .t { font-size: clamp(1.9rem, 3.2vw, 2.9rem); }
 }
+
+/* Featured: while there are fewer than three posts, the latest one gets the room. */
+.entry.feature { padding: 1rem 0 2rem; }
+.entry.feature .t { font-weight: var(--display-weight); font-size: clamp(2.4rem, 9vw, 4.6rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); max-width: 14ch; }
+.entry.feature .ex { font-size: 1.25rem; color: var(--fg); max-width: 40ch; }
+.teaser { margin: .9rem 0 0; padding: 0 0 0 1.1rem; font: 500 1.0625rem/1.45 var(--ui); color: var(--fg-2); max-width: 44ch; }
+.teaser li + li { margin-top: .3rem; }
+.teaser li::marker { color: var(--hue-ui); }
+.more { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; margin-top: .8rem; font: 600 1rem/1 var(--ui); color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .22em; }
+.more:hover { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
+.who { display: flex; gap: 1rem; align-items: flex-start; margin: 2rem 0 0 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--rule); max-width: 44rem; color: var(--fg-2); font-size: 1rem; line-height: 1.5; }
+.who .net { flex: none; width: 42px; height: 31.5px; margin-top: .15rem; }
+.who p { margin: 0; }
+.who a { color: var(--h-ochre); text-decoration: underline 1px color-mix(in srgb, var(--h-ochre) 45%, transparent); text-underline-offset: .2em; }
+@media (min-width: 900px) {
+  .entry.feature .teaser, .entry.feature .more { grid-column: 2; }
+  .who { margin-left: calc(2.25rem + 13rem + 2rem); }
+}
+
+/* Short landscape (a phone on its side): a compact two-column composition. The net stays
+   inside its column, so it never runs past the list, and its exit node sits above the thread. */
+@media (max-width: 899px) and (max-height: 500px) and (orientation: landscape) {
+  .index { padding-top: .5rem; }
+  .hero { display: grid; grid-template-columns: 1.2fr 1fr; column-gap: 2rem; align-items: center; min-height: 0; padding: 1rem 0 2rem; }
+  .hero-title h1 { font-size: clamp(3rem, 16vh, 5rem); }
+  .lede { font-size: 1rem; max-width: 30ch; }
+  .net-wrap { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .45; }
+  .net-wrap .net { width: 100%; max-height: 62vh; }
+  .net-wrap .net circle { stroke-opacity: 1; }
+}
