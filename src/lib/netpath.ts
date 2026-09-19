@@ -1,6 +1,6 @@
 /**
  * Net as navigation: each post owns a node in the hero net, reached by a short
- * path from the lit ochre node. Paths are computed at build time from the
+ * path from the net's lit node. Paths are computed at build time from the
  * frozen geometry, so the page only toggles classes.
  */
 import type { NetGeometry } from '../assets/net/geometry';
@@ -54,7 +54,7 @@ export function exitNode(g: NetGeometry): number {
   return best;
 }
 
-/** Shortest path from the lit ochre node to the exit node, node indices. */
+/** Shortest path from the net's lit node to the exit node, node indices. */
 export function exitPath(g: NetGeometry, start = g.lit[0] ?? 0): number[] {
   const { parent } = bfs(g, start);
   const path: number[] = [];
@@ -86,7 +86,7 @@ function through(g: NetGeometry, start: number, target: number): number[] | null
   return [...head, ...tail];
 }
 
-/** The post's own node on the landing: anywhere 3+ hops from the ochre node, off the shared
+/** The post's own node on the landing: anywhere 3+ hops from the net's lit node, off the shared
  *  exit path, with a route through it that never doubles back; chosen by the slug, so posts
  *  spread across the whole net. */
 function pool(g: NetGeometry, start: number): number[] {
@@ -128,7 +128,7 @@ export function routesFor(g: NetGeometry, slugs: string[], start = g.lit[0] ?? 0
 }
 
 /**
- * The post's route on the landing: from the ochre node through the post's own node on to
+ * The post's route on the landing: from the net's lit node through the post's own node on to
  * the exit node, where the wire leaves for the thread. Each post crosses its own region
  * and the route never doubles back.
  */

@@ -15,7 +15,7 @@ const links = [
 ] as const;
 ---
 <footer class="site-foot wrap">
-  <Net name="mark" />
+  <span class="foot-mark"><Net name="mark" /></span>
   <div class="foot-text">
     <p>David Aragort</p>
     <ul class="foot-links">
@@ -49,21 +49,29 @@ const links = [
 </footer>
 
 <style>
+  /* One row, one centre line. The mark sits in a box the height of an icon link and is
+     pinned to the top of the row, so the landing's thread always meets its top-left node
+     at the same place however the text beside it wraps. */
   .site-foot { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; color: var(--fg-2); font-size: .9375rem; padding-top: 4rem; padding-bottom: 3rem; }
   .site-foot p { margin: 0; }
-  /* Beside the mark; the icons wrap under the name, never under the mark. */
-  .foot-text { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; min-width: 0; flex: 1; }
+  .foot-mark { align-self: flex-start; display: flex; align-items: center; height: var(--foot-row); }
+  .foot-text { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.5rem; min-width: 0; flex: 1; }
   .site-foot :global(.net) { width: 38px; height: 29px; }
-  .site-foot > :global(.net) { align-self: flex-start; }
 
   .foot-links { display: flex; align-items: center; gap: .35rem; list-style: none; margin: 0; padding: 0; }
   /* 44px tap targets that still look like small marks. */
-  .foot-links a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; color: var(--fg-2); }
+  .foot-links a { display: inline-flex; align-items: center; justify-content: center; min-width: var(--foot-row); min-height: var(--foot-row); color: var(--fg-2); }
   .foot-links a:hover { color: var(--hue); }
-  .cc { display: inline-flex; align-items: center; gap: .2rem; }
+  .cc { display: inline-flex; align-items: center; gap: .22rem; }
   /* Drawn like the net: hairlines that do not thicken with the icon's size. */
-  .i { display: block; width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: color 140ms ease; }
+  .i { display: block; width: var(--foot-icon); height: var(--foot-icon); fill: none; stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: color 140ms ease; }
   .i .solid { fill: currentColor; stroke: none; }
   /* The solid GitHub mark reads heavier than the hairline glyphs; hold it back to match. */
   .i-gh { opacity: .82; }
+  /* A phone keeps the name and the marks on one row: tighter gaps, no wrap between them. */
+  @media (max-width: 420px) {
+    .site-foot { gap: .75rem 1rem; }
+    .foot-text { gap: .25rem 1rem; }
+    .foot-links { gap: .1rem; }
+  }
 </style>

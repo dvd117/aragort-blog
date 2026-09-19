@@ -1,7 +1,7 @@
 /**
  * Net as navigation (index). The hero net, a wire from its bottom-left node and
  * the thread down the list are one line. Choosing an entry lights, in one hue: the
- * entry's own region of the net (its route from the ochre node through its own node to
+ * entry's own region of the net (its route from the net's lit node through its own node to
  * the exit, plus the nodes one wire away from it, data-region), the wire, and the thread
  * down to the entry's node. The net only ever gains light: regions already lit stay lit,
  * wires fill in as their nodes light, and the whole page takes the hue of the entry under
@@ -10,7 +10,6 @@
  * Drawn in 220ms; instant under reduced motion.
  */
 import { reduced } from './motion';
-import { rolled } from './lasthue';
 
 export function initNetNav(): void {
   const root = document.querySelector<HTMLElement>('[data-netnav-root]');
@@ -77,9 +76,7 @@ export function initNetNav(): void {
     // The trail recolours at once; only the nodes new to this entry draw in, one by one.
     for (const el of [...circles, ...lines]) el.style.removeProperty('--i');
     // One hue rules the whole page: the net, the entries, the links. Never a mix.
-    const base = entry.dataset.postHue ?? 'ochre';
-    document.documentElement.setAttribute('data-hue-base', base);
-    document.documentElement.setAttribute('data-hue', rolled(base));
+    document.documentElement.setAttribute('data-hue', entry.dataset.postHue ?? 'amarillo');
     const region = (entry.dataset.region ?? '').split(',').filter(Boolean).map(Number);
     (region.length ? region : exit).forEach((n, i) => {
       if (!on.has(n)) { on.add(n); circles[n]?.style.setProperty('--i', String(i)); }

@@ -25,8 +25,8 @@
   --rule: #24272c;
   --net: #ece9e1;
   --net-alpha: .5;
-  --ochre: #e2a638;               /* UI marks: wordmark node, focus ring */
-  --link: #e2a638;                /* ochre as text */
+  --focus: #e2a638;               /* the focus ring, the one mark that never changes hue */
+  --link: #e2a638;                /* the amarillo accent as text */
   --mark: rgba(226, 166, 56, .28);
   --mark-hover: rgba(226, 166, 56, .45);
   --underline: 1px;
@@ -42,19 +42,22 @@
   --lh: 1.65; --trk: 0em; --body-weight: 400;
   --em-style: italic; --em-weight: 400;
   --gutter: 16px;
+  /* Footer: the row every item centres on, and the size of its marks. */
+  --foot-row: 44px;
+  --foot-icon: 21px;
   color-scheme: dark;
 }
 /* Light ("Claro", or nothing saved on a light OS): bright off-white, graphite net. */
 :root[data-theme="light"] {
   --bg: #f7f6f2; --panel: #eeece6; --fg: #15171a; --fg-read: #15171a; --fg-2: #5a5f66; --rule: #dcdad3;
-  --net: #15171a; --net-alpha: .55; --ochre: #b8801b; --link: #8b6114;
+  --net: #15171a; --net-alpha: .55; --focus: #b8801b; --link: #8b6114;
   --mark: rgba(226, 166, 56, .38); --mark-hover: rgba(226, 166, 56, .6);
   color-scheme: light;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
     --bg: #f7f6f2; --panel: #eeece6; --fg: #15171a; --fg-read: #15171a; --fg-2: #5a5f66; --rule: #dcdad3;
-    --net: #15171a; --net-alpha: .55; --ochre: #b8801b; --link: #8b6114;
+    --net: #15171a; --net-alpha: .55; --focus: #b8801b; --link: #8b6114;
     --mark: rgba(226, 166, 56, .38); --mark-hover: rgba(226, 166, 56, .6);
     color-scheme: light;
   }
@@ -62,36 +65,36 @@
 /* Sepia: warm paper, brown ink. */
 :root[data-theme="sepia"] {
   --bg: #f3ead6; --panel: #e9dec5; --fg: #33291d; --fg-read: #33291d; --fg-2: #6a5943; --rule: #d6c8a8;
-  --net: #33291d; --net-alpha: .55; --ochre: #af7a19; --link: #805a13;
+  --net: #33291d; --net-alpha: .55; --focus: #af7a19; --link: #805a13;
   --mark: rgba(226, 166, 56, .34); --mark-hover: rgba(226, 166, 56, .55);
   color-scheme: light;
 }
 /* Alto contraste: black and white, AAA body text, solid 2px link underlines, no highlight band. */
 :root[data-theme="contrast"] {
   --bg: #000000; --panel: #141414; --fg: #ffffff; --fg-read: #ffffff; --fg-2: #d0d0d0; --rule: #9a9a9a;
-  --net: #ffffff; --net-alpha: .85; --ochre: #ffc233; --link: #ffd166;
+  --net: #ffffff; --net-alpha: .85; --focus: #ffc233; --link: #ffd166;
   --mark: transparent; --mark-hover: rgba(255, 209, 102, .28); --underline: 2px;
   color-scheme: dark;
 }
 
-/* A hue per post (README has the table). Each value passes 4.5:1 on the page
-   and the panel in its theme (7:1 in alto contraste); text on its band passes too. */
-:root { --h-ochre: #e2a638; --hb-ochre: var(--mark); --h-teal: #43a3a0; --hb-teal: rgba(92, 188, 185, 0.26); --h-brick: #d4735f; --hb-brick: rgba(212, 115, 95, 0.26); --h-sky: #5b9bd0; --hb-sky: rgba(91, 155, 208, 0.26); --h-moss: #759a4c; --hb-moss: rgba(143, 179, 101, 0.26); }
-:root[data-theme="light"] { --h-ochre: #8b6114; --hb-ochre: var(--mark); --h-teal: #2f7472; --hb-teal: rgba(92, 188, 185, 0.3); --h-brick: #aa4e3c; --hb-brick: rgba(195, 104, 85, 0.3); --h-sky: #386e97; --hb-sky: rgba(87, 147, 193, 0.3); --h-moss: #567138; --hb-moss: rgba(143, 179, 101, 0.3); }
-@media (prefers-color-scheme: light) { :root:not([data-theme]) { --h-ochre: #8b6114; --hb-ochre: var(--mark); --h-teal: #2f7472; --hb-teal: rgba(92, 188, 185, 0.3); --h-brick: #aa4e3c; --hb-brick: rgba(195, 104, 85, 0.3); --h-sky: #386e97; --hb-sky: rgba(87, 147, 193, 0.3); --h-moss: #567138; --hb-moss: rgba(143, 179, 101, 0.3); } }
-:root[data-theme="sepia"] { --h-ochre: #805a13; --hb-ochre: var(--mark); --h-teal: #2c6b69; --hb-teal: rgba(92, 188, 185, 0.3); --h-brick: #9d4837; --hb-brick: rgba(195, 104, 85, 0.3); --h-sky: #34658c; --hb-sky: rgba(87, 147, 193, 0.3); --h-moss: #506833; --hb-moss: rgba(143, 179, 101, 0.3); }
-:root[data-theme="contrast"] { --h-ochre: #ffd166; --hb-ochre: transparent; --h-teal: #48b0ac; --hb-teal: transparent; --h-brick: #d39082; --hb-brick: transparent; --h-sky: #75a6cc; --hb-sky: transparent; --h-moss: #84ac56; --hb-moss: transparent; }
+/* The three hues of the flag, in the order they appear on it: amarillo, azul, rojo
+   (README has the table). A subtle reference, not the flag's own colours: each value is
+   muted to pass 4.5:1 on the page and the panel in its theme (7:1 in alto contraste),
+   and text on its band passes too. */
+:root { --h-amarillo: #e2a638; --hb-amarillo: var(--mark); --h-azul: #6298dd; --hb-azul: rgba(98, 152, 221, 0.26); --h-rojo: #e0705e; --hb-rojo: rgba(224, 112, 94, 0.26); }
+:root[data-theme="light"] { --h-amarillo: #8b6114; --hb-amarillo: var(--mark); --h-azul: #2e5c9c; --hb-azul: rgba(90, 140, 205, 0.3); --h-rojo: #b23a35; --hb-rojo: rgba(205, 95, 80, 0.3); }
+@media (prefers-color-scheme: light) { :root:not([data-theme]) { --h-amarillo: #8b6114; --hb-amarillo: var(--mark); --h-azul: #2e5c9c; --hb-azul: rgba(90, 140, 205, 0.3); --h-rojo: #b23a35; --hb-rojo: rgba(205, 95, 80, 0.3); } }
+:root[data-theme="sepia"] { --h-amarillo: #805a13; --hb-amarillo: var(--mark); --h-azul: #305a94; --hb-azul: rgba(90, 140, 205, 0.3); --h-rojo: #a83731; --hb-rojo: rgba(205, 95, 80, 0.3); }
+:root[data-theme="contrast"] { --h-amarillo: #ffd166; --hb-amarillo: transparent; --h-azul: #88b4e6; --hb-azul: transparent; --h-rojo: #e89a90; --hb-rojo: transparent; }
 /* UI marks (dots, nodes, rails, progress, rules) need 3:1, not 4.5:1, so in the light
    themes they can be more saturated than the hue as text. Dark and contrast reuse the text hue. */
-:root { --hu-ochre: var(--h-ochre); --hu-teal: var(--h-teal); --hu-brick: var(--h-brick); --hu-sky: var(--h-sky); --hu-moss: var(--h-moss); }
-:root[data-theme="light"] { --hu-ochre: #b8801b; --hu-teal: #2f8f8b; --hu-brick: #c4553f; --hu-sky: #3a82bd; --hu-moss: #5f8c2e; }
-:root[data-theme="sepia"] { --hu-teal: #2f8f8b; --hu-brick: #c4553f; --hu-sky: #3a82bd; --hu-moss: #5f8c2e; }
-@media (prefers-color-scheme: light) { :root:not([data-theme]) { --hu-ochre: #b8801b; --hu-teal: #2f8f8b; --hu-brick: #c4553f; --hu-sky: #3a82bd; --hu-moss: #5f8c2e; } }
-:root, [data-hue="ochre"] { --hue: var(--h-ochre); --hue-band: var(--hb-ochre); --hue-ui: var(--hu-ochre); }
-[data-hue="teal"] { --hue: var(--h-teal); --hue-band: var(--hb-teal); --hue-ui: var(--hu-teal); }
-[data-hue="brick"] { --hue: var(--h-brick); --hue-band: var(--hb-brick); --hue-ui: var(--hu-brick); }
-[data-hue="sky"] { --hue: var(--h-sky); --hue-band: var(--hb-sky); --hue-ui: var(--hu-sky); }
-[data-hue="moss"] { --hue: var(--h-moss); --hue-band: var(--hb-moss); --hue-ui: var(--hu-moss); }
+:root { --hu-amarillo: var(--h-amarillo); --hu-azul: var(--h-azul); --hu-rojo: var(--h-rojo); }
+:root[data-theme="light"] { --hu-amarillo: #b8801b; --hu-azul: #2f6fc4; --hu-rojo: #cf4435; }
+:root[data-theme="sepia"] { --hu-azul: #2f6fc4; --hu-rojo: #cf4435; }
+@media (prefers-color-scheme: light) { :root:not([data-theme]) { --hu-amarillo: #b8801b; --hu-azul: #2f6fc4; --hu-rojo: #cf4435; } }
+:root, [data-hue="amarillo"] { --hue: var(--h-amarillo); --hue-band: var(--hb-amarillo); --hue-ui: var(--hu-amarillo); }
+[data-hue="azul"] { --hue: var(--h-azul); --hue-band: var(--hb-azul); --hue-ui: var(--hu-azul); }
+[data-hue="rojo"] { --hue: var(--h-rojo); --hue-band: var(--hb-rojo); --hue-ui: var(--hu-rojo); }
 
 /* Reading settings: one attribute each on <html>, read by the prose. */
 :root { --scale: 1; --lh-step: 1; --trk-step: 0em; --leading: calc(var(--lh) * var(--lh-step)); --tracking: calc(var(--trk) + var(--trk-step)); --measure: 63ch; --read-font: var(--sans); }
@@ -123,7 +126,7 @@ body {
   transition: background-color 140ms ease, color 140ms ease;
 }
 a { color: inherit; }
-:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 2px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 /* External links: the arrow is glued to the last word and never underlined. */

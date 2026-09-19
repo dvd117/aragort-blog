@@ -92,7 +92,7 @@ const filename = `${post.id}.md`;
   import { rememberHue } from '../../scripts/lasthue';
   initThreads();
   // The landing and "Sobre mí" open in the hue of the last post read.
-  whenActive(() => rememberHue(document.documentElement.dataset.hueBase ?? 'ochre'));
+  whenActive(() => rememberHue(document.documentElement.dataset.hue ?? 'amarillo'));
   // A prerendered post must not record a position the reader never reached.
   whenActive(() => initResume(document.querySelector<HTMLElement>('.post')?.dataset.slug ?? location.pathname));
 </script>

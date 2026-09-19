@@ -1,5 +1,5 @@
 /**
- * Filtrar escritos. One box under the hero narrows the list as you type: title,
+ * Buscar. One box under the hero narrows the list as you type: title,
  * description, "En corto" lines and the date, accent- and case-insensitive, so "deje"
  * finds "dejé" and "septiembre" finds the date. It searches what the landing already
  * shows, not the body of the posts -- no index is shipped.
@@ -26,21 +26,21 @@ export function initFilter(): void {
   form.setAttribute('role', 'search');
   form.addEventListener('submit', (e) => e.preventDefault());
 
-  const id = 'filtrar';
+  const id = 'buscar';
   const label = document.createElement('label');
   label.className = 'visually-hidden';
   label.htmlFor = id;
-  label.textContent = 'Filtrar escritos';
+  label.textContent = 'Buscar escritos';
 
   const box = document.createElement('input');
   box.type = 'search';
   box.id = id;
-  box.placeholder = 'Filtrar escritos';
+  box.placeholder = 'Buscar';
   box.autocomplete = 'off';
-  box.setAttribute('aria-describedby', 'filtrar-n');
+  box.setAttribute('aria-describedby', 'buscar-n');
 
   const count = document.createElement('p');
-  count.id = 'filtrar-n';
+  count.id = 'buscar-n';
   count.className = 'filter-n';
   count.setAttribute('role', 'status'); // announced only when it changes
 

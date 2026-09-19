@@ -5,7 +5,8 @@ description: >
   A personal essay site built on one figure: a frozen net after Gego's Reticulárea, which
   is the mark, the landing's hero, the portrait on Sobre mí and the reading rail. One sans
   family (Geist) set large and tight for display, calm for reading. OLED black when dark,
-  bone text, ochre as the one brand accent, and five muted hues that each belong to a post.
+  bone text, and the flag's three colours -- amarillo, azul, rojo -- muted, one belonging
+  to each post and ruling the whole page while it is the one in hand.
 webgl: none
 colors:
   # Dark (the base CSS; the OS preference picks light or dark)
@@ -15,47 +16,46 @@ colors:
   bone-read: "#cfccc4"
   slate: "#9ea3aa"
   night-rule: "#24272c"
-  ochre: "#e2a638"
+  focus: "#e2a638"
   # Light ("Claro")
   paper: "#f7f6f2"
   paper-panel: "#eeece6"
   graphite: "#15171a"
   graphite-2: "#5a5f66"
   paper-rule: "#dcdad3"
-  ochre-ui-light: "#b8801b"
-  ochre-text-light: "#8b6114"
+  focus-light: "#b8801b"
+  amarillo-text-light: "#8b6114"
   # Sepia
   sepia: "#f3ead6"
   sepia-panel: "#e9dec5"
   sepia-ink: "#33291d"
   sepia-ink-2: "#6a5943"
   sepia-rule: "#d6c8a8"
-  ochre-text-sepia: "#805a13"
+  amarillo-text-sepia: "#805a13"
   # Alto contraste
   black: "#000000"
   black-panel: "#141414"
   white: "#ffffff"
   silver: "#d0d0d0"
   contrast-rule: "#9a9a9a"
-  ochre-contrast: "#ffd166"
-  # Post hues, dark values (light/sepia/contrast values in README)
-  teal: "#43a3a0"
-  brick: "#d4735f"
-  sky: "#5b9bd0"
-  moss: "#759a4c"
+  amarillo-contrast: "#ffd166"
+  # Post hues: the flag's three, dark values (light/sepia/contrast values in README)
+  amarillo: "#e2a638"
+  azul: "#6298dd"
+  rojo: "#e0705e"
 color-aliases:
   c-bg: night
   c-bg-alt: night-panel
   c-fg: bone
   c-fg-2: slate
-  c-accent: ochre
+  c-accent: amarillo
   c-border: night-rule
   c-bg-light: paper
   c-bg-light-alt: paper-panel
   c-fg-light: graphite
   c-fg-light-2: graphite-2
   c-border-light: paper-rule
-  c-accent-light: ochre-text-light
+  c-accent-light: amarillo-text-light
   c-bg-sepia: sepia
   c-fg-sepia: sepia-ink
   c-fg-sepia-2: sepia-ink-2
@@ -194,11 +194,12 @@ decoration that means nothing.
   dark), then dark. The base CSS is dark. Dark is OLED black (`#000`), with reading text
   at `#cfccc4` against halation; panels (`#101113`) and rules (`#24272c`) still separate
   from black. "Sistema" is the first option in Ajustes.
-- **Ochre** is the focus ring and the favicon, and the hue the order starts from before
-  it is rolled. It is no longer a fixed brand colour on the page: the wordmark node and
-  every other lit node take the ruling hue like everything else.
-- **The five post hues** (ochre, teal, brick, sky, moss) each belong to one post, set in
-  frontmatter or hashed from the slug. A hue colours its post's rail, progress line,
+- **`--focus`** is the focus ring and the favicon: the one mark that never changes hue.
+  Nothing else is a fixed brand colour any more -- the wordmark node and every other lit
+  node take the ruling hue like everything else.
+- **The three post hues are the flag's**, in the order they appear on it: amarillo, azul,
+  rojo, muted to the page. A quiet reference, not a flag drawn on the screen. Each belongs
+  to one post, set in frontmatter or hashed from the slug. A hue colours its post's rail, progress line,
   footnote markers, note edge, links, chapter numbers and the dot beside its date.
 - **One hue rules the page at a time.** The hue lives on `<html>`, so everything on the
   page shares it -- links, dots, rules, and every net on the page: header mark, hero,
@@ -207,12 +208,8 @@ decoration that means nothing.
   cursor, so a post's colour is hidden until you reach for it and then takes the whole
   page. On the landing and Sobre mí before any hover it is the hue of the last post read
   on this device, so leaving a post does not lose its colour.
-- **The starting point rolls each visit.** A post's hue in the frontmatter or from its
-  slug is a *base*. What a visitor sees is that base moved forward by one offset, drawn
-  once per visit and kept for the tab: the five keep their order, only where the order
-  begins moves. The same post is teal one visit and sky the next, while two posts that
-  were neighbours still are. Base on `<html data-hue-base>`, rolled hue on `data-hue`;
-  both written by one inline script before first paint (`src/lib/lasthue.ts`).
+- **The order never shuffles.** A post's hue is fixed at build time and stays put: the
+  flag's order is the point, so there is nothing to randomise.
 - **Colour means something.** Colour on the letters means clickable: links are set in the
   hue with a faint hue underline that goes solid and 2px on hover. Colour behind the
   letters means emphasis: bold keeps its hue band, text in `fg`. In Alto contraste bold is
@@ -221,7 +218,7 @@ decoration that means nothing.
 - **Text and marks:** hue text stays at 4.5:1; UI marks that only need 3:1 (net, dots,
   rails, rules) use a more saturated `--hue-ui` in the light themes.
 - **The net** is drawn in the text colour at low alpha (`--net-alpha`, .26 to .55 by
-  context). Lit parts go to ochre or the post's hue.
+  context). Lit parts go to the ruling hue.
 
 ## Typography
 
@@ -248,11 +245,13 @@ decoration that means nothing.
 - **Landing, phone:** the net bleeds off the right edge behind the title; a wire leaves
   its exit node and becomes the thread down the left gutter; each entry hangs on the
   thread by its hue node.
-- **Filtrar escritos:** one box between the hero and the list, on the thread's left edge.
-  It narrows the list as you type over what the landing already shows -- title,
-  description, En corto and the date -- accent- and case-insensitive, so "deje" finds
-  "dejé". It is built by `src/scripts/filter.ts`, so it is never there without the JS to
-  drive it, and Escape clears it. No search index is shipped; post bodies are not searched.
+- **Buscar:** one box between the hero and the list, hard against its right edge and below
+  the net's reach on every width, so it never sits on a node or a wire. Filled rather than
+  outlined, so it reads as a control and not as one more hairline. It narrows the list as
+  you type over what the landing already shows -- title, description, En corto and the
+  date -- accent- and case-insensitive, so "deje" finds "dejé". Built by
+  `src/scripts/filter.ts`, so it is never there without the JS to drive it; Escape clears
+  it. No search index is shipped; post bodies are not searched.
 - **Landing, desktop (≥900px):** two columns, the title and lede on the left (as wide as
   they need) and the net taking the rest of the width on the right, at fuller strength.
 - **Every post is expanded on the landing:** date, near-display title, description, its
@@ -266,7 +265,9 @@ decoration that means nothing.
   move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
 - **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
   sticky on the left and the thread runs on the right.
-- **Footer:** the mark, "David Aragort" and three icon links — GitHub (the source of this
+- **Footer:** the mark, "David Aragort" and three icon links, all on one centre line (the
+  mark sits in a box the height of an icon link and pinned to the top of the row, so the
+  landing's thread always meets its top-left node in the same place) — GitHub (the source of this
   site), CC BY-SA (the licence, as the three canonical glyphs) and RSS. The icons are
   drawn in the net's hand: hairlines in `currentColor`, hollow rings, 44px tap targets,
   each carrying its words for screen readers and as a tooltip. They take the ruling hue on
@@ -296,10 +297,10 @@ below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir mov
   inertia: the cursor (or a finger on the net) pulls nearby nodes in like gravity; a
   click or a tap sends a ring outward that springs back; on a phone, scrolling swings the
   net against its motion and it settles. Posts get half amplitude and hold still while
-  scrolling. The node under the cursor glows in ochre and fades (~600ms); the first page
-  of a session opens with one pulse of light from the ochre node.
+  scrolling. The node under the cursor glows in the ruling hue and fades (~600ms); the
+  first page of a session opens with one pulse of light from the net's lit node.
 - **Landing:** hovering or focusing an entry lights its own **region** of the net — its
-  route (ochre node → the post's node → exit) plus the nodes one wire away from its own
+  route (the net's lit node → the post's node → exit) plus the nodes one wire away from its own
   node — along with the wire and the thread. A wire lights once both of its nodes are lit,
   so separate regions knit together and the net visibly fills as the archive grows: one
   post lights about a quarter of it, six about four fifths. **The net only ever gains
@@ -323,7 +324,7 @@ below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir mov
 
 1. **Links and bold looked alike:** links are now the hue as text; bold keeps the band
    (`post.css`, Colors above).
-2. **Colour without meaning on Sobre mí:** it is ochre plus neutrals (`sobre-mi.astro`).
+2. **Colour without meaning on Sobre mí:** it is one hue plus neutrals (`sobre-mi.astro`).
 3. **Small landscape broke the landing:** a short-landscape composition keeps the net in
    its column, above the thread (`index.css`).
 4. **The net only came alive on hover:** it drifts and answers everyone (`netlive.ts`).
