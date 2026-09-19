@@ -21,21 +21,21 @@
 .entries::before { content: ""; position: absolute; left: 5px; top: 0; bottom: 1.2rem; width: 1px; background: var(--net); opacity: var(--net-alpha); }
 .entry { position: relative; display: grid; gap: .2rem; padding: .85rem 0 1.25rem; }
 /* The node sits on the thread, centred on its date line. */
-.node { position: absolute; left: calc(-1.75rem + 5.5px - 6px); top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; background: var(--hue); box-shadow: 0 0 0 3px var(--bg); }
+.node { position: absolute; left: calc(-1.75rem + 5.5px - 6px); top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; background: var(--hue-ui); box-shadow: 0 0 0 3px var(--bg); }
 .entry .d { position: relative; font-size: .875rem; color: var(--fg-2); margin: 0; line-height: 1.4; }
 .entry .t { font-family: var(--display); font-weight: var(--title-weight); font-size: clamp(1.6rem, 6.4vw, 2.6rem); line-height: var(--title-leading); letter-spacing: var(--title-tracking); text-decoration: none; }
-.entry .t:hover { text-decoration: underline; text-decoration-color: var(--hue); text-decoration-thickness: 2px; text-underline-offset: .12em; }
+.entry .t:hover { text-decoration: underline; text-decoration-color: var(--hue-ui); text-decoration-thickness: 2px; text-underline-offset: .12em; }
 .entry .ex { font-family: var(--read); font-size: 1.0625rem; line-height: 1.45; color: var(--fg-2); margin: .3rem 0 0; }
 .entry.draft .t { color: var(--fg-2); }
 .tag { font-size: .875rem; color: var(--fg-2); }
 .empty { font-family: var(--read); font-size: 1.125rem; color: var(--fg-2); }
 
 /* Lit: the net path, the wire and the thread segment, in the entry's hue. */
-.net-wrap .net .path { stroke: var(--hue); stroke-opacity: 1; transition: stroke 120ms ease, fill 120ms ease; transition-delay: calc(var(--i, 0) * 30ms); }
-.net-wrap .net circle.path { fill: var(--hue); }
+.net-wrap .net .path { stroke: var(--hue-ui); stroke-opacity: 1; transition: stroke 120ms ease, fill 120ms ease; transition-delay: calc(var(--i, 0) * 30ms); }
+.net-wrap .net circle.path { fill: var(--hue-ui); }
 .wire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
 .wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
-.wire .lit { fill: none; stroke: var(--hue); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset 220ms cubic-bezier(.2, 0, 0, 1); }
+.wire .lit { fill: none; stroke: var(--hue-ui); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset 220ms cubic-bezier(.2, 0, 0, 1); }
 
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */
