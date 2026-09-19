@@ -62,14 +62,11 @@
 .teaser li::marker { color: var(--hue-ui); }
 .more { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; margin-top: .8rem; font: 600 1rem/1 var(--ui); color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .22em; }
 .more:hover { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
-/* Quién escribe hangs on the same thread: the mark sits on it, the thread entering at its
-   top-left node and leaving from its bottom-left one, then running on to the footer mark. */
+/* Quién escribe: the mark beside its sentence; the thread runs past it, down to the footer mark. */
 .index:has(.who) .entries::before { bottom: 0; }
-.who { position: relative; margin: 0; padding: 2rem 0 0 calc(42px + 1rem); color: var(--fg-2); font-size: 1rem; line-height: 1.5; }
-.who::before, .who::after { content: ""; position: absolute; left: 5px; width: 1px; background: var(--net); opacity: var(--net-alpha); }
-.who::before { top: 0; height: calc(2rem + 2.6px); }
-.who::after { top: calc(2rem + 28.9px); bottom: 0; }
-.who .net { position: absolute; left: 2.9px; top: 2rem; width: 42px; height: 31.5px; }
+.who { position: relative; display: flex; gap: 1rem; align-items: flex-start; margin: 0; padding: 2rem 0 0 1.75rem; color: var(--fg-2); font-size: 1rem; line-height: 1.5; }
+.who::before { content: ""; position: absolute; left: 5px; top: 0; bottom: 0; width: 1px; background: var(--net); opacity: var(--net-alpha); }
+.who .net { flex: none; width: 42px; height: 31.5px; margin-top: .15rem; }
 .who p { margin: 0; max-width: 44rem; }
 .who a { color: var(--h-ochre); text-decoration: underline 1px color-mix(in srgb, var(--h-ochre) 45%, transparent); text-underline-offset: .2em; }
 /* The thread ends at the footer mark's top-left node. */
