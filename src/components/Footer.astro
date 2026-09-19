@@ -1,23 +1,69 @@
 ---
+/*
+ * The footer is three marks and a name. The links are icons, drawn in the same hand as the
+ * net: thin strokes, hollow rings, currentColor. Each carries its words for screen readers
+ * and as a tooltip, so nothing is lost by dropping the labels. GitHub keeps its own solid
+ * mark, which does not read as a wire drawing.
+ */
 import Net from './Net.astro';
-import ExtLink from './ExtLink.astro';
-import { LICENCE } from '../lib/licence';
+import { LICENCE, REPO } from '../lib/licence';
+
+const links = [
+  { href: REPO, label: 'Código de este sitio en GitHub', ext: true, icon: 'github' },
+  { href: LICENCE.url, label: `Licencia ${LICENCE.name}`, ext: true, icon: 'cc', rel: 'license' },
+  { href: '/rss.xml', label: 'Suscríbete por RSS', ext: false, icon: 'rss' },
+] as const;
 ---
 <footer class="site-foot wrap">
   <Net name="mark" />
   <div class="foot-text">
-    <p>David Aragort · <ExtLink href={LICENCE.url} rel="license">{LICENCE.name}</ExtLink></p>
-    <p><a href="/rss.xml">RSS</a></p>
+    <p>David Aragort</p>
+    <ul class="foot-links">
+      {links.map(({ href, label, ext, icon, ...rest }) => (
+        <li>
+          <a
+            href={href}
+            title={label}
+            rel={[...(ext ? ['noopener', 'noreferrer'] : []), ...('rel' in rest ? [rest.rel] : [])].join(' ') || undefined}
+            target={ext ? '_blank' : undefined}
+          >
+            {icon === 'github' && (
+              <svg class="i i-gh" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path class="solid" d="M8 .5a7.5 7.5 0 0 0-2.37 14.62c.37.07.51-.16.51-.36v-1.4c-2.09.45-2.53-.9-2.53-.9-.34-.87-.83-1.1-.83-1.1-.68-.47.05-.46.05-.46.75.06 1.15.78 1.15.78.67 1.15 1.76.82 2.19.63.07-.49.26-.82.48-1.01-1.67-.19-3.42-.84-3.42-3.72 0-.82.29-1.5.78-2.02-.08-.19-.34-.96.07-2.01 0 0 .63-.2 2.07.77a7.2 7.2 0 0 1 3.77 0c1.44-.97 2.07-.77 2.07-.77.41 1.05.15 1.82.07 2.01.49.52.78 1.2.78 2.02 0 2.89-1.76 3.53-3.43 3.71.27.24.51.69.51 1.4v2.07c0 .2.14.44.51.36A7.5 7.5 0 0 0 8 .5Z" /></svg>
+            )}
+            {icon === 'cc' && (
+              <span class="cc">
+                <svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.9" /><path d="M6.9 6.6a2 2 0 1 0 0 2.8" /><path d="M11.4 6.6a2 2 0 1 0 0 2.8" /></svg>
+                <svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.9" /><circle class="solid" cx="8" cy="5" r="1.25" /><path d="M5.2 12.6v-2.1a2.8 2.8 0 0 1 5.6 0v2.1" /></svg>
+                <svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.9" /><path d="M11.1 6.3a3.5 3.5 0 1 0 .5 3.4" /><path d="M11.4 3.6v2.8H8.6" /></svg>
+              </span>
+            )}
+            {icon === 'rss' && (
+              <svg class="i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle class="solid" cx="4.4" cy="11.6" r="1.4" /><path d="M3.7 7.6a4.7 4.7 0 0 1 4.7 4.7" /><path d="M3.7 3.7a8.6 8.6 0 0 1 8.6 8.6" /></svg>
+            )}
+            <span class="visually-hidden">{label}{ext ? ' (abre en otra pestaña)' : ''}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
   </div>
 </footer>
 
 <style>
   .site-foot { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; color: var(--fg-2); font-size: .9375rem; padding-top: 4rem; padding-bottom: 3rem; }
   .site-foot p { margin: 0; }
-  /* Beside the mark; RSS wraps under the licence, never under the mark. */
+  /* Beside the mark; the icons wrap under the name, never under the mark. */
   .foot-text { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; min-width: 0; flex: 1; }
   .site-foot :global(.net) { width: 38px; height: 29px; }
   .site-foot > :global(.net) { align-self: flex-start; }
-  .site-foot :global(a) { color: var(--fg-2); text-underline-offset: .2em; }
-  .site-foot :global(a:hover) { color: var(--fg); }
+
+  .foot-links { display: flex; align-items: center; gap: .35rem; list-style: none; margin: 0; padding: 0; }
+  /* 44px tap targets that still look like small marks. */
+  .foot-links a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; color: var(--fg-2); }
+  .foot-links a:hover { color: var(--hue); }
+  .cc { display: inline-flex; align-items: center; gap: .2rem; }
+  /* Drawn like the net: hairlines that do not thicken with the icon's size. */
+  .i { display: block; width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: color 140ms ease; }
+  .i .solid { fill: currentColor; stroke: none; }
+  /* The solid GitHub mark reads heavier than the hairline glyphs; hold it back to match. */
+  .i-gh { opacity: .82; }
 </style>

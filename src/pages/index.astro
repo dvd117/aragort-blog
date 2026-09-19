@@ -4,7 +4,7 @@ import Net from '../components/Net.astro';
 import { getPosts } from '../lib/collection';
 import { formatDateEs } from '../lib/posts';
 import { nets } from '../assets/net/geometry';
-import { exitNode, exitPath, routesFor } from '../lib/netpath';
+import { exitNode, exitPath, regionsFor } from '../lib/netpath';
 import { LEDE, WHO } from '../lib/site';
 import '../styles/index.css';
 
@@ -12,7 +12,7 @@ const posts = await getPosts();
 const exit = exitPath(nets.hero).join(',');
 // Oldest first, so a new post never takes an older post's section of the net.
 const oldest = [...posts].reverse();
-const routes = new Map(routesFor(nets.hero, oldest.map((p) => p.slug)).map((r, i) => [oldest[i]!.slug, r.join(',')]));
+const regions = new Map(regionsFor(nets.hero, oldest.map((p) => p.slug)).map((r, i) => [oldest[i]!.slug, r.join(',')]));
 ---
 <Base title="David Aragort" description={LEDE} current="escritos" heroNet ogImage="/og/index.png" ogAlt={`David Aragort: ${LEDE}`}>
   <div class="index wrap" data-netnav-root>
@@ -32,7 +32,7 @@ const routes = new Map(routesFor(nets.hero, oldest.map((p) => p.slug)).map((r, i
       <>
         <ol class="entries" data-thread>
           {posts.map((p) => (
-              <li class:list={['entry', 'feature', { draft: p.draft }]} data-hue={p.hue} data-route={routes.get(p.slug)}>
+              <li class:list={['entry', 'feature', { draft: p.draft }]} data-post-hue={p.hue} data-region={regions.get(p.slug)}>
                 <p class="d"><span class="node" aria-hidden="true" style={`view-transition-name: dot-${p.slug}`}></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
                 <a class="t" href={`/escritos/${p.slug}/`} style={`view-transition-name: t-${p.slug}; view-transition-class: title`}>{p.title}</a>
                 {p.description && <p class="ex">{p.description}</p>}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { nets } from '../src/assets/net/geometry';
-import { exitNode, exitPath, pathFor, postNode, routeFor, routesFor } from '../src/lib/netpath';
+import { exitNode, exitPath, pathFor, postNode, regionOf, regionsFor, routeFor, routeTable, routesFor } from '../src/lib/netpath';
 
 const hero = nets.hero;
 const wired = (a: number, b: number) => hero.edges.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
@@ -64,5 +64,36 @@ describe('the landing hands out sections', () => {
     expect(new Set(routes.map((r) => r.join(','))).size).toBe(slugs.length);
     expect(routesFor(hero, slugs)).toEqual(routes);
     for (const r of routes) { expect(r[0]).toBe(hero.lit[0]); expect(r.at(-1)).toBe(exitNode(hero)); }
+  });
+});
+
+describe('a post lights a region, not a line', () => {
+  const slugs = ['por-que-deje-los-chatbots', 'la-terminal-y-github', 'tus-instrucciones-tus-reglas', 'no-dependas-de-una-sola-empresa', 'lo-que-todavia-no-funciona', 'convenciones-de-lectura'];
+
+  it('grows each route with the nodes one wire away from the post\'s own node', () => {
+    for (const { route, own } of routeTable(hero, slugs)) {
+      const region = regionOf(hero, route, own);
+      expect(region.slice(0, route.length)).toEqual(route); // the route comes first
+      expect(new Set(region).size).toBe(region.length);
+      expect(region.length).toBeGreaterThan(route.length);
+      for (const n of region.slice(route.length)) expect(wired(own, n)).toBe(true);
+    }
+  });
+
+  it('fills more of the net with every post, and never less', () => {
+    const lit = new Set<number>();
+    let before = 0;
+    for (const region of regionsFor(hero, slugs)) {
+      for (const n of region) lit.add(n);
+      expect(lit.size).toBeGreaterThanOrEqual(before);
+      before = lit.size;
+    }
+    // Six posts light most of the forty-node hero; one post already lights a patch.
+    expect(regionsFor(hero, slugs)[0]!.length).toBeGreaterThanOrEqual(8);
+    expect(lit.size).toBeGreaterThan(hero.nodes.length / 2);
+  });
+
+  it('is stable per slug', () => {
+    expect(regionsFor(hero, slugs)).toEqual(regionsFor(hero, slugs));
   });
 });

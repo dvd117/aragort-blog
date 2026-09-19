@@ -1,10 +1,13 @@
 /**
  * Net as navigation (index). The hero net, a wire from its bottom-left node and
- * the thread down the list are one line. Choosing an entry lights, in its hue: its own
- * route through the net (ochre node -> the post's node -> exit, data-route), the wire,
- * and the thread down to the entry's node. Routes already lit stay lit as a trail, and
- * the whole trail takes the hue of the current entry: one colour at a time, never a mix. Desktop: hover or keyboard focus. Phone: the entry at mid-screen, as you
- * scroll (a tap lights it on the way out). Drawn in 220ms; instant under reduced motion.
+ * the thread down the list are one line. Choosing an entry lights, in one hue: the
+ * entry's own region of the net (its route from the ochre node through its own node to
+ * the exit, plus the nodes one wire away from it, data-region), the wire, and the thread
+ * down to the entry's node. The net only ever gains light: regions already lit stay lit,
+ * wires fill in as their nodes light, and the whole page takes the hue of the entry under
+ * the cursor -- one colour at a time, never a carnival. Desktop: hover or keyboard focus.
+ * Phone: the entry at mid-screen, as you scroll (a tap lights it on the way out).
+ * Drawn in 220ms; instant under reduced motion.
  */
 import { reduced } from './motion';
 
@@ -62,29 +65,31 @@ export function initNetNav(): void {
     lit.style.strokeDashoffset = '0';
   };
 
+  // Cumulative: every node any entry has lit so far. Nothing is ever unlit.
+  const on = new Set<number>();
+
   const light = (entry: HTMLElement | null) => {
     if (entry === current) return;
     current = entry;
     // Leaving the list keeps the trail (and its hue); only the thread segment lets go.
     if (!entry) { lit.removeAttribute('d'); return; }
-    // The trail recolours at once; only the new route draws in, node by node.
+    // The trail recolours at once; only the nodes new to this entry draw in, one by one.
     for (const el of [...circles, ...lines]) el.style.removeProperty('--i');
-    root.setAttribute('data-hue', entry.dataset.hue ?? 'ochre');
-    const route = (entry.dataset.route ?? '').split(',').filter(Boolean).map(Number);
-    const path = route.length ? route : exit;
-    path.forEach((n, i) => {
-      const fresh = !circles[n]?.classList.contains('path');
+    // One hue rules the whole page: the net, the entries, the links. Never a mix.
+    document.documentElement.setAttribute('data-hue', entry.dataset.postHue ?? 'ochre');
+    const region = (entry.dataset.region ?? '').split(',').filter(Boolean).map(Number);
+    (region.length ? region : exit).forEach((n, i) => {
+      if (!on.has(n)) { on.add(n); circles[n]?.style.setProperty('--i', String(i)); }
       circles[n]?.classList.add('path');
-      if (fresh) circles[n]?.style.setProperty('--i', String(i));
-      const prev = path[i - 1];
-      if (prev === undefined) return;
-      const wireEl = lines.find((l) => {
-        const a = Number(l.dataset.a), b = Number(l.dataset.b);
-        return (a === prev && b === n) || (a === n && b === prev);
-      });
-      if (wireEl && !wireEl.classList.contains('path')) wireEl.style.setProperty('--i', String(i));
-      wireEl?.classList.add('path');
     });
+    // A wire lights once both of its nodes are lit, so separate regions knit together
+    // as the trail grows.
+    for (const wireEl of lines) {
+      const a = Number(wireEl.dataset.a), b = Number(wireEl.dataset.b);
+      if (!on.has(a) || !on.has(b) || wireEl.classList.contains('path')) continue;
+      wireEl.style.setProperty('--i', String(Math.max(region.indexOf(a), region.indexOf(b), 0)));
+      wireEl.classList.add('path');
+    }
     draw(entry, true);
   };
 

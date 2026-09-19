@@ -104,20 +104,27 @@ export function postNode(g: NetGeometry, slug: string, start = g.lit[0] ?? 0): n
 
 /** Routes for every post on the landing at once: each post keeps its hashed route unless an
  *  earlier post took it, then takes the next free one, so posts light different sections
- *  until the net runs out of them. */
-export function routesFor(g: NetGeometry, slugs: string[], start = g.lit[0] ?? 0): number[][] {
+ *  until the net runs out of them. Each result carries the post's own node, the one its
+ *  region grows around. */
+export function routeTable(g: NetGeometry, slugs: string[], start = g.lit[0] ?? 0): { route: number[]; own: number }[] {
   const p = pool(g, start), taken = new Set<string>();
+  const exit = exitPath(g, start);
   return slugs.map((slug) => {
-    if (!p.length) return exitPath(g, start);
+    if (!p.length) return { route: exit, own: exitNode(g) };
     const first = hash(slug) % p.length;
-    let fallback: number[] | null = null;
+    let fallback: { route: number[]; own: number } | null = null;
     for (let tries = 0; tries < p.length; tries++) {
-      const route = through(g, start, p[(first + tries) % p.length]!) ?? exitPath(g, start);
-      fallback ??= route;
-      if (!taken.has(route.join(','))) { taken.add(route.join(',')); return route; }
+      const own = p[(first + tries) % p.length]!;
+      const found = { route: through(g, start, own) ?? exit, own };
+      fallback ??= found;
+      if (!taken.has(found.route.join(','))) { taken.add(found.route.join(',')); return found; }
     }
     return fallback!; // the net is out of sections: share the post's own
   });
+}
+
+export function routesFor(g: NetGeometry, slugs: string[], start = g.lit[0] ?? 0): number[][] {
+  return routeTable(g, slugs, start).map((r) => r.route);
 }
 
 /**
@@ -127,4 +134,21 @@ export function routesFor(g: NetGeometry, slugs: string[], start = g.lit[0] ?? 0
  */
 export function routeFor(g: NetGeometry, slug: string, start = g.lit[0] ?? 0): number[] {
   return through(g, start, postNode(g, slug, start)) ?? exitPath(g, start);
+}
+
+/**
+ * The post's region on the landing: its route, then the nodes one wire away from the
+ * post's own node. A post lights a patch of the net, not a line through it, so a handful
+ * of posts already read as a filling net. Ordered: route first, then the halo, so the
+ * landing can stagger the draw-in.
+ */
+export function regionOf(g: NetGeometry, route: number[], own: number): number[] {
+  const seen = new Set(route);
+  const halo = neighbours(g)[own]?.slice().sort((a, b) => a - b).filter((n) => !seen.has(n)) ?? [];
+  return [...route, ...halo];
+}
+
+/** regionsFor is routesFor, each route grown into its region. */
+export function regionsFor(g: NetGeometry, slugs: string[], start = g.lit[0] ?? 0): number[][] {
+  return routeTable(g, slugs, start).map(({ route, own }) => regionOf(g, route, own));
 }
