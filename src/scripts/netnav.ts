@@ -1,8 +1,9 @@
 /**
  * Net as navigation (index). The hero net, a wire from its bottom-left node and
- * the thread down the list are one line. Choosing an entry lights, in its hue:
- * the net's path to the exit node, the wire, and the thread down to the entry's
- * node. Desktop: hover or keyboard focus. Phone: the entry at mid-screen, as you
+ * the thread down the list are one line. Choosing an entry lights, in its hue: its own
+ * route through the net (ochre node -> the post's node -> exit, data-route), the wire,
+ * and the thread down to the entry's node. Routes already lit stay lit as a trail, and
+ * the whole trail takes the hue of the current entry: one colour at a time, never a mix. Desktop: hover or keyboard focus. Phone: the entry at mid-screen, as you
  * scroll (a tap lights it on the way out). Drawn in 220ms; instant under reduced motion.
  */
 import { reduced } from './motion';
@@ -64,20 +65,25 @@ export function initNetNav(): void {
   const light = (entry: HTMLElement | null) => {
     if (entry === current) return;
     current = entry;
-    for (const el of [...circles, ...lines]) { el.classList.remove('path'); el.style.removeProperty('--i'); }
-    if (!entry) { root.removeAttribute('data-hue'); lit.removeAttribute('d'); return; }
+    // Leaving the list keeps the trail (and its hue); only the thread segment lets go.
+    if (!entry) { lit.removeAttribute('d'); return; }
+    // The trail recolours at once; only the new route draws in, node by node.
+    for (const el of [...circles, ...lines]) el.style.removeProperty('--i');
     root.setAttribute('data-hue', entry.dataset.hue ?? 'ochre');
-    exit.forEach((n, i) => {
+    const route = (entry.dataset.route ?? '').split(',').filter(Boolean).map(Number);
+    const path = route.length ? route : exit;
+    path.forEach((n, i) => {
+      const fresh = !circles[n]?.classList.contains('path');
       circles[n]?.classList.add('path');
-      circles[n]?.style.setProperty('--i', String(i));
-      const prev = exit[i - 1];
+      if (fresh) circles[n]?.style.setProperty('--i', String(i));
+      const prev = path[i - 1];
       if (prev === undefined) return;
       const wireEl = lines.find((l) => {
         const a = Number(l.dataset.a), b = Number(l.dataset.b);
         return (a === prev && b === n) || (a === n && b === prev);
       });
+      if (wireEl && !wireEl.classList.contains('path')) wireEl.style.setProperty('--i', String(i));
       wireEl?.classList.add('path');
-      wireEl?.style.setProperty('--i', String(i));
     });
     draw(entry, true);
   };

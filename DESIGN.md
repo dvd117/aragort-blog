@@ -236,11 +236,10 @@ decoration that means nothing.
   thread by its hue node.
 - **Landing, desktop (≥900px):** two columns, the title and lede on the left (as wide as
   they need) and the net taking the rest of the width on the right, at fuller strength.
-- **Landing under 3 posts:** the latest post is featured (date, near-display title,
-  description, its En corto as a teaser, "Leer · N min"), then a "quién escribe" strip
-  (the mark beside one sentence and a link to Sobre mí). The thread runs past it to the
-  footer mark: net, wire, posts, strip and footer are one line. From 3 posts the list
-  returns, decided at build time.
+- **Every post is expanded on the landing:** date, near-display title, description, its
+  En corto as a teaser, "Leer · N min". After the posts, a "quién escribe" strip (the mark
+  beside one sentence and a link to Sobre mí). The thread runs past it to the footer
+  mark: net, wire, posts, strip and footer are one line.
 - **Post:** a single column on a phone, with a progress hairline and a closed "En este
   texto". From 1000px, a 150px sticky rail. At rest the chapter numbers sit beside their nodes,
   the current one in the hue with a dot beside its node; hovering or focusing the rail opens
@@ -277,8 +276,10 @@ below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir mov
   net against its motion and it settles. Posts get half amplitude and hold still while
   scrolling. The node under the cursor glows in ochre and fades (~600ms); the first page
   of a session opens with one pulse of light from the ochre node.
-- **Landing:** hovering or focusing an entry lights its path through the net, the wire and
-  the thread in the entry's hue. On a phone, the entry at mid-screen does.
+- **Landing:** hovering or focusing an entry lights its own route through the net (ochre
+  node → the post's node → exit), the wire and the thread in the entry's hue. Routes stay
+  lit as a trail, and the whole trail takes the current entry's hue. On a phone, the entry
+  at mid-screen does.
 - **Post:** the rail and the header mark light node by node as you read. At the end the
   net completes with one pulse.
 
@@ -300,7 +301,7 @@ below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir mov
    its column, above the thread (`index.css`).
 4. **The net only came alive on hover:** it drifts and answers everyone (`netlive.ts`).
 5. **The landing felt empty with one post:** it features the latest post under three
-   (`landing.ts`, `index.astro`).
+   (`index.astro`).
 6. **The phone header was loaded while reading:** the nav steps aside while reading
    (`Header.astro`).
 
