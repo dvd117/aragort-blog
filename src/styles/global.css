@@ -147,6 +147,11 @@ a { color: inherit; }
 .net .on { stroke: var(--ochre); stroke-opacity: 1; }
 .net circle.on { fill: var(--ochre); }
 .net.live line, .net.live circle { transition: stroke 140ms ease, fill 140ms ease, stroke-opacity 140ms ease; }
+/* The net answers (netlive.ts): a node glows in ochre and fades over 600ms. */
+.net .glow { stroke: var(--ochre); stroke-opacity: 1; transition-duration: 80ms; }
+.net circle.glow { fill: var(--ochre); }
+.net[data-respond] line, .net[data-respond] circle { transition: stroke 600ms ease, fill 600ms ease, stroke-opacity 600ms ease; }
+.net[data-respond] .glow { transition-duration: 80ms; } /* in fast, out over 600ms */
 
 /* Moving between pages: cross-document View Transitions, CSS only.
    - index <-> post: the entry's title and hue dot become the post's title and dot;

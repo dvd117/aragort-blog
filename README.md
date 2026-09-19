@@ -75,7 +75,7 @@ Each value is the colour used as text and UI in that theme: ratio on the page / 
 
 Each setting is one `data-*` attribute on `<html>`, applied before first paint by an inline script generated from `src/lib/settings.ts`, and stored in `localStorage` (`aragort-lectura`).
 
-**Motion** is functional, 120 to 360ms, never looping, and off under `prefers-reduced-motion` or the panel's "Reducir movimiento":
+**Motion** is functional, 120 to 360ms, and off under `prefers-reduced-motion` or the panel's "Reducir movimiento". The net is alive: it drifts in 3D, a few degrees, on every page (half on posts, still while scrolling); the node under the cursor glows, a tap sends a pulse, and the first page of a session opens with one pulse. One loop at 30fps, stopped in hidden tabs (the header mark keeps it running while the page is visible). All of it is off under reduced motion (OS or Ajustes):
 - Moving between pages uses cross-document View Transitions, CSS only. An index title becomes the post title, the hero net shrinks into the header mark, "Escritos" and "Sobre mí" morph into each other, and every page rises in 12px.
 - On the index, hovering or focusing an entry lights its path through the net. On a phone, the entry in the middle of the screen does, in a sticky net band.
 - On a post, the header mark lights node by node as you read. A compact bar with the time left appears on scroll-up, and footnote markers draw a wire to their margin note (on a phone, a tap opens the note).
