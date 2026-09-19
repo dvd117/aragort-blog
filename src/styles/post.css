@@ -6,10 +6,10 @@
 .rail { display: none; }
 @media (min-width: 1000px) {
   .post-head { padding-top: 6rem; padding-bottom: 4.5rem; }
-  .post-grid { grid-template-columns: 220px minmax(0, 1fr); column-gap: 3.5rem; }
+  .post-grid { grid-template-columns: 150px minmax(0, 1fr); column-gap: 4.5rem; }
   .post-grid > .prose, .post-grid > .source, .post-grid > .sig, .post-grid > .done-card { grid-column: 2; }
   .rail { display: block; position: sticky; top: 10vh; align-self: start; grid-column: 1; grid-row: 1 / span 3; height: 78vh; }
-  .rail .net { height: 78vh; width: auto; max-width: 88px; }
+  .rail .net { height: 78vh; width: auto; max-width: 150px; }
   /* The chapters sit beside the net, each at the height where it begins (set by reading.ts). */
   .rail-toc { position: absolute; top: 0; left: 100px; right: 0; height: 100%; }
   .rail-toc ol { list-style: none; margin: 0; padding: 0; }
