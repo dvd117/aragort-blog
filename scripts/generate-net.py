@@ -6,6 +6,8 @@ Run once, commit the output, never at build time:
     python3 scripts/generate-net.py
 
 Writes src/assets/net/geometry.ts and public/favicon.svg. Standard library only.
+The rail is the hero transposed (same topology), so the landing's net can become
+the reading rail.
 Python's `random` is reproducible for a given seed, so these seeds reproduce the
 net approved in mockups/round-2/d-vanguardia.html exactly. Changing a seed
 changes the mark: do it on purpose or not at all.
@@ -18,7 +20,6 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 NETS = {
     'mark': (48, 36, 4, 3, 7, 1.7, 'x', [9], 3),
     'hero': (600, 400, 8, 5, 20, 3.5, 'x', [27], None),
-    'rail': (150, 780, 3, 14, 41, 3.5, 'y', [], None),
 }
 
 
@@ -85,8 +86,24 @@ def favicon(g):
         f'{lines}{dots}</svg>\n')
 
 
+def rail_from(hero, w=110, h=780, pad=7):
+    """The hero, transposed into a column: same nodes, same wires, same indices.
+    Hero x -> rail y, hero y -> rail x. The hero's nodes are ordered by x, so the
+    rail's come out ordered by y: the index is still the reading order."""
+    sx = (w - 2 * pad) / hero['h']
+    sy = (h - 2 * pad) / hero['w']
+    rd = lambda v: round(v, 1)
+    return {
+        'w': w, 'h': h, 'r': hero['r'],
+        'nodes': [[rd(pad + y * sx), rd(pad + x * sy)] for x, y in hero['nodes']],
+        'edges': hero['edges'],
+        'lit': [],
+    }
+
+
 def main():
     data = {name: net(*spec) for name, spec in NETS.items()}
+    data['rail'] = rail_from(data['hero'])
     out = ROOT / 'src/assets/net/geometry.ts'
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(

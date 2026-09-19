@@ -104,6 +104,8 @@ Requires Node 22.12 or later. After changing a Markdown plugin (`src/lib/rehype-
 
 The mark, the index figure and the reading rail share one frozen geometry, after Gego's *Reticulárea*: `src/assets/net/geometry.ts`. It was generated once by `scripts/generate-net.py` (standard library, fixed seeds) and is committed, so the mark is identical on every build. Rerun the script only to change the mark on purpose; it also writes `public/favicon.svg`.
 
+The rail is the hero transposed into a column: the same 40 nodes and 84 wires. That is what lets the landing's net become the reading rail.
+
 On a post, the rail's nodes light up in reading order from 1000px wide. Below that, a 3px hairline at the top shows progress. Under `prefers-reduced-motion` the rail stays fully drawn and static. The hairline keeps reporting position, with no transition.
 
 ## Container
