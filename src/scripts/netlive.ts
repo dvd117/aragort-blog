@@ -38,6 +38,10 @@ const RING_R = 280, RING_KICK = 9, RING_SPEED = 0.9;
 const SWING = 0.05, SWING_MAX = 6;
 // Nothing strays further than this from where the drift puts it.
 const MAX_OFF = 30;
+// Forces are sized for the hero; a smaller net gets them in proportion to its width
+// (a 38px mark about 1/11 of the pull), with a floor so it still answers a little.
+const REF_W = 420, MIN_SIZE = 0.09;
+const sizeOf = (n: Live, px: number) => Math.min(1, Math.max(MIN_SIZE, (n.w * px) / REF_W));
 const SESSION_KEY = 'aragort-net-pulsed';
 const rad = (d: number) => (d * Math.PI) / 180;
 const depth = (i: number) => ((Math.imul(i + 1, 2654435761) >>> 0) % 1000) / 500 - 1;
@@ -119,7 +123,8 @@ function schedule(): void { if (!scheduled) { scheduled = true; requestAnimation
 function step(n: Live, target: Pt[], now: number): void {
   const s = pointer ? scale(n) : null;
   const p = s && pointer ? new DOMPoint(pointer.x, pointer.y).matrixTransform(s.inv) : null;
-  const R = s ? PULL_R / s.px : 0, maxPull = s ? (PULL_MAX * amp) / s.px : 0, cap = MAX_OFF / (s?.px ?? scale(n)?.px ?? 1);
+  const px = s?.px ?? scale(n)?.px ?? 1, f = sizeOf(n, px);
+  const R = (PULL_R * Math.max(f, 0.3)) / px, maxPull = (PULL_MAX * amp * f) / px, cap = (MAX_OFF * f) / px;
   for (let i = 0; i < n.pos.length; i++) {
     if (n.pinned.has(i)) { n.pos[i] = [...n.base[i]!]; n.vel[i] = [0, 0]; continue; }
     let [tx, ty] = target[i]!;
@@ -205,9 +210,10 @@ function ring(x: number, y: number): void {
     const p = new DOMPoint(x, y).matrixTransform(s.inv);
     n.pos.forEach(([nx, ny], i) => {
       if (n.pinned.has(i)) return;
+      const f = sizeOf(n, s.px), R = RING_R * Math.max(f, 0.3);
       const dx = nx - p.x, dy = ny - p.y, d = Math.hypot(dx, dy) * s.px;
-      if (d >= RING_R || d < 0.5) return;
-      const kick = (RING_KICK * amp * (1 - d / RING_R)) / s.px;
+      if (d >= R || d < 0.5) return;
+      const kick = (RING_KICK * amp * f * (1 - d / R)) / s.px;
       kicks.push({ n, i, at: now + d / RING_SPEED, v: [(dx / Math.hypot(dx, dy)) * kick, (dy / Math.hypot(dx, dy)) * kick] });
     });
   }
@@ -294,8 +300,8 @@ export function initNetLive(): void {
       const kick = Math.max(-SWING_MAX, Math.min(SWING_MAX, dy * SWING));
       for (const n of nets) {
         if (!n.visible) continue;
-        const px = scale(n)?.px ?? 1;
-        n.vel.forEach((v, i) => { if (!n.pinned.has(i)) v[1] += (kick * (1 + n.z[i]! * 0.5)) / px; });
+        const px = scale(n)?.px ?? 1, f = sizeOf(n, px);
+        n.vel.forEach((v, i) => { if (!n.pinned.has(i)) v[1] += (kick * f * (1 + n.z[i]! * 0.5)) / px; });
       }
     }
     schedule();
