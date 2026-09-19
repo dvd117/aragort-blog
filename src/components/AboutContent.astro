@@ -71,8 +71,17 @@ const path = exitPath(nets.hero);
 
   .about-thread { position: relative; list-style: none; margin: .5rem 0 0; padding: 0 0 0 1.75rem; }
   .about-thread::before { content: ""; position: absolute; left: 5px; top: 0; bottom: 2rem; width: 1px; background: var(--net); opacity: var(--net-alpha); }
-  /* The lit part of the thread grows to the last lit node (set by about.ts). */
-  .about-thread::after { content: ""; position: absolute; left: 4.5px; top: 0; width: 2px; height: var(--lit, 0px); background: var(--hue-ui); transition: height 240ms cubic-bezier(.2, 0, 0, 1); }
+  /* The thread is the flag, and reading down the page paints it. The gradient is drawn at
+     full height and uncovered to the last lit node -- a clip, not a growing box, so the
+     three bands stay where they are instead of being squashed into the lit part. The same
+     move as the header's progress line, and the same as the rail: this page is about
+     David, so the arc through the three colours is his. */
+  .about-thread::after { content: ""; position: absolute; left: 4.5px; top: 0; bottom: 2rem; width: 2px; background: linear-gradient(180deg, var(--hu-amarillo) 0 33.333%, var(--hu-azul) 33.333% 66.667%, var(--hu-rojo) 66.667% 100%); clip-path: inset(0 0 calc(100% - var(--lit, 0px)) 0); transition: clip-path 240ms cubic-bezier(.2, 0, 0, 1); }
+  /* Each paragraph's node, and everything coloured inside it, takes the band it hangs in
+     (about.ts measures it). */
+  .about-node-item[data-band="0"] { --hue: var(--h-amarillo); --hue-ui: var(--hu-amarillo); }
+  .about-node-item[data-band="1"] { --hue: var(--h-azul); --hue-ui: var(--hu-azul); }
+  .about-node-item[data-band="2"] { --hue: var(--h-rojo); --hue-ui: var(--hu-rojo); }
   .about-node-item { position: relative; padding: 0 0 2rem; }
   .about-node { position: absolute; left: calc(-1.75rem + 5.5px - 7px); top: .35em; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); box-shadow: inset 0 0 0 2px var(--hue-ui), 0 0 0 3px var(--bg); transition: background-color 200ms ease; }
   .about-node-item.is-lit .about-node { background: var(--hue-ui); }
@@ -81,12 +90,21 @@ const path = exitPath(nets.hero);
   .about-node-item :global(a) { color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
   .about-node-item :global(a:hover) { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
   /* Credentials: the same sentence, set as its own element. */
-  .cred { font-family: var(--display) !important; font-weight: 600; font-size: calc(clamp(1.25rem, 1.05rem + .8vw, 1.6rem) * var(--scale)) !important; line-height: 1.25 !important; letter-spacing: -.02em !important; color: var(--fg) !important; padding-left: .9rem; border-left: 3px solid var(--hue-ui); }
+  /* The credentials carry the whole flag rather than the band they happen to fall in:
+     they are the one place the page states what David has been trusted with.
+     `border-image` is safe here -- unlike En corto, this box has no rounded corner to
+     lose to it. */
+  .cred { font-family: var(--display) !important; font-weight: 600; font-size: calc(clamp(1.25rem, 1.05rem + .8vw, 1.6rem) * var(--scale)) !important; line-height: 1.25 !important; letter-spacing: -.02em !important; color: var(--fg) !important; padding-left: .9rem; border-left: 3px solid; border-image: linear-gradient(180deg, var(--hu-amarillo) 0 33.333%, var(--hu-azul) 33.333% 66.667%, var(--hu-rojo) 66.667% 100%) 1; }
   .cred span { display: block; }
   .cred span + span { color: var(--fg-2); }
 
+  /* Three ways to reach him: three rows, so they are the three bands, like the footer's
+     three marks and En corto's three lines. */
   .contact { margin: 0; display: grid; gap: .1rem; font: 400 1rem/1.3 var(--ui); }
   .contact div { display: grid; grid-template-columns: 5.5rem 1fr; align-items: center; min-height: 44px; border-bottom: 1px solid var(--rule); }
+  .contact div:nth-child(1) { --hue: var(--h-amarillo); --hue-ui: var(--hu-amarillo); }
+  .contact div:nth-child(2) { --hue: var(--h-azul); --hue-ui: var(--hu-azul); }
+  .contact div:nth-child(3) { --hue: var(--h-rojo); --hue-ui: var(--hu-rojo); }
   .contact dt { color: var(--fg-2); font-size: .875rem; }
   .contact dd { margin: 0; overflow-wrap: anywhere; }
   .contact :global(a) { font-weight: 500; }

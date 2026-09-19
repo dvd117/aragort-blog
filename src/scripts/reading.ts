@@ -9,6 +9,10 @@
  *   left to right. Its notches are the chapters, and on a phone they are the dock --
  *   tap one to go there, press or hover to open its number and title;
  * - the header mark: the rail in miniature, with "quedan N min" beside it;
+ * - the prose takes the flag by section: every top-level block is given the band of the
+ *   third of the text it sits in, and its links, bold, quote, markers and notes follow.
+ *   A block, never a line: a paragraph is one colour throughout, so the change always
+ *   lands at a paragraph seam -- which is also where the rail beside it is turning;
  * - at the end: every net completes with one short pulse, and the end card appears.
  */
 import { reduced } from './motion';
@@ -62,6 +66,26 @@ export function initReading(minutes: number): void {
     card?.classList.add('show');
   };
 
+  /**
+   * The flag, by section. A block takes the band of its own middle, measured against the
+   * same box the rail and the header's line are measured against -- so a paragraph two
+   * thirds down is rojo and so is the rail beside it.
+   *
+   * It is measured rather than counted because the text's height is the reader's: the
+   * size, the measure and the leading in Ajustes all move where a paragraph falls. It
+   * runs on layout, never on scroll -- a colour that moved while you read would be the
+   * one thing this is meant not to do.
+   */
+  const bandBlocks = () => {
+    const g = grid.getBoundingClientRect();
+    if (!g.height) return;
+    for (const el of prose.children) {
+      const r = el.getBoundingClientRect();
+      const mid = (r.top + r.height / 2 - g.top) / g.height;
+      (el as HTMLElement).dataset.band = String(Math.min(2, Math.max(0, Math.floor(mid * 3))));
+    }
+  };
+
   const update = () => {
     queued = false;
     const r = grid.getBoundingClientRect();
@@ -83,9 +107,13 @@ export function initReading(minutes: number): void {
       : `${chapterOf(p)}${terse.matches ? '' : 'quedan '}${Math.max(1, Math.ceil(minutes * (1 - p)))} min`;
   };
 
+  // Anything that has to be measured is measured here, and only here: the blocks' bands,
+  // and (below) the chapters' notches. `place` replaces this once there are chapters.
+  let relayout = () => { bandBlocks(); update(); };
+
   addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
-  addEventListener('resize', update);
-  document.addEventListener('ajustes:change', update);
+  addEventListener('resize', () => relayout());
+  document.addEventListener('ajustes:change', () => relayout());
   card?.addEventListener('focusin', finish); // keyboard readers who jump to the end
 
   // Chapters (## headings): notches on the header's progress line where each begins,
@@ -149,6 +177,7 @@ export function initReading(minutes: number): void {
     syncDock();
 
     const place = () => {
+      bandBlocks();
       const g = grid.getBoundingClientRect();
       marks_ = heads.map((h) => (h.getBoundingClientRect().top - g.top) / g.height);
       // A chapter that opens the text needs no notch at 0%.
@@ -161,19 +190,18 @@ export function initReading(minutes: number): void {
         t.classList.toggle('at-start', m < 0.18);
         t.classList.toggle('at-end', m > 0.82);
       });
-      // The chapter numbers in the text walk the flag with the reader: the headings in
-      // the first third are amarillo, the middle azul, the last rojo. Fixed by position
-      // in the text, so a number never changes colour while it is on the screen.
+      // A heading is a block like any other, so bandBlocks has already given it its
+      // band; the rail's dock and the header's notches take the same one, and the
+      // chapter reads in one colour from the number in the margin to the notch up top.
       heads.forEach((h, i) => {
-        const band = String(Math.min(2, Math.floor(marks_[i]! * 3)));
-        h.dataset.band = band;
+        const band = h.dataset.band ?? '0';
         ticks[i]!.dataset.band = band;
         tocLinks[i]?.setAttribute('data-band', band);
       });
       tocLinks.forEach((a, i) => { (a.parentElement as HTMLElement).style.top = `${(nodeAt(chapterNode(marks_[i]!)).y * 100).toFixed(2)}%`; });
       update();
     };
-    addEventListener('resize', place);
+    relayout = place;
     document.fonts?.ready.then(place);
     requestAnimationFrame(place);
   }
@@ -213,5 +241,6 @@ export function initReading(minutes: number): void {
     });
     dock.addEventListener('pointerleave', () => items.forEach((li) => li.style.removeProperty('--s')));
   }
-  requestAnimationFrame(update); // first layout read after first paint, not during load
+  document.fonts?.ready.then(() => relayout());
+  requestAnimationFrame(() => relayout()); // first layout read after first paint, not during load
 }

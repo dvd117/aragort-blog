@@ -154,7 +154,10 @@
 
 /* Conventions that make a post easy to follow (all plain Markdown / GFM). */
 /* En corto: the frontmatter `resumen`, under the title. */
-.encorto { margin: 1.75rem 0 0; padding: 1rem 1.1rem 1.05rem; background: var(--panel); border-left: 3px solid var(--hue-ui); border-radius: 0 10px 10px 0; max-width: 40rem; }
+.encorto { position: relative; margin: 1.75rem 0 0; padding: 1rem 1.1rem 1.05rem; background: var(--panel); border-left: 3px solid transparent; border-radius: 0 10px 10px 0; max-width: 40rem; }
+/* The bar is the three bands, like the three bullets beside it. Drawn rather than set as
+   a border, because `border-image` would take the rounded right corners with it. */
+.encorto::before { content: ""; position: absolute; left: -3px; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, var(--hu-amarillo) 0 33.333%, var(--hu-azul) 33.333% 66.667%, var(--hu-rojo) 66.667% 100%); }
 .encorto h2 { font: 600 .8125rem/1.2 var(--ui); color: var(--fg-2); margin: 0 0 .5rem; letter-spacing: .01em; }
 .encorto ul { margin: 0; padding: 0 0 0 1.1rem; font: 500 1.0625rem/1.45 var(--ui); color: var(--fg); }
 .encorto li + li { margin-top: .35rem; }
@@ -174,13 +177,16 @@
 .toc li::marker { color: var(--hue-ui); font-variant-numeric: tabular-nums; }
 .toc a { color: var(--fg); text-decoration: none; }
 .toc a:hover { text-decoration: underline; text-decoration-color: var(--hue); }
-/* The chapters walk the flag. A heading's number takes the band of the third of the text
-   it opens -- amarillo, then azul, then rojo -- in the text, in the rail's dock and in the
-   header's notches (reading.ts sets data-band from its position). The prose itself keeps
-   the post's one hue: links and bold never change colour under the reader. */
-.prose > h2[data-band="0"], .rail-toc a[data-band="0"] { --hue: var(--h-amarillo); --hue-ui: var(--hu-amarillo); }
-.prose > h2[data-band="1"], .rail-toc a[data-band="1"] { --hue: var(--h-azul); --hue-ui: var(--hu-azul); }
-.prose > h2[data-band="2"], .rail-toc a[data-band="2"] { --hue: var(--h-rojo); --hue-ui: var(--hu-rojo); }
+/* The text walks the flag with the reader. Every top-level block of the prose is given
+   the band of the third it sits in (reading.ts), and everything coloured inside it
+   follows: links, the bold band, the pull quote, list markers, note rules, the chapter
+   number in the margin -- and the rail's dock and the header's notch for that chapter.
+   The band is the block's, so a paragraph is one colour from its first word to its last
+   and the change always falls at a paragraph seam. It is set on layout, never on scroll:
+   nothing recolours while you are reading it. */
+.prose > [data-band="0"], .rail-toc a[data-band="0"] { --hue: var(--h-amarillo); --hue-band: var(--hb-amarillo); --hue-ui: var(--hu-amarillo); }
+.prose > [data-band="1"], .rail-toc a[data-band="1"] { --hue: var(--h-azul); --hue-band: var(--hb-azul); --hue-ui: var(--hu-azul); }
+.prose > [data-band="2"], .rail-toc a[data-band="2"] { --hue: var(--h-rojo); --hue-band: var(--hb-rojo); --hue-ui: var(--hu-rojo); }
 /* ## chapters. */
 .prose h2 { font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.45em; line-height: 1.12; color: var(--fg); margin: 2.2em 0 .7em; scroll-margin-top: 80px; }
 /* Chapter numbers: 01, 02… in the hue. The number is decoration: hidden from screen readers. */

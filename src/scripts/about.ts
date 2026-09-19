@@ -1,8 +1,10 @@
 /**
- * Sobre mí: each paragraph is a node on the thread and lights, in its hue, as it
- * comes into view; the thread's lit line grows to the last lit node. The portrait
- * net lights its path to where the thread begins. Under reduced motion everything
- * is lit from the start, with no transition.
+ * Sobre mí: each paragraph is a node on the thread and lights as it comes into view,
+ * and the thread's own line is the flag -- amarillo at the top, azul, then rojo --
+ * uncovered down to the last lit node. Each node, and the links in its paragraph, take
+ * the band the node hangs in, so the story reads through the three colours once.
+ * The portrait net lights its path to where the thread begins. Under reduced motion
+ * everything is lit from the start, with no transition.
  */
 import { reduced } from './motion';
 
@@ -29,7 +31,21 @@ export function initAbout(root: ParentNode = document): void {
     });
   }
 
+  // Which third of the thread a node hangs in. Measured, not counted: the paragraphs are
+  // different lengths and the reader's own type size moves them.
+  const band = () => {
+    const t = thread.getBoundingClientRect();
+    if (!t.height) return;
+    for (const item of items) {
+      const n = item.querySelector<HTMLElement>('.about-node')?.getBoundingClientRect();
+      if (!n) continue;
+      const f = (n.top + n.height / 2 - t.top) / t.height;
+      item.dataset.band = String(Math.min(2, Math.max(0, Math.floor(f * 3))));
+    }
+  };
+
   const grow = () => {
+    band();
     const lit = items.filter((i) => i.classList.contains('is-lit'));
     const last = lit.at(-1)?.querySelector<HTMLElement>('.about-node');
     if (!last) { thread.style.setProperty('--lit', '0px'); return; }
