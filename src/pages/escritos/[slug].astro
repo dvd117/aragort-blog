@@ -88,8 +88,10 @@ const filename = `${post.id}.md`;
 <script>
   import { initThreads } from '../../scripts/threads';
   import { initResume } from '../../scripts/resume';
+  import { whenActive } from '../../scripts/active';
   initThreads();
-  initResume(document.querySelector<HTMLElement>('.post')?.dataset.slug ?? location.pathname);
+  // A prerendered post must not record a position the reader never reached.
+  whenActive(() => initResume(document.querySelector<HTMLElement>('.post')?.dataset.slug ?? location.pathname));
 </script>
 
 <script>
@@ -114,5 +116,6 @@ const filename = `${post.id}.md`;
 
 <script>
   import { initReading } from '../../scripts/reading';
-  initReading(Number(document.querySelector<HTMLElement>('.post')?.dataset.minutes) || 1);
+  import { whenActive } from '../../scripts/active';
+  whenActive(() => initReading(Number(document.querySelector<HTMLElement>('.post')?.dataset.minutes) || 1));
 </script>

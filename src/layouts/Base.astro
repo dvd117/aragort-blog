@@ -69,7 +69,10 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
   <button type="button" class="to-top" data-to-top aria-label="Volver arriba" hidden><span aria-hidden="true">↑</span></button>
   <script>
     import { initToTop } from '../scripts/totop';
+    import { initNetLive } from '../scripts/netlive';
+    import { whenActive } from '../scripts/active';
     initToTop();
+    whenActive(initNetLive);
   </script>
 </body>
 </html>

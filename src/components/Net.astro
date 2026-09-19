@@ -7,8 +7,12 @@ interface Props {
   class?: string;
   /** Light nodes in reading order (the post rail). */
   progress?: boolean;
+  /** Answers the cursor and taps (netlive.ts): hero and portrait. */
+  respond?: boolean;
+  /** Nodes that never drift (the exit node the index wire hangs from). */
+  pin?: number[];
 }
-const { name, class: className, progress = false } = Astro.props;
+const { name, class: className, progress = false, respond = false, pin } = Astro.props;
 const g = nets[name];
 const lit = new Set<number>(g.lit);
 ---
@@ -16,6 +20,8 @@ const lit = new Set<number>(g.lit);
   class:list={['net', className]}
   viewBox={`0 0 ${g.w} ${g.h}`}
   data-progress={progress ? '' : undefined}
+  data-respond={respond ? '' : undefined}
+  data-pin={pin?.length ? pin.join(',') : undefined}
   aria-hidden="true"
   focusable="false"
 >

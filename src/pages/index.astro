@@ -4,7 +4,7 @@ import Net from '../components/Net.astro';
 import { getPosts } from '../lib/collection';
 import { formatDateEs } from '../lib/posts';
 import { nets } from '../assets/net/geometry';
-import { exitPath } from '../lib/netpath';
+import { exitNode, exitPath } from '../lib/netpath';
 import { LEDE, WHO } from '../lib/site';
 import { landingMode } from '../lib/landing';
 import '../styles/index.css';
@@ -21,7 +21,7 @@ const mode = landingMode(posts.length);
         <p class="lede">{LEDE}</p>
       </div>
       <div class="net-wrap" data-netnav data-exit={exit}>
-        <div class="hero-net" style="view-transition-name: net"><Net name="hero" /></div>
+        <div class="hero-net" style="view-transition-name: net"><Net name="hero" respond pin={[exitNode(nets.hero)]} /></div>
       </div>
     </section>
 
