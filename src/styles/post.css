@@ -181,3 +181,5 @@
 .net-hr circle.on { fill: var(--hue-ui); stroke: var(--hue-ui); }
 
 @media (max-width: 899px) and (max-height: 500px) and (orientation: landscape) { .post-head { padding-top: 1.5rem; padding-bottom: 1.5rem; } .post-head h1 { font-size: clamp(2.2rem, 13vh, 4rem); max-width: 18ch; } }
+/* On desktop posts the hero goes to the rail, not to the header mark. */
+@media (min-width: 1000px) { .site .mark.vt-net { view-transition-name: none; } }

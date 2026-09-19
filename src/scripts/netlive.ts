@@ -153,6 +153,7 @@ export function morphFrom(svg: SVGSVGElement, from: Pt[], ms = 450): void {
   if (!n || reduced() || from.length !== n.base.length) return;
   n.morph = { from, start: performance.now(), ms };
   n.visible = true;
+  draw(n, from); // start where the hero was, not one frame in place first
   schedule();
 }
 
