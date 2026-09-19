@@ -7,8 +7,10 @@ interface Props {
   netMark?: boolean;
   /** On a post: minutes to read. The header then carries "quedan N min" and the progress line. */
   minutes?: number;
+  /** On a post: its title, shown in the header once the page title has scrolled away. */
+  postTitle?: string;
 }
-const { current, netMark = true, minutes } = Astro.props;
+const { current, netMark = true, minutes, postTitle } = Astro.props;
 ---
 <!-- Always visible, one compact row (52px on a phone). On a post the mark is the
      reading progress, with the time left beside it and a progress line along the bottom. -->
@@ -18,7 +20,12 @@ const { current, netMark = true, minutes } = Astro.props;
       <span class="mark" style={netMark ? 'view-transition-name: net' : undefined}><Net name="mark" /></span>
       <span class="name">David Aragort</span>
     </a>
-    {minutes && <span class="left" data-left aria-hidden="true">quedan {minutes} min</span>}
+    {minutes && (
+      <span class="doc" aria-hidden="true">
+        {postTitle && <span class="doc-title">{postTitle}</span>}
+        <span class="left" data-left>quedan {minutes} min</span>
+      </span>
+    )}
     <nav aria-label="Principal">
       <a href="/" aria-current={current === 'escritos' ? 'page' : undefined}>Escritos</a>
       <a href="/sobre-mi/" aria-current={current === 'sobre-mi' ? 'page' : undefined}>Sobre mí</a>
@@ -34,7 +41,15 @@ const { current, netMark = true, minutes } = Astro.props;
   .brand { display: inline-flex; align-items: center; gap: .6rem; text-decoration: none; font-weight: 600; font-size: 1rem; letter-spacing: -.01em; min-height: 44px; }
   .mark { display: block; }
   .brand :global(.net) { width: 34px; height: 26px; }
+  /* While reading (the post's own title out of view) the header carries it, as the
+     minibar did: title over the time left. */
+  .doc { display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: 3px; }
+  .doc-title { display: none; font: var(--title-weight) .9375rem/1.15 var(--display); letter-spacing: -.01em; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .site.reading .doc { flex: 1 1 auto; }
+  .site.reading .doc-title { display: block; animation: doc-in 160ms ease both; }
+  @keyframes doc-in { from { opacity: 0; transform: translateY(3px); } }
   .left { font: 500 .8125rem/1 var(--ui); color: var(--fg-2); white-space: nowrap; }
+  .site.reading .left { font-size: .75rem; }
   nav { display: flex; gap: .9rem; margin-left: auto; }
   nav a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; color: var(--fg-2); font-size: .9375rem; }
   nav a:hover { color: var(--fg); }
@@ -42,6 +57,8 @@ const { current, netMark = true, minutes } = Astro.props;
   .progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--hue); transform-origin: 0 50%; transform: scaleX(0); pointer-events: none; }
   /* Phone: the name gives its room to the nav; the mark still says who it is. */
   @media (max-width: 519px) {
+    /* While reading, "Sobre mí" steps aside so the title has room; "Escritos" stays. */
+    .site.reading nav a[href="/sobre-mi/"] { display: none; }
     .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   }
   @media (min-width: 900px) {
