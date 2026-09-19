@@ -267,7 +267,7 @@ below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir mov
   in on top (200ms, 6px rise). Escritos and Sobre mí morph into each other. Same-origin
   pages are prerendered on hover or focus.
 - **The net becomes the rail:** on desktop the hero's nodes glide into the post's rail
-  (~450ms; the rail is the hero transposed, same 40 nodes and 84 wires). On a phone the
+  (~450ms; each rail node starts from the hero node at the same place in reading order). On a phone the
   hero shrinks into the header mark.
 - **The net is alive:** every net drifts in 3D (each node has a depth; a few degrees of
   turn, near nodes move more). The cursor tilts it on desktop, scroll on a phone. Posts

@@ -1,11 +1,13 @@
 /**
  * Landing -> post on desktop: the hero net becomes the reading rail. On the landing, the
  * click on an entry stores where the hero's nodes are on screen. On the post, the rail
- * (the same nodes, transposed) starts from those points and glides into place in 450ms,
+ * starts from those points (each rail node from the hero node at the same place in
+ * reading order) and glides into its own shape in 450ms,
  * then reading lights it as usual. Phone, reduced motion, or no stored points: nothing.
  */
 import { reduced } from './motion';
 import { morphFrom } from './netlive';
+import { mapByOrder } from '../lib/netmap';
 
 const KEY = 'aragort-net-from';
 
@@ -29,5 +31,7 @@ export function arriveOnRail(): void {
   const m = svg?.getScreenCTM();
   if (!svg || !m) return;
   const inv = m.inverse();
-  morphFrom(svg, data.pts.map(([x, y]) => { const p = new DOMPoint(x, y).matrixTransform(inv); return [p.x, p.y] as [number, number]; }));
+  const from = data.pts.map(([x, y]) => { const p = new DOMPoint(x, y).matrixTransform(inv); return [p.x, p.y] as [number, number]; });
+  const map = mapByOrder(from.length, svg.querySelectorAll('circle').length);
+  morphFrom(svg, map.map((i) => from[i]!));
 }
