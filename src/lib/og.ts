@@ -8,7 +8,6 @@ import { resolve } from 'node:path';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import { nets } from '../assets/net/geometry';
-import { buildFamily, FAMILIES } from './families';
 
 const DARK = { bg: '#0c0e11', fg: '#ece9e1', muted: '#9ea3aa', ochre: '#e2a638' };
 
@@ -29,7 +28,7 @@ function markSvg(): string {
 
 let font: Promise<Buffer> | undefined;
 // Relative to the project root: the build runs there, and bundling moves import.meta.url.
-const loadFont = () => (font ??= readFile(resolve('src/assets/og', FAMILIES[buildFamily()].og)));
+const loadFont = () => (font ??= readFile(resolve('src/assets/og/geist-700.ttf')));
 
 type Node = { type: string; props: Record<string, unknown> };
 const el = (type: string, style: Record<string, unknown>, children?: unknown, extra: Record<string, unknown> = {}): Node =>

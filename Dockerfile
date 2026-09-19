@@ -10,13 +10,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
-# SPECIMEN=1 ships all four type families and the "Tipo" switcher, to compare them
-# live; the default 0 ships the chosen family only. Test posts can never reach an
-# image: tests/fixtures is outside the build context (.dockerignore) and the
-# fixtures switch is cleared here.
-ARG SPECIMEN=0
+# Test posts can never reach an image: tests/fixtures is outside the build context
+# (.dockerignore) and the fixtures switch is cleared here.
 RUN git config --global --add safe.directory /app \
- && env -u ARAGORT_POSTS_DIR ARAGORT_SPECIMEN="$SPECIMEN" npm run build
+ && env -u ARAGORT_POSTS_DIR npm run build
 
 # Serve: Caddy, static files only. TLS is terminated in front (Traefik on Dokploy).
 FROM caddy:2-alpine
