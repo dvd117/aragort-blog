@@ -62,7 +62,7 @@ const filename = `${post.id}.md`;
         <div class="rail-net" aria-hidden="true"><Net name="rail" progress /></div>
         {chapters.length >= 3 && (
           <nav class="rail-toc" aria-label="Capítulos">
-            <ol>{chapters.map((c, i) => <li><a href={`#${c.slug}`} data-chapter={i}><span class="num">{String(i + 1).padStart(2, '0')}</span>{c.text}</a></li>)}</ol>
+            <ol>{chapters.map((c, i) => <li><a href={`#${c.slug}`} data-chapter={i}><span class="num">{String(i + 1).padStart(2, '0')}</span><span class="ttl">{c.text}</span></a></li>)}</ol>
           </nav>
         )}
       </div>

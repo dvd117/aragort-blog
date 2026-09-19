@@ -11,19 +11,24 @@
   .rail { display: block; position: sticky; top: 10vh; align-self: start; grid-column: 1; grid-row: 1 / span 3; height: 78vh; }
   .rail .net { height: 78vh; width: auto; max-width: 150px; }
   /* The chapters sit beside the net, each at the height where it begins (set by reading.ts). */
-  /* The dock: at rest only the net, with a dot beside the current chapter's node. Hover or
-     focus the rail and each chapter opens beside its node; the ones near the pointer grow. */
+  /* The dock: at rest the chapter numbers sit beside their nodes, with a dot beside the
+     current chapter's node. Hover or focus the rail and each number opens into a pill with
+     its title; the ones near the pointer grow. */
   .rail-dot { position: absolute; width: 5px; height: 5px; margin: -2.5px 0 0; border-radius: 50%; background: var(--hue-ui); pointer-events: none; transition: top 240ms cubic-bezier(.2, 0, 0, 1); }
   .rail-toc { position: absolute; top: 0; left: calc(100% - 14px); width: 17rem; height: 100%; z-index: 5; pointer-events: none; }
   .rail-toc ol { list-style: none; margin: 0; padding: 0; }
   .rail-toc li { position: absolute; left: 0; transform: translateY(-50%) scale(var(--s, 1)); transform-origin: left center; transition: transform 120ms ease-out; }
-  .rail-toc a { display: flex; align-items: baseline; gap: .55rem; max-width: 16rem; padding: .45rem .8rem; border: 1px solid var(--rule); border-radius: 10px; background: var(--panel); font: 500 .875rem/1.25 var(--ui); color: var(--fg-2); text-decoration: none; opacity: 0; translate: -8px 0; transition: opacity 160ms ease, translate 200ms cubic-bezier(.2, 0, 0, 1), color 120ms ease; }
-  .rail:hover .rail-toc, .rail:focus-within .rail-toc { pointer-events: auto; }
-  .rail:hover .rail-toc a, .rail:focus-within .rail-toc a { opacity: 1; translate: 0 0; }
-  .rail-toc li:nth-child(2) a { transition-delay: 30ms; } .rail-toc li:nth-child(3) a { transition-delay: 60ms; } .rail-toc li:nth-child(n+4) a { transition-delay: 90ms; }
+  .rail-toc a { display: flex; align-items: baseline; max-width: 16rem; padding: .4rem .7rem; border: 1px solid transparent; border-radius: 10px; background: transparent; font: 500 .875rem/1.25 var(--ui); color: var(--fg-2); text-decoration: none; pointer-events: auto; transition: background-color 160ms ease, border-color 160ms ease, color 120ms ease; }
+  .rail-toc .num { flex: none; font: 600 .75rem/1 var(--mono); color: var(--fg-2); transition: color 120ms ease; }
+  .rail-toc a.now .num { color: var(--hue); }
+  .rail-toc .ttl { display: block; max-width: 0; margin-left: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; opacity: 0; transition: max-width 220ms cubic-bezier(.2, 0, 0, 1), margin-left 220ms cubic-bezier(.2, 0, 0, 1), opacity 160ms ease; }
+  .rail:hover .rail-toc a, .rail:focus-within .rail-toc a { background: var(--panel); border-color: var(--rule); }
+  .rail:hover .rail-toc .ttl, .rail:focus-within .rail-toc .ttl { max-width: 13rem; margin-left: .55rem; opacity: 1; }
+  .rail:hover .rail-toc .num, .rail:focus-within .rail-toc .num { color: var(--hue); }
+  .rail-toc li:nth-child(2) .ttl { transition-delay: 30ms; } .rail-toc li:nth-child(3) .ttl { transition-delay: 60ms; } .rail-toc li:nth-child(n+4) .ttl { transition-delay: 90ms; }
   .rail-toc a:hover, .rail-toc a:focus-visible { color: var(--fg); border-color: var(--fg-2); }
-  .rail-toc a.now { color: var(--fg); border-color: var(--hue-ui); }
-  .rail-toc .num { flex: none; font: 600 .75rem/1 var(--mono); color: var(--hue); }
+  .rail-toc a.now { color: var(--fg); }
+  .rail:hover .rail-toc a.now, .rail:focus-within .rail-toc a.now { border-color: var(--hue-ui); }
   .post[data-has-rail-toc] .toc { display: none; }
 }
 
@@ -197,5 +202,5 @@
 /* On desktop posts the hero goes to the rail, not to the header mark. */
 @media (min-width: 1000px) { .site .mark.vt-net { view-transition-name: none; } }
 /* Reduced motion: the dock simply appears, no slide and no magnification. */
-@media (prefers-reduced-motion: reduce) { .rail-toc li, .rail-toc a, .rail-dot { transition: none; translate: none; } }
-:root[data-motion="reduce"] .rail-toc li, :root[data-motion="reduce"] .rail-toc a, :root[data-motion="reduce"] .rail-dot { transition: none; translate: none; }
+@media (prefers-reduced-motion: reduce) { .rail-toc li, .rail-toc a, .rail-toc .ttl, .rail-toc .num, .rail-dot { transition: none; } }
+:root[data-motion="reduce"] .rail-toc li, :root[data-motion="reduce"] .rail-toc a, :root[data-motion="reduce"] .rail-toc .ttl, :root[data-motion="reduce"] .rail-toc .num, :root[data-motion="reduce"] .rail-dot { transition: none; }
