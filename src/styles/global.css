@@ -1,7 +1,11 @@
 /* Fonts: SIL OFL, self-hosted, Latin subset (licences in /fonts). */
 @font-face { font-family: "Newsreader"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("/fonts/newsreader.woff2") format("woff2"); }
 @font-face { font-family: "Newsreader"; font-style: italic; font-weight: 400; font-display: swap; src: url("/fonts/newsreader-italic.woff2") format("woff2"); }
-@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800; font-display: swap; src: url("/fonts/jetbrains-mono.woff2") format("woff2"); }
+
+/* Geist + Geist Mono: the site's one family (display, UI, body). */
+@font-face { font-family: "Geist"; font-style: normal; font-weight: 400 800; font-display: swap; src: url("/fonts/geist.woff2") format("woff2"); }
+@font-face { font-family: "Geist"; font-style: italic; font-weight: 400 600; font-display: swap; src: url("/fonts/geist-italic.woff2") format("woff2"); }
+@font-face { font-family: "Geist Mono"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("/fonts/geist-mono.woff2") format("woff2"); }
 
 /* Atkinson Hyperlegible: declared here, downloaded only when a reader picks it. */
 @font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/atkinson-hyperlegible-regular.woff2") format("woff2"); }
@@ -26,17 +30,16 @@
   --mark: rgba(226, 166, 56, .28);
   --mark-hover: rgba(226, 166, 56, .45);
   --underline: 1px;
-  /* Type: one sans family for display, UI and body (src/styles/families/*.css sets
-     --sans, --mono and the per-family weights, tracking and line-heights). */
-  --sans: system-ui, sans-serif;
-  --mono: ui-monospace, Menlo, Consolas, monospace;
+  /* Type: Geist for display, UI and body; Geist Mono for code and the source view. */
+  --sans: "Geist", system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
   --display: var(--sans);
   --read: var(--sans);
   --ui: var(--sans);
   --serif: "Newsreader", Georgia, serif;
-  --display-weight: 700; --display-tracking: -.04em; --display-leading: .92;
-  --title-weight: 650; --title-tracking: -.03em; --title-leading: 1.04;
-  --lh: 1.62; --trk: 0em; --body-weight: 400;
+  --display-weight: 700; --display-tracking: -.055em; --display-leading: .92;
+  --title-weight: 620; --title-tracking: -.035em; --title-leading: 1.04;
+  --lh: 1.65; --trk: 0em; --body-weight: 400;
   --em-style: italic; --em-weight: 400;
   --gutter: 16px;
   color-scheme: dark;
