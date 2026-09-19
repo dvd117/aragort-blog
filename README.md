@@ -67,6 +67,8 @@ Each value is the colour used as text and UI in that theme: ratio on the page / 
 - highlighting the paragraph being read, underlining every link, and reducing motion;
 - reading aloud, with a local Spanish voice only (the control is hidden when there is none).
 
+**Theme resolution:** the reader's saved choice first. With nothing saved, the OS preference applies (light or dark). With no preference, or none readable, the site is dark. The base CSS is dark and a `prefers-color-scheme: light` rule applies only when nothing is saved, so there is no flash.
+
 Each setting is one `data-*` attribute on `<html>`, applied before first paint by an inline script generated from `src/lib/settings.ts`, and stored in `localStorage` (`aragort-lectura`).
 
 **Motion** is functional, 120 to 360ms, never looping, and off under `prefers-reduced-motion` or the panel's "Reducir movimiento":

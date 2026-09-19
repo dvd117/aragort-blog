@@ -11,7 +11,8 @@ export const STORAGE_KEY = 'aragort-lectura';
 export const LEGACY_THEME_KEY = 'aragort-theme';
 
 export const SCHEMA = {
-  theme: { attr: 'data-theme', values: ['system', 'light', 'dark', 'sepia', 'contrast'], default: 'system' },
+  // 'system' (default): OS preference, dark when there is none. See global.css.
+  theme: { attr: 'data-theme', values: ['system', 'dark', 'light', 'sepia', 'contrast'], default: 'system' },
   size: { attr: 'data-size', values: ['1', '2', '3', '4', '5'], default: '3' },
   leading: { attr: 'data-leading', values: ['1', '2', '3'], default: '2' },
   tracking: { attr: 'data-tracking', values: ['1', '2'], default: '1' },
