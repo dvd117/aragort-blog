@@ -18,6 +18,7 @@
 .prose p { margin: 0 0 1.35em; }
 /* The first paragraph is the lead: one step larger. */
 .prose > p:first-of-type { font-size: 1.12em; line-height: 1.55; color: var(--fg); }
+.prose > h2 ~ p:first-of-type { font-size: inherit; }
 /* E's highlighter, in D's palette: a band plus a 1px underline, so links never rely on the band alone. */
 /* Links: a thin underline in the post's hue; the highlight band only on hover, so
    1,300 words do not carry a dozen heavy bands. */
@@ -121,3 +122,37 @@
 .back:hover { color: var(--fg); }
 .dc-all a { font-weight: 500; color: var(--fg-2); text-underline-offset: .2em; }
 .dc-all a:hover { color: var(--fg); }
+
+/* Conventions that make a post easy to follow (all plain Markdown / GFM). */
+/* En corto: the frontmatter `resumen`, under the title. */
+.encorto { margin: 1.75rem 0 0; padding: 1rem 1.1rem 1.05rem; background: var(--panel); border-left: 3px solid var(--hue); border-radius: 0 10px 10px 0; max-width: 40rem; }
+.encorto h2 { font: 600 .8125rem/1.2 var(--ui); color: var(--fg-2); margin: 0 0 .5rem; letter-spacing: .01em; }
+.encorto ul { margin: 0; padding: 0 0 0 1.1rem; font: 500 1.0625rem/1.45 var(--ui); color: var(--fg); }
+.encorto li + li { margin-top: .35rem; }
+.encorto li::marker { color: var(--hue); }
+/* En este texto: the chapters, collapsible, from three ## headings on. */
+.toc { margin: 1rem 0 0; max-width: 40rem; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.toc summary { display: flex; align-items: center; min-height: 44px; font: 600 .9375rem/1 var(--ui); cursor: pointer; list-style: none; }
+.toc summary::-webkit-details-marker { display: none; }
+.toc summary::after { content: "+"; margin-left: auto; color: var(--fg-2); font-weight: 500; }
+.toc[open] summary::after { content: "−"; }
+.toc ol { margin: 0 0 .9rem; padding: 0 0 0 1.4rem; font: 400 1rem/1.4 var(--ui); }
+.toc li { padding: .3rem 0; }
+.toc li::marker { color: var(--hue); font-variant-numeric: tabular-nums; }
+.toc a { color: var(--fg); text-decoration: none; }
+.toc a:hover { text-decoration: underline; text-decoration-color: var(--hue); }
+/* ## chapters. */
+.prose h2 { font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.45em; line-height: 1.12; color: var(--fg); margin: 2.2em 0 .7em; scroll-margin-top: 72px; }
+.prose > h2:first-child { margin-top: .4em; }
+/* > quote: a pull quote, large, in the post's hue. */
+.prose blockquote { margin: 1.6em 0 1.8em; padding: 0; border: 0; font-family: var(--display); font-weight: var(--title-weight); letter-spacing: var(--title-tracking); font-size: 1.55em; line-height: 1.15; color: var(--hue); }
+.prose blockquote p { margin: 0; font-size: inherit !important; line-height: inherit !important; color: inherit !important; }
+/* **bold**: the skim path, a quiet highlight in the post's hue. */
+.prose strong { font-weight: 600; color: var(--fg); box-shadow: inset 0 -.38em 0 var(--hue-band); }
+:root[data-theme="contrast"] .prose strong { box-shadow: none; text-decoration: underline 2px var(--hue); text-underline-offset: .2em; }
+/* --- : a small net fragment. */
+.net-hr { display: flex; justify-content: center; margin: 2.2em 0; }
+.net-hr svg { width: 96px; height: 16px; overflow: visible; }
+.net-hr line { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
+.net-hr circle { fill: var(--bg); stroke: var(--net); stroke-width: 1; }
+.net-hr circle.on { fill: var(--hue); stroke: var(--hue); }

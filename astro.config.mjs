@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
 import rehypeMarginNotes from './src/lib/rehype-margin-notes.ts';
+import rehypeNetDivider from './src/lib/rehype-net-divider.ts';
 
 export default defineConfig({
   site: 'https://aragort.com',
@@ -16,7 +17,7 @@ export default defineConfig({
     processor: unified({
       gfm: true,
       smartypants: true,
-      rehypePlugins: [rehypeMarginNotes],
+      rehypePlugins: [rehypeMarginNotes, rehypeNetDivider],
     }),
   },
 });

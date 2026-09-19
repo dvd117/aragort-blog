@@ -165,3 +165,8 @@ a { color: inherit; }
 .to-top:hover { border-color: var(--fg-2); }
 .to-top[hidden] { display: none; }
 main:focus { outline: none; }
+
+/* Chapter notches on the header's progress line (drawn by reading.ts). */
+.site .ticks { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; }
+.site .ticks i { position: absolute; top: -3px; width: 2px; height: 8px; margin-left: -1px; background: var(--fg-2); border-radius: 1px; }
+.site .ticks i.past { background: var(--hue); }

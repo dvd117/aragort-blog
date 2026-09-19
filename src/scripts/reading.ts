@@ -22,6 +22,7 @@ export function initReading(minutes: number): void {
   const nets = [...marks, ...(rail ? [rail] : [])];
 
   let complete = false;
+  let chapterOf: (p: number) => string = () => '';
   let queued = false;
   card?.classList.add('pending');
 
@@ -62,7 +63,7 @@ export function initReading(minutes: number): void {
         railNodes.forEach((c) => c.classList.toggle('on', Number(c.dataset.o) < k));
         railWires.forEach((l) => l.classList.toggle('on', Number(l.dataset.a) < k && Number(l.dataset.b) < k));
       }
-      if (left) left.textContent = `quedan ${Math.max(1, Math.ceil(minutes * (1 - p)))} min`;
+      if (left) left.textContent = `${chapterOf(p)}quedan ${Math.max(1, Math.ceil(minutes * (1 - p)))} min`;
     }
 
   };
@@ -71,6 +72,35 @@ export function initReading(minutes: number): void {
   addEventListener('resize', update);
   document.addEventListener('ajustes:change', update);
   card?.addEventListener('focusin', finish); // keyboard readers who jump to the end
+
+  // Chapters (## headings): notches on the header's progress line where each begins,
+  // and "n/total" before the time left.
+  const heads = [...prose.querySelectorAll<HTMLElement>(':scope > h2')];
+  const siteHeader = document.querySelector<HTMLElement>('header.site');
+  let marks_: number[] = [];
+  let ticks: HTMLElement[] = [];
+  if (heads.length >= 3 && siteHeader) {
+    const host = document.createElement('div');
+    host.className = 'ticks';
+    host.setAttribute('aria-hidden', 'true');
+    ticks = heads.map(() => host.appendChild(document.createElement('i')));
+    siteHeader.append(host);
+    const place = () => {
+      const g = grid.getBoundingClientRect();
+      marks_ = heads.map((h) => (h.getBoundingClientRect().top - g.top) / g.height);
+      ticks.forEach((t, i) => { t.style.left = `${(marks_[i]! * 100).toFixed(2)}%`; });
+      update();
+    };
+    addEventListener('resize', place);
+    document.fonts?.ready.then(place);
+    requestAnimationFrame(place);
+  }
+  chapterOf = (p: number) => {
+    if (!marks_.length) return '';
+    const n = marks_.filter((m) => m <= p + 0.001).length;
+    ticks.forEach((t, i) => t.classList.toggle('past', marks_[i]! <= p + 0.001));
+    return n ? `${n}/${marks_.length} · ` : '';
+  };
 
   // The header carries the post title once the page's own title has scrolled away.
   const site = document.querySelector<HTMLElement>('header.site');

@@ -22,7 +22,9 @@ export const getStaticPaths = (async () => {
 
 interface Props { post: Post; next: { label: string; slug: string; title: string } | null; }
 const { post, next } = Astro.props;
-const { Content } = await render(post.entry);
+const { Content, headings } = await render(post.entry);
+// ## headings are chapters; the index appears from three on.
+const chapters = headings.filter((h) => h.depth === 2);
 const words = new Intl.NumberFormat('es').format(post.words);
 const version = versionLine(postVersion(post.file, post.date));
 const source = await readFile(post.file, 'utf8');
@@ -39,6 +41,18 @@ const filename = `${post.id}.md`;
         {post.draft && <span> · borrador</span>}
       </p>
       <h1 style={`view-transition-name: t-${post.slug}`}>{post.title}</h1>
+      {post.resumen && (
+        <aside class="encorto" aria-labelledby="encorto-title">
+          <h2 id="encorto-title">En corto</h2>
+          <ul>{post.resumen.map((r) => <li>{r}</li>)}</ul>
+        </aside>
+      )}
+      {chapters.length >= 3 && (
+        <details class="toc" data-chapters={chapters.length}>
+          <summary>En este texto</summary>
+          <ol>{chapters.map((c) => <li><a href={`#${c.slug}`}>{c.text}</a></li>)}</ol>
+        </details>
+      )}
       <div class="view" role="group" aria-label="Cómo ver el artículo">
         <button type="button" data-view="read" aria-pressed="true">Formato</button>
         <button type="button" data-view="md" aria-pressed="false">Markdown</button>
