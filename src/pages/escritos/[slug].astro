@@ -6,7 +6,7 @@ import Net from '../../components/Net.astro';
 import { getPosts, type Post } from '../../lib/collection';
 import { formatDateEs } from '../../lib/posts';
 import { postVersion, versionLine } from '../../lib/versions';
-import { readFile } from 'node:fs/promises';
+import { servedMarkdown } from '../../lib/raw';
 import '../../styles/post.css';
 
 export const getStaticPaths = (async () => {
@@ -26,7 +26,7 @@ const { Content, headings } = await render(post.entry);
 // ## headings are chapters; the index appears from three on.
 const chapters = headings.filter((h) => h.depth === 2);
 const version = versionLine(postVersion(post.file, post.date));
-const source = await readFile(post.file, 'utf8');
+const source = await servedMarkdown(post.file, post.date.slice(0, 4));
 const filename = `${post.id}.md`;
 ---
 <Base title={post.title} description={post.description} current="escritos" type="article" ogImage={`/og/${post.slug}.png`} hue={post.hue} minutes={post.minutes} postTitle={post.title}>
