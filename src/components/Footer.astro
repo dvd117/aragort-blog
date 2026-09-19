@@ -5,9 +5,10 @@
  * and as a tooltip, so nothing is lost by dropping the labels. GitHub keeps its own solid
  * mark, which does not read as a wire drawing.
  *
- * There are exactly three of them, so they are the flag: amarillo, azul, rojo, in the
- * order they sit in. They keep those three whatever hue the page owns -- the footer is
- * the same footer under every post.
+ * There are exactly three of them, so each owns one of the flag's colours -- amarillo,
+ * azul, rojo, in the order they sit in -- but only on the way in. At rest they are three
+ * quiet grey marks; the colour is what answers the pointer. Three lit marks in a footer
+ * would be asking for attention the footer does not want.
  */
 import Net from './Net.astro';
 import { LICENCE, REPO } from '../lib/licence';
@@ -66,12 +67,9 @@ const links = [
   .foot-links { display: flex; align-items: center; gap: .35rem; list-style: none; margin: 0; padding: 0; }
   /* 44px tap targets that still look like small marks. */
   .foot-links a { display: inline-flex; align-items: center; justify-content: center; min-width: var(--foot-row); min-height: var(--foot-row); color: var(--fg-2); transition: color 140ms ease; }
-  .foot-links a[data-band="0"] { color: var(--hu-amarillo); }
-  .foot-links a[data-band="1"] { color: var(--hu-azul); }
-  .foot-links a[data-band="2"] { color: var(--hu-rojo); }
-  .foot-links a[data-band="0"]:hover { color: var(--hl-amarillo); }
-  .foot-links a[data-band="1"]:hover { color: var(--hl-azul); }
-  .foot-links a[data-band="2"]:hover { color: var(--hl-rojo); }
+  .foot-links a[data-band="0"]:is(:hover, :focus-visible) { color: var(--hu-amarillo); }
+  .foot-links a[data-band="1"]:is(:hover, :focus-visible) { color: var(--hu-azul); }
+  .foot-links a[data-band="2"]:is(:hover, :focus-visible) { color: var(--hu-rojo); }
   .cc { display: inline-flex; align-items: center; gap: .22rem; }
   /* Drawn like the net: hairlines that do not thicken with the icon's size. */
   .i { display: block; width: var(--foot-icon); height: var(--foot-icon); fill: none; stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: color 140ms ease; }
