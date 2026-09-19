@@ -88,7 +88,8 @@ export function initReading(minutes: number): void {
     const place = () => {
       const g = grid.getBoundingClientRect();
       marks_ = heads.map((h) => (h.getBoundingClientRect().top - g.top) / g.height);
-      ticks.forEach((t, i) => { t.style.left = `${(marks_[i]! * 100).toFixed(2)}%`; });
+      // A chapter that opens the text needs no notch at 0%.
+      ticks.forEach((t, i) => { t.style.left = `${(marks_[i]! * 100).toFixed(2)}%`; t.hidden = marks_[i]! < 0.02; });
       update();
     };
     addEventListener('resize', place);
