@@ -234,8 +234,8 @@ decoration that means nothing.
 - **Landing, phone:** the net bleeds off the right edge behind the title; a wire leaves
   its exit node and becomes the thread down the left gutter; each entry hangs on the
   thread by its hue node.
-- **Landing, desktop (≥900px):** two columns, the title and lede on the left and the net
-  on the right at fuller strength.
+- **Landing, desktop (≥900px):** two columns, the title and lede on the left (as wide as
+  they need) and the net taking the rest of the width on the right, at fuller strength.
 - **Landing under 3 posts:** the latest post is featured (date, near-display title,
   description, its En corto as a teaser, "Leer · N min"), then a "quién escribe" strip
   (the mark beside one sentence and a link to Sobre mí). The thread runs past it to the

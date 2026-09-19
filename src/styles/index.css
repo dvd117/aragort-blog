@@ -41,7 +41,8 @@
    fuller strength; the thread runs down the left column and the wire crosses to it. */
 @media (min-width: 900px) {
   .index { padding-top: 4rem; overflow-x: visible; }
-  .hero { display: grid; grid-template-columns: 1.1fr 1fr; column-gap: 4rem; align-items: end; padding: 3rem 0 5rem; }
+  /* The title column is as wide as the title; the net takes the rest. */
+  .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 5rem; }
   .hero-title h1 { font-size: clamp(5rem, 9vw, 9rem); }
   .lede { font-size: 1.3125rem; max-width: 28ch; margin-top: 1.5rem; }
   .net-wrap { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .5; }
