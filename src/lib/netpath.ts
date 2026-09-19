@@ -45,3 +45,19 @@ export function pathFor(g: NetGeometry, slug: string, start = g.lit[0] ?? 0): nu
   for (let n = target; n !== -1; n = parent[n]!) path.unshift(n);
   return path;
 }
+
+/** The node where the net meets the list's thread: the bottom-left-most node. */
+export function exitNode(g: NetGeometry): number {
+  let best = 0;
+  let score = -Infinity;
+  g.nodes.forEach(([x, y], i) => { const s = y - x; if (s > score) { score = s; best = i; } });
+  return best;
+}
+
+/** Shortest path from the lit ochre node to the exit node, node indices. */
+export function exitPath(g: NetGeometry, start = g.lit[0] ?? 0): number[] {
+  const { parent } = bfs(g, start);
+  const path: number[] = [];
+  for (let n = exitNode(g); n !== -1; n = parent[n]!) path.unshift(n);
+  return path;
+}

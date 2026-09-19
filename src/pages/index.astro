@@ -4,26 +4,31 @@ import Net from '../components/Net.astro';
 import { getPosts } from '../lib/collection';
 import { formatDateEs } from '../lib/posts';
 import { nets } from '../assets/net/geometry';
-import { pathFor } from '../lib/netpath';
+import { exitPath } from '../lib/netpath';
 import '../styles/index.css';
 
 const posts = await getPosts();
+const exit = exitPath(nets.hero).join(',');
 ---
 <Base title="David Aragort" current="escritos" heroNet>
-  <div class="index wrap">
-    <div class="hero-title">
-      <h1 style="view-transition-name: page-title">Escritos</h1>
-      <p class="lede">Escribo sobre el país que podemos ser. A veces con propuestas, a veces con lo que aprendí haciendo.</p>
-    </div>
-    <div class="net-wrap" data-netnav><div class="hero-net" style="view-transition-name: net"><Net name="hero" /></div></div>
+  <div class="index wrap" data-netnav-root>
+    <section class="hero">
+      <div class="hero-title">
+        <h1 style="view-transition-name: page-title">Escritos</h1>
+        <p class="lede">Escribo sobre el país que podemos ser. A veces con propuestas, a veces con lo que aprendí haciendo.</p>
+      </div>
+      <div class="net-wrap" data-netnav data-exit={exit}>
+        <div class="hero-net" style="view-transition-name: net"><Net name="hero" /></div>
+      </div>
+    </section>
 
     {posts.length === 0 ? (
       <p class="empty">Todavía no hay escritos publicados.</p>
     ) : (
-      <ol class="entries">
+      <ol class="entries" data-thread>
         {posts.map((p) => (
-          <li class:list={['entry', { draft: p.draft }]} data-hue={p.hue} data-path={pathFor(nets.hero, p.slug).join(',')}>
-            <p class="d"><span class="hue-dot" aria-hidden="true" style={`view-transition-name: dot-${p.slug}`}></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
+          <li class:list={['entry', { draft: p.draft }]} data-hue={p.hue}>
+            <p class="d"><span class="node" aria-hidden="true" style={`view-transition-name: dot-${p.slug}`}></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
             <a class="t" href={`/escritos/${p.slug}/`} style={`view-transition-name: t-${p.slug}`}>{p.title}</a>
             {p.description && <p class="ex">{p.description}</p>}
             {p.draft && <span class="tag">borrador</span>}

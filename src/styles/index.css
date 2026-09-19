@@ -1,38 +1,54 @@
-/* Phone first: title, then the net as a sticky band over the list, then the list.
-   The entry at mid-screen lights its path in the band. */
-.index { display: grid; grid-template-columns: minmax(0, 1fr); padding-top: 2.5rem; }
-.hero-title h1 { font-family: var(--display); font-weight: var(--display-weight); font-size: clamp(3.6rem, 17vw, 10rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); margin: 0; }
-.lede { font-family: var(--read); font-size: 1.1875rem; line-height: 1.5; color: var(--fg-2); max-width: 30ch; margin: 1.25rem 0 1.75rem; }
-.net-wrap { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--rule); padding: .5rem var(--gutter); margin: 0 calc(-1 * var(--gutter)); }
-.hero-net { width: fit-content; margin: 0 auto; }
-.net-wrap .net { display: block; width: auto; height: 112px; margin: 0 auto; }
+/* The landing is one composition. Phone first:
+   the net bleeds off the right edge behind the title (quiet enough that the title
+   stays AA over it), a wire leaves its bottom-left node and becomes the thread
+   down the left gutter, and every entry hangs on the thread by its hue node. */
+.index { position: relative; overflow-x: clip; padding-top: 1rem; }
+.hero { position: relative; isolation: isolate; padding: 1.5rem 0 3rem; min-height: 15rem; }
+.hero-title { position: relative; z-index: 1; }
+/* Knockout: a halo in the page colour keeps every glyph on the background, so the
+   net under the title never touches the letters (title and lede keep their AA ratios). */
+.hero-title h1, .lede { text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg), 0 0 8px var(--bg); }
+.hero-title h1 { font-family: var(--display); font-weight: var(--display-weight); font-size: clamp(3.6rem, 18vw, 9rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); margin: 0; }
+.lede { font-family: var(--read); font-size: 1.125rem; line-height: 1.5; color: var(--fg-2); max-width: 24ch; margin: 1rem 0 0; }
+.net-wrap { position: absolute; z-index: 0; top: -.5rem; right: calc(-1 * var(--gutter) - 24vw); width: 96vw; pointer-events: none; }
+.net-wrap .net { display: block; width: 100%; height: auto; }
+/* Under the title the net recedes: lines and rings at low strength. */
+.net-wrap { --net-alpha: .26; }
+.net-wrap .net circle { stroke-opacity: .5; }
 
-/* Desktop: its own composition. Title and net side by side; hover or focus lights a path. */
-@media (min-width: 900px) {
-  .index { grid-template-columns: 1.15fr 1fr; column-gap: 4rem; padding-top: 7rem; }
-  .hero-title { align-self: end; padding-bottom: 7rem; }
-  .lede { font-size: 1.3125rem; margin-bottom: 0; }
-  .net-wrap { position: static; grid-column: 2; grid-row: 1; align-self: end; padding: 0 0 7rem; margin: 0; border: 0; background: none; }
-  .hero-net { width: 100%; }
-  .net-wrap .net { width: 100%; height: auto; }
-  .entries, .empty { grid-column: 1 / -1; }
-}
+/* The thread: one line in the gutter; the wire from the net joins it (drawn by netnav). */
+.entries { position: relative; list-style: none; margin: 0; padding: 0 0 0 1.75rem; }
+.entries::before { content: ""; position: absolute; left: 5px; top: 0; bottom: 1.2rem; width: 1px; background: var(--net); opacity: var(--net-alpha); }
+.entry { position: relative; display: grid; gap: .2rem; padding: .85rem 0 1.25rem; }
+/* The node sits on the thread, centred on its date line. */
+.node { position: absolute; left: calc(-1.75rem + 5.5px - 6px); top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; background: var(--hue); box-shadow: 0 0 0 3px var(--bg); }
+.entry .d { position: relative; font-size: .875rem; color: var(--fg-2); margin: 0; line-height: 1.4; }
+.entry .t { font-family: var(--display); font-weight: var(--title-weight); font-size: clamp(1.6rem, 6.4vw, 2.6rem); line-height: var(--title-leading); letter-spacing: var(--title-tracking); text-decoration: none; }
+.entry .t:hover { text-decoration: underline; text-decoration-color: var(--hue); text-decoration-thickness: 2px; text-underline-offset: .12em; }
+.entry .ex { font-family: var(--read); font-size: 1.0625rem; line-height: 1.45; color: var(--fg-2); margin: .3rem 0 0; }
+.entry.draft .t { color: var(--fg-2); }
+.tag { font-size: .875rem; color: var(--fg-2); }
+.empty { font-family: var(--read); font-size: 1.125rem; color: var(--fg-2); }
 
-/* Lit path: the post's hue, node by node (120-240ms in total). */
+/* Lit: the net path, the wire and the thread segment, in the entry's hue. */
 .net-wrap .net .path { stroke: var(--hue); stroke-opacity: 1; transition: stroke 120ms ease, fill 120ms ease; transition-delay: calc(var(--i, 0) * 30ms); }
 .net-wrap .net circle.path { fill: var(--hue); }
+.wire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
+.wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
+.wire .lit { fill: none; stroke: var(--hue); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset 220ms cubic-bezier(.2, 0, 0, 1); }
 
-.entries { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
-.entry { display: grid; gap: .35rem; padding: 1.75rem 0 1.9rem; border-bottom: 1px solid var(--rule); }
-.entry .d { font-size: .9375rem; color: var(--fg-2); margin: 0; }
-.entry .t { font-family: var(--display); font-weight: var(--title-weight); font-size: clamp(1.6rem, 6.4vw, 2.9rem); line-height: var(--title-leading); letter-spacing: var(--title-tracking); text-decoration: none; }
-.entry .t:hover { text-decoration: underline; text-decoration-color: var(--fg-2); text-decoration-thickness: 2px; text-underline-offset: .12em; }
-.entry .ex { font-family: var(--read); font-size: 1.1875rem; color: var(--fg-2); margin: .35rem 0 0; }
-.entry.draft .t { color: var(--fg-2); }
-.tag { font-size: .9375rem; color: var(--fg-2); }
+/* Desktop: its own composition. Two columns: title and lede left, the net right at
+   fuller strength; the thread runs down the left column and the wire crosses to it. */
 @media (min-width: 900px) {
-  .entry { grid-template-columns: 15rem 1fr; column-gap: 2rem; align-items: baseline; }
+  .index { padding-top: 4rem; overflow-x: visible; }
+  .hero { display: grid; grid-template-columns: 1.1fr 1fr; column-gap: 4rem; align-items: end; padding: 3rem 0 5rem; }
+  .hero-title h1 { font-size: clamp(5rem, 9vw, 9rem); }
+  .lede { font-size: 1.3125rem; max-width: 28ch; margin-top: 1.5rem; }
+  .net-wrap { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .5; }
+  .net-wrap .net circle { stroke-opacity: 1; }
+  .entries { padding-left: 2.25rem; max-width: 60rem; }
+  .node { left: calc(-2.25rem + 5.5px - 6px); }
+  .entry { grid-template-columns: 13rem 1fr; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
   .entry .ex, .entry .tag { grid-column: 2; }
+  .entry .t { font-size: clamp(1.9rem, 3.2vw, 2.9rem); }
 }
-.empty { font-family: var(--read); font-size: 1.1875rem; color: var(--fg-2); }
-.hue-dot { display: inline-block; width: .6em; height: .6em; border-radius: 50%; background: var(--hue); margin-right: .5em; vertical-align: .05em; }
