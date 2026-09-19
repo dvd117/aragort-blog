@@ -5,6 +5,8 @@ import Base from '../../layouts/Base.astro';
 import Net from '../../components/Net.astro';
 import { getPosts, type Post } from '../../lib/collection';
 import { formatDateEs } from '../../lib/posts';
+import { postVersion, versionLine } from '../../lib/versions';
+import { readFile } from 'node:fs/promises';
 import '../../styles/post.css';
 
 export const getStaticPaths = (async () => {
@@ -16,21 +18,33 @@ interface Props { post: Post; }
 const { post } = Astro.props;
 const { Content } = await render(post.entry);
 const words = new Intl.NumberFormat('es').format(post.words);
+const version = versionLine(postVersion(post.file), post.date);
+const source = await readFile(post.file, 'utf8');
+const filename = `${post.id}.md`;
 ---
 <Base title={post.title} description={post.description} current="escritos" type="article">
   <div class="progress" aria-hidden="true"></div>
   <article class="wrap post">
     <header class="post-head">
+      {version && <p class="ver">{version}</p>}
       <p class="meta">
         <time datetime={post.date}>{formatDateEs(post.date)}</time> · {post.minutes} min de lectura · {words} palabras
         {post.draft && <span> · borrador</span>}
       </p>
       <h1>{post.title}</h1>
+      <div class="view" role="group" aria-label="Cómo ver el artículo" hidden>
+        <button type="button" data-view="read" aria-pressed="true">Vista leída</button>
+        <button type="button" data-view="md" aria-pressed="false">Markdown</button>
+      </div>
     </header>
     <div class="post-grid">
       <div class="rail" aria-hidden="true"><Net name="rail" progress /></div>
-      <div class="prose">
+      <div class="prose" data-pane="read">
         <Content />
+      </div>
+      <div class="source" data-pane="md" hidden>
+        <p class="file"><a href={`/escritos/${post.slug}.md`}>{filename}</a></p>
+        <pre>{source}</pre>
       </div>
       <p class="sig"><Net name="mark" /><span>David Aragort</span></p>
     </div>
@@ -38,10 +52,21 @@ const words = new Intl.NumberFormat('es').format(post.words);
 </Base>
 
 <script>
+  /* Vista leída / Markdown: the real source, in place. Hidden without JS; the .md link still works. */
+  const views = document.querySelectorAll<HTMLButtonElement>('[data-view]');
+  const group = document.querySelector<HTMLElement>('.view');
+  if (group) group.hidden = false;
+  views.forEach((b) => b.addEventListener('click', () => {
+    views.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    document.querySelectorAll<HTMLElement>('[data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== b.dataset.view; });
+  }));
+</script>
+
+<script>
   /* Reading progress. Desktop: the rail's nodes light in reading order.
      Phone: a 3px hairline at the top. Under reduced motion the rail stays fully
      drawn and static; the hairline still reports position (state, not animation). */
-  const body = document.querySelector<HTMLElement>('.post .prose');
+  const body = document.querySelector<HTMLElement>('.post-grid');
   const bar = document.querySelector<HTMLElement>('.progress');
   const rail = document.querySelector<SVGSVGElement>('.rail .net[data-progress]');
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
