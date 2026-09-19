@@ -66,6 +66,7 @@ export default function rehypeMarginNotes() {
       if (!isEl(block)) continue;
       const refs = findAll(block, (n) => n.tagName === 'a' && 'dataFootnoteRef' in n.properties);
       const notes: Element[] = [];
+      let count = 0;
       for (const ref of refs) {
         const target = String(ref.properties.href ?? '').replace(/^#/, '');
         const n = textOf(ref);
@@ -73,12 +74,13 @@ export default function rehypeMarginNotes() {
         ref.properties = { href: `#${id}`, id: ref.properties.id, className: ['nref'], ariaLabel: `Nota ${n}` };
         if (emitted.has(id)) continue;
         emitted.add(id);
+        count++;
         const [first = [], ...rest] = defs.get(target) ?? [];
         notes.push(h('p', { id }, [h('span', { className: ['n'] }, [{ type: 'text', value: n }]), { type: 'text', value: ' ' }, ...first]));
         for (const para of rest) notes.push(h('p', {}, para));
       }
       if (notes.length) {
-        out.push({ type: 'text', value: '\n' }, h('aside', { className: ['note'], ariaLabel: notes.length > 1 ? 'Notas' : 'Nota' }, notes));
+        out.push({ type: 'text', value: '\n' }, h('aside', { className: ['note'], ariaLabel: count > 1 ? 'Notas' : 'Nota' }, notes));
       }
     }
     tree.children = out;

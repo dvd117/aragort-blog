@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import { countWords, parsePostFilename, readingMinutes } from './posts';
+import { countWords, isVisible, parsePostFilename, readingMinutes } from './posts';
 
 export interface Post {
   entry: CollectionEntry<'posts'>;
@@ -17,7 +17,7 @@ export interface Post {
 
 /** Published posts, newest first. Drafts appear only in `astro dev`. */
 export async function getPosts(): Promise<Post[]> {
-  const entries = await getCollection('posts', ({ data }) => import.meta.env.DEV || !data.draft);
+  const entries = await getCollection('posts', ({ data }) => isVisible(data, import.meta.env.DEV));
   const posts = entries
     .map((entry) => {
       const { date, slug } = parsePostFilename(`${entry.id}.md`);
