@@ -28,15 +28,10 @@ const version = versionLine(postVersion(post.file, post.date));
 const source = await readFile(post.file, 'utf8');
 const filename = `${post.id}.md`;
 ---
-<Base title={post.title} description={post.description} current="escritos" type="article" ogImage={`/og/${post.slug}.png`} hue={post.hue}>
-  <div class="progress" aria-hidden="true"></div>
-  <div class="minibar" data-minibar aria-hidden="true">
-    <span class="mb-mark"><Net name="mark" /></span>
-    <span class="mb-title">{post.title}</span>
-    <span class="mb-left" data-left>quedan {post.minutes} min</span>
-  </div>
+<Base title={post.title} description={post.description} current="escritos" type="article" ogImage={`/og/${post.slug}.png`} hue={post.hue} minutes={post.minutes}>
   <article class="wrap post" data-slug={post.slug} data-minutes={post.minutes}>
     <header class="post-head">
+      <a class="back" href="/">← Escritos</a>
       {version && <p class="ver">{version}</p>}
       <p class="meta">
         <span class="hue-dot" aria-hidden="true" style={`view-transition-name: dot-${post.slug}`}></span>
@@ -45,7 +40,7 @@ const filename = `${post.id}.md`;
       </p>
       <h1 style={`view-transition-name: t-${post.slug}`}>{post.title}</h1>
       <div class="view" role="group" aria-label="Cómo ver el artículo">
-        <button type="button" data-view="read" aria-pressed="true">Vista leída</button>
+        <button type="button" data-view="read" aria-pressed="true">Formato</button>
         <button type="button" data-view="md" aria-pressed="false">Markdown</button>
       </div>
     </header>
@@ -64,6 +59,7 @@ const filename = `${post.id}.md`;
           <p class="dc-next"><span class="dc-label">{next.label}</span> <a href={`/escritos/${next.slug}/`}>{next.title}</a></p>
         )}
         <p class="dc-mail"><a href="mailto:hola@aragort.com">Escríbeme</a> <span>hola@aragort.com</span></p>
+        <p class="dc-all"><a href="/">Todos los escritos</a></p>
       </aside>
     </div>
   </article>
@@ -77,7 +73,7 @@ const filename = `${post.id}.md`;
 </script>
 
 <script>
-  /* Vista leída / Markdown: the real source, in place. Hidden without JS; the .md link still works. */
+  /* Formato / Markdown: the real source, in place. Hidden without JS; the .md link still works. */
   const views = document.querySelectorAll<HTMLButtonElement>('[data-view]');
   views.forEach((b) => b.addEventListener('click', () => {
     views.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
