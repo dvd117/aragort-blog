@@ -194,11 +194,17 @@ decoration that means nothing.
   dark), then dark. The base CSS is dark. Dark is OLED black (`#000`), with reading text
   at `#cfccc4` against halation; panels (`#101113`) and rules (`#24272c`) still separate
   from black. "Sistema" is the first option in Ajustes.
-- **Ochre** is the brand: the wordmark node, the focus ring, global UI marks, and all of
-  Sobre mí (ochre plus neutrals, no post hues).
+- **Ochre** is the brand: the wordmark node, the focus ring and global UI marks. It is
+  also the hue the site falls back to before any post has been read.
 - **The five post hues** (ochre, teal, brick, sky, moss) each belong to one post, set in
   frontmatter or hashed from the slug. A hue colours its post's rail, progress line,
   footnote markers, note edge, links, chapter numbers and the dot beside its date.
+- **One hue rules the page at a time.** The hue lives on `<html>`, so everything on the
+  page shares it: no page ever shows five hues at once. On a post it is the post's own.
+  On the landing it follows the entry under the cursor, and every entry, node, link and
+  lit wire moves with it. On the landing and Sobre mí before any hover it is the hue of
+  the last post read on this device (`src/lib/lasthue.ts`, applied before first paint);
+  ochre until there is one.
 - **Colour means something.** Colour on the letters means clickable: links are set in the
   hue with a faint hue underline that goes solid and 2px on hover. Colour behind the
   letters means emphasis: bold keeps its hue band, text in `fg`. In Alto contraste bold is
@@ -247,8 +253,11 @@ decoration that means nothing.
   move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
 - **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
   sticky on the left and the thread runs on the right.
-- **Footer:** the mark, "David Aragort · CC BY-SA 4.0 ↗" and RSS. The writing
-  is CC BY-SA 4.0; every served `.md` closes with its licence line.
+- **Footer:** the mark, "David Aragort" and three icon links — GitHub (the source of this
+  site), CC BY-SA (the licence, as the three canonical glyphs) and RSS. The icons are
+  drawn in the net's hand: hairlines in `currentColor`, hollow rings, 44px tap targets,
+  each carrying its words for screen readers and as a tooltip. They take the ruling hue on
+  hover. The writing is CC BY-SA 4.0; every served `.md` closes with its licence line.
 
 ## Depth
 
@@ -276,12 +285,17 @@ below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir mov
   net against its motion and it settles. Posts get half amplitude and hold still while
   scrolling. The node under the cursor glows in ochre and fades (~600ms); the first page
   of a session opens with one pulse of light from the ochre node.
-- **Landing:** hovering or focusing an entry lights its own route through the net (ochre
-  node → the post's node → exit), the wire and the thread in the entry's hue. Routes stay
-  lit as a trail, and the whole trail takes the current entry's hue. On a phone, the entry
-  at mid-screen does.
-- **Post:** the rail and the header mark light node by node as you read. At the end the
-  net completes with one pulse.
+- **Landing:** hovering or focusing an entry lights its own **region** of the net — its
+  route (ochre node → the post's node → exit) plus the nodes one wire away from its own
+  node — along with the wire and the thread. A wire lights once both of its nodes are lit,
+  so separate regions knit together and the net visibly fills as the archive grows: one
+  post lights about a quarter of it, six about four fifths. **The net only ever gains
+  light.** Nothing is ever unlit; the trail simply recolours to the current entry's hue.
+  On a phone, the entry at mid-screen does.
+- **Post:** the rail and the header mark light node by node as you read, as a **high-water
+  mark** — the light holds at the furthest you have read and never recedes, so jumping
+  back with the chapter dock does not unread the text. The chapter dot and the time left
+  follow where you actually are. At the end the net completes with one pulse.
 
 ## Do's and Don'ts
 

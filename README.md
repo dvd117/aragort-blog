@@ -49,7 +49,7 @@ A post is **v1 when published**. Each commit to its file **after the filename da
 
 ### A hue per post
 
-Each post owns one of five muted hues: `ochre` (the brand), `teal`, `brick`, `sky`, `moss`. Set it with `hue:` in the frontmatter, or leave it out: it is then assigned from the slug by a hash (`src/lib/hue.ts`), stable across builds and independent of post order. The hue colours the post's reading rail, progress line, footnote markers, margin-note edge and link highlight, and a small dot beside the date on the index and the post. Ochre stays for the wordmark node and global UI. Links are set in the hue (text); dots, nodes, rails and rules use a more saturated UI variant in the light themes (3:1).
+Each post owns one of five muted hues: `ochre` (the brand), `teal`, `brick`, `sky`, `moss`. Set it with `hue:` in the frontmatter, or leave it out: it is then assigned from the slug by a hash (`src/lib/hue.ts`), stable across builds and independent of post order. The hue colours the post's reading rail, progress line, footnote markers, margin-note edge and link highlight, and a small dot beside the date on the index and the post. Ochre stays for the wordmark node and global UI. Only one hue rules a page at a time: it sits on `<html>`, so a post wears its own, and the landing takes the hue of whichever entry is under the cursor. The landing and Sobre mí open in the hue of the last post read on this device (`src/lib/lasthue.ts`, applied inline before first paint), ochre until there is one. Links are set in the hue (text); dots, nodes, rails and rules use a more saturated UI variant in the light themes (3:1).
 
 Each value is the colour used as text and UI in that theme: ratio on the page / on the note panel (needs 4.5, and 7 in alto contraste). Text on each hue's highlight band stays at 8.6 or more.
 
@@ -77,8 +77,8 @@ Each setting is one `data-*` attribute on `<html>`, applied before first paint b
 
 **Motion** is functional, 120 to 360ms, and off under `prefers-reduced-motion` or the panel's "Reducir movimiento". The net is alive: it drifts in 3D, a few degrees, on every page (half on posts, still while scrolling); each node hangs on a spring, so the cursor (or a finger on the net) pulls nodes in like gravity, a click or tap sends a ring outward that springs back, and on a phone scrolling swings the net and it settles. The node under the cursor glows, and the first page of a session opens with one pulse of light. One loop at 30fps, stopped in hidden tabs (the header mark keeps it running while the page is visible). All of it is off under reduced motion (OS or Ajustes):
 - Moving between pages uses cross-document View Transitions, CSS only. An index title becomes the post title, the hero net shrinks into the header mark (on desktop it glides into the post's rail instead), and "Escritos" and "Sobre mí" morph into each other. The old page stays solid while the new one fades in on top (200ms, a 6px rise); titles hand over in sequence so two line breaks never overlap; same-origin pages are prerendered on hover or focus (Chromium; ignored elsewhere).
-- On the index, hovering or focusing an entry lights its own route through the net (`routesFor` in `src/lib/netpath.ts`: up to 19 distinct sections, assigned oldest post first so they never move); routes already lit stay lit, all in the current entry's hue. On a phone, the entry in the middle of the screen does, in a sticky net band.
-- On a post, the header mark lights node by node as you read. A compact bar with the time left appears on scroll-up, and footnote markers draw a wire to their margin note (on a phone, a tap opens the note).
+- On the index, hovering or focusing an entry lights its own region of the net (`regionsFor` in `src/lib/netpath.ts`: the entry's route, assigned oldest post first so sections never move, grown with the nodes one wire away from its own node). A wire lights once both of its nodes are lit, so regions knit together and the net fills as posts accumulate — about a quarter of it for one post, four fifths for six. Light is only ever added, never taken away; the lit trail recolours to the current entry's hue. On a phone, the entry in the middle of the screen does, in a sticky net band.
+- On a post, the rail and header mark light node by node as you read, as a high-water mark: the light holds at the furthest point reached and never recedes, while the chapter dot and the time left keep following your position, so a jump back with the chapter dock is not a dead end. A compact bar with the time left appears on scroll-up, and footnote markers draw a wire to their margin note (on a phone, a tap opens the note).
 - At the end of a post, the net completes with one pulse and a card offers the next post and "Escríbeme".
 - "Sigue donde quedaste" offers to jump back to the last paragraph read. It is stored on the device only and forgotten after 30 days.
 
@@ -106,7 +106,7 @@ The mark, the index figure and the reading rail share one frozen geometry, after
 
 The rail keeps its own column shape (42 nodes). Landing → post on desktop, each rail node starts from the hero node at the same place in reading order (`src/lib/netmap.ts`) and glides into the column.
 
-On a post, the rail's nodes light up in reading order from 1000px wide. Below that, a 3px hairline at the top shows progress. Under `prefers-reduced-motion` the rail stays fully drawn and static. The hairline keeps reporting position, with no transition.
+On a post, the rail's nodes light up in reading order from 1000px wide, and stay lit once reached. Below that, a 3px hairline at the top shows progress. Under `prefers-reduced-motion` the rail stays fully drawn and static. The hairline keeps reporting position, with no transition.
 
 ## Container
 

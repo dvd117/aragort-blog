@@ -1,6 +1,8 @@
 /**
  * Motion while reading, driven by one scroll position:
- * - desktop rail: nodes light in reading order (static under reduced motion);
+ * - desktop rail: nodes light in reading order (static under reduced motion). The light is
+ *   a high-water mark: it holds at the furthest you have read and never recedes, so a jump
+ *   back with the dock does not unread the text;
  * - the progress line along the header's bottom edge: position, always, no transition;
  * - the header mark: the rail in miniature, in the post's hue, with "quedan N min" beside it;
  * - at the end: every net completes with one short pulse, and the end card appears.
@@ -24,6 +26,9 @@ export function initReading(minutes: number): void {
   const nets = [...marks, ...(rail ? [rail] : [])];
 
   let complete = false;
+  // The light is a high-water mark: it shows the furthest you have read, and never
+  // recedes. The chapter dot and "quedan N min" follow where you actually are.
+  let peak = 0;
   let chapterOf: (p: number) => string = () => '';
   let queued = false;
   card?.classList.add('pending');
@@ -40,6 +45,7 @@ export function initReading(minutes: number): void {
   const finish = () => {
     if (complete) return;
     complete = true;
+    peak = 1;
     lightMarks(1);
     railNodes.forEach((c) => c.classList.add('on'));
     railWires.forEach((l) => l.classList.add('on'));
@@ -57,17 +63,20 @@ export function initReading(minutes: number): void {
 
     const end = prose.getBoundingClientRect().bottom <= innerHeight - 24;
     if (end) finish();
-    if (!complete) {
-      lightMarks(p);
+    const still = reduced();
+    rail?.classList.toggle('live', !still);
+    if (p > peak) {
+      peak = p;
+      lightMarks(peak);
       if (rail) {
-        const still = reduced();
-        rail.classList.toggle('live', !still);
-        const k = still ? 0 : Math.round(p * railNodes.length);
+        const k = still ? 0 : Math.round(peak * railNodes.length);
         railNodes.forEach((c) => c.classList.toggle('on', Number(c.dataset.o) < k));
         railWires.forEach((l) => l.classList.toggle('on', Number(l.dataset.a) < k && Number(l.dataset.b) < k));
       }
-      if (left) left.textContent = `${chapterOf(p)}quedan ${Math.max(1, Math.ceil(minutes * (1 - p)))} min`;
     }
+    // Where you are now: the current chapter, its dot on the rail, and the time left.
+    // These move both ways, so jumping back with the dock is never a dead end.
+    if (left) left.textContent = end ? `${chapterOf(p)}terminado` : `${chapterOf(p)}quedan ${Math.max(1, Math.ceil(minutes * (1 - p)))} min`;
 
   };
 
