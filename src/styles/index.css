@@ -88,7 +88,11 @@
 .entry.feature .ex { font-size: 1.25rem; color: var(--fg); max-width: 40ch; }
 .teaser { margin: .9rem 0 0; padding: 0 0 0 1.1rem; font: 500 1.0625rem/1.45 var(--ui); color: var(--fg-2); max-width: 44ch; }
 .teaser li + li { margin-top: .3rem; }
-.teaser li::marker { color: var(--hue-ui); }
+/* Three bullets, three bands: "En corto" is the flag in miniature and stays those three
+   under every post. */
+.teaser li:nth-child(1)::marker { color: var(--hu-amarillo); }
+.teaser li:nth-child(2)::marker { color: var(--hu-azul); }
+.teaser li:nth-child(3)::marker { color: var(--hu-rojo); }
 .more { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; margin-top: .8rem; font: 600 1rem/1 var(--ui); color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .22em; }
 .more:hover { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
 /* Quién escribe on the landing: the thread runs past it, down to the footer mark. The

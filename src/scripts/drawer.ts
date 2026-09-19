@@ -1,7 +1,10 @@
 /**
- * The header's "Sobre mí" opens the panel instead of leaving the page. The link keeps its
- * href, so without JS, on middle-click and on "open in new tab" it still goes to
- * /sobre-mi/. The URL never changes: the panel is a view of this page, not a place.
+ * Every "Sobre mí" on the page opens the panel instead of leaving -- the header's button
+ * and the one at the end of the signature alike. They are found by where they point, so a
+ * new one anywhere in the site is wired up by writing the link and nothing else.
+ *
+ * Each keeps its href, so without JS, on middle-click and on "open in new tab" it still
+ * goes to /sobre-mi/. The URL never changes: the panel is a view of this page, not a place.
  *
  * Escape, the focus trap and the backdrop are <dialog>'s own. Back closes it as well,
  * because a history entry is pushed while it is open -- without it, the first Back on a
@@ -14,8 +17,9 @@ const CLOSING = 'is-closing';
 
 export function initDrawer(): void {
   const drawer = document.querySelector<HTMLDialogElement>('#sobre-mi');
-  const link = document.querySelector<HTMLAnchorElement>('[data-drawer-open]');
-  if (!drawer || !link || typeof drawer.showModal !== 'function') return;
+  // The header's button is marked; the rest are found by their destination.
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-drawer-open], a[href="/sobre-mi/"], a[href="/sobre-mi"]')];
+  if (!drawer || links.length === 0 || typeof drawer.showModal !== 'function') return;
 
   let threaded = false;
   let pushed = false;
@@ -23,7 +27,7 @@ export function initDrawer(): void {
   const open = () => {
     if (drawer.open) return;
     drawer.showModal();
-    link.setAttribute('aria-expanded', 'true');
+    links.forEach((l) => l.setAttribute('aria-expanded', 'true'));
     // The thread only starts once the panel is on screen; an observer on a closed dialog
     // never fires.
     if (!threaded) { threaded = true; initAbout(drawer); }
@@ -33,7 +37,7 @@ export function initDrawer(): void {
 
   const close = (fromPop = false) => {
     if (!drawer.open) return;
-    link.setAttribute('aria-expanded', 'false');
+    links.forEach((l) => l.setAttribute('aria-expanded', 'false'));
     if (pushed && !fromPop) { pushed = false; history.back(); return; }
     pushed = false;
     if (reduced()) { drawer.close(); return; }
@@ -49,14 +53,16 @@ export function initDrawer(): void {
     drawer.addEventListener('animationend', (e) => { if (e.target === drawer) done(); }, { once: true });
   };
 
-  link.setAttribute('aria-expanded', 'false');
-  link.setAttribute('aria-controls', 'sobre-mi');
-  link.addEventListener('click', (e) => {
-    // Leave the modified clicks alone: they are asking for the page, not the panel.
-    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    e.preventDefault();
-    open();
-  });
+  for (const l of links) {
+    l.setAttribute('aria-expanded', 'false');
+    l.setAttribute('aria-controls', 'sobre-mi');
+    l.addEventListener('click', (e) => {
+      // Leave the modified clicks alone: they are asking for the page, not the panel.
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      open();
+    });
+  }
 
   drawer.querySelector('[data-drawer-close]')?.addEventListener('click', () => close());
   // Clicking the page behind the panel closes it. A <dialog> stretches under its own
