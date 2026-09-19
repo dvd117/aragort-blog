@@ -1,0 +1,13 @@
+/* D. Space Grotesk + Space Mono: geometric, quirky; tight at text sizes, so the body
+   gets extra tracking and line-height. No italic exists: emphasis is a weight step. */
+@font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 400 700; font-display: swap; src: url("/fonts/space-grotesk.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url("/fonts/space-mono.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/space-mono-bold.woff2") format("woff2"); }
+:root[data-family="space"] {
+  --sans: "Space Grotesk", system-ui, sans-serif;
+  --mono: "Space Mono", ui-monospace, Menlo, Consolas, monospace;
+  --display-weight: 700; --display-tracking: -.045em; --display-leading: .95;
+  --title-weight: 620; --title-tracking: -.025em; --title-leading: 1.05;
+  --lh: 1.7; --trk: .012em; --body-weight: 400;
+  --em-style: normal; --em-weight: 620;
+}

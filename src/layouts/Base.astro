@@ -2,7 +2,18 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import TypeSwitcher from '../components/TypeSwitcher.astro';
 import { headScript } from '../lib/settings';
+import { buildFamily, FAMILIES } from '../lib/families';
+
+// One family ships; the preview ships all four so they can be compared.
+const familyCss = import.meta.glob<string>('../styles/families/*.css', { query: '?raw', import: 'default', eager: true });
+const preview = process.env.ARAGORT_PREVIEW === '1';
+const family = buildFamily();
+const css = Object.entries(familyCss)
+  .filter(([path]) => preview || path.endsWith(`/${family}.css`))
+  .map(([, text]) => text)
+  .join('\n');
 
 interface Props {
   title: string;
@@ -19,7 +30,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort`;
 ---
 <!doctype html>
-<html lang="es" data-hue={hue}>
+<html lang="es" data-hue={hue} data-family={family}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,7 +40,8 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
   <link rel="canonical" href={canonical} />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="alternate" type="application/rss+xml" title="David Aragort" href="/rss.xml" />
-  <link rel="preload" href="/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href={`/fonts/${FAMILIES[family].preload}`} as="font" type="font/woff2" crossorigin />
+  <Fragment set:html={`<style>${css}</style>`} />
   <meta property="og:type" content={type} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
@@ -41,11 +53,13 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
   <script is:inline set:html={headScript()} />
   <!-- JS-only controls take their final layout before first paint (no layout shift). -->
   <script is:inline>document.documentElement.classList.add('js')</script>
+  {preview && <script is:inline>try{var f=localStorage.getItem('aragort-tipo');if(/^(bricolage|schibsted|geist|space)$/.test(f||''))document.documentElement.setAttribute('data-family',f)}catch(e){}</script>}
   <slot name="head" />
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
   <Header current={current} netMark={!heroNet} />
+  {preview && <TypeSwitcher />}
   <main id="contenido">
     <slot />
   </main>
