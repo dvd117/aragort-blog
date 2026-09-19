@@ -36,6 +36,10 @@ Notes are standard Markdown footnotes, so the raw `.md` stays readable:
 
 `src/lib/rehype-margin-notes.ts` turns each footnote into an `<aside class="note">` right after the paragraph that cites it. From 1100px wide it sits in the margin; below that it stays inline, under its paragraph.
 
+### External links
+
+Links to other sites open in a new tab and carry a ↗; nothing to write in the Markdown.
+
 ### Versions
 
 A post is **v1 when published**. Each commit to its file **after the filename date** adds one version; drafting commits on or before that date do not count. From v2 on the post shows `v<n> · editado <date>`, where the date is the last commit after publication. The history comes from `git log --follow`, so renaming the file to move the date keeps it.
@@ -45,7 +49,7 @@ A post is **v1 when published**. Each commit to its file **after the filename da
 
 ### A hue per post
 
-Each post owns one of five muted hues: `ochre` (the brand), `teal`, `brick`, `sky`, `moss`. Set it with `hue:` in the frontmatter, or leave it out: it is then assigned from the slug by a hash (`src/lib/hue.ts`), stable across builds and independent of post order. The hue colours the post's reading rail, progress line, footnote markers, margin-note edge and link highlight, and a small dot beside the date on the index and the post. Ochre stays for the wordmark node and global UI.
+Each post owns one of five muted hues: `ochre` (the brand), `teal`, `brick`, `sky`, `moss`. Set it with `hue:` in the frontmatter, or leave it out: it is then assigned from the slug by a hash (`src/lib/hue.ts`), stable across builds and independent of post order. The hue colours the post's reading rail, progress line, footnote markers, margin-note edge and link highlight, and a small dot beside the date on the index and the post. Ochre stays for the wordmark node and global UI. Links are set in the hue (text); dots, nodes, rails and rules use a more saturated UI variant in the light themes (3:1).
 
 Each value is the colour used as text and UI in that theme: ratio on the page / on the note panel (needs 4.5, and 7 in alto contraste). Text on each hue's highlight band stays at 8.6 or more.
 

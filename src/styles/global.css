@@ -76,16 +76,22 @@
 
 /* A hue per post (README has the table). Each value passes 4.5:1 on the page
    and the panel in its theme (7:1 in alto contraste); text on its band passes too. */
-:root { --h-ochre: #e2a638; --hb-ochre: var(--mark); --h-teal: #43a3a0; --hb-teal: rgba(92, 188, 185, 0.26); --h-brick: #c36855; --hb-brick: rgba(195, 104, 85, 0.26); --h-sky: #4587ba; --hb-sky: rgba(87, 147, 193, 0.26); --h-moss: #759a4c; --hb-moss: rgba(143, 179, 101, 0.26); }
+:root { --h-ochre: #e2a638; --hb-ochre: var(--mark); --h-teal: #43a3a0; --hb-teal: rgba(92, 188, 185, 0.26); --h-brick: #d4735f; --hb-brick: rgba(212, 115, 95, 0.26); --h-sky: #5b9bd0; --hb-sky: rgba(91, 155, 208, 0.26); --h-moss: #759a4c; --hb-moss: rgba(143, 179, 101, 0.26); }
 :root[data-theme="light"] { --h-ochre: #8b6114; --hb-ochre: var(--mark); --h-teal: #2f7472; --hb-teal: rgba(92, 188, 185, 0.3); --h-brick: #aa4e3c; --hb-brick: rgba(195, 104, 85, 0.3); --h-sky: #386e97; --hb-sky: rgba(87, 147, 193, 0.3); --h-moss: #567138; --hb-moss: rgba(143, 179, 101, 0.3); }
 @media (prefers-color-scheme: light) { :root:not([data-theme]) { --h-ochre: #8b6114; --hb-ochre: var(--mark); --h-teal: #2f7472; --hb-teal: rgba(92, 188, 185, 0.3); --h-brick: #aa4e3c; --hb-brick: rgba(195, 104, 85, 0.3); --h-sky: #386e97; --hb-sky: rgba(87, 147, 193, 0.3); --h-moss: #567138; --hb-moss: rgba(143, 179, 101, 0.3); } }
 :root[data-theme="sepia"] { --h-ochre: #805a13; --hb-ochre: var(--mark); --h-teal: #2c6b69; --hb-teal: rgba(92, 188, 185, 0.3); --h-brick: #9d4837; --hb-brick: rgba(195, 104, 85, 0.3); --h-sky: #34658c; --hb-sky: rgba(87, 147, 193, 0.3); --h-moss: #506833; --hb-moss: rgba(143, 179, 101, 0.3); }
 :root[data-theme="contrast"] { --h-ochre: #ffd166; --hb-ochre: transparent; --h-teal: #48b0ac; --hb-teal: transparent; --h-brick: #d39082; --hb-brick: transparent; --h-sky: #75a6cc; --hb-sky: transparent; --h-moss: #84ac56; --hb-moss: transparent; }
-:root, [data-hue="ochre"] { --hue: var(--h-ochre); --hue-band: var(--hb-ochre); }
-[data-hue="teal"] { --hue: var(--h-teal); --hue-band: var(--hb-teal); }
-[data-hue="brick"] { --hue: var(--h-brick); --hue-band: var(--hb-brick); }
-[data-hue="sky"] { --hue: var(--h-sky); --hue-band: var(--hb-sky); }
-[data-hue="moss"] { --hue: var(--h-moss); --hue-band: var(--hb-moss); }
+/* UI marks (dots, nodes, rails, progress, rules) need 3:1, not 4.5:1, so in the light
+   themes they can be more saturated than the hue as text. Dark and contrast reuse the text hue. */
+:root { --hu-ochre: var(--h-ochre); --hu-teal: var(--h-teal); --hu-brick: var(--h-brick); --hu-sky: var(--h-sky); --hu-moss: var(--h-moss); }
+:root[data-theme="light"] { --hu-ochre: #b8801b; --hu-teal: #2f8f8b; --hu-brick: #c4553f; --hu-sky: #3a82bd; --hu-moss: #5f8c2e; }
+:root[data-theme="sepia"] { --hu-teal: #2f8f8b; --hu-brick: #c4553f; --hu-sky: #3a82bd; --hu-moss: #5f8c2e; }
+@media (prefers-color-scheme: light) { :root:not([data-theme]) { --hu-ochre: #b8801b; --hu-teal: #2f8f8b; --hu-brick: #c4553f; --hu-sky: #3a82bd; --hu-moss: #5f8c2e; } }
+:root, [data-hue="ochre"] { --hue: var(--h-ochre); --hue-band: var(--hb-ochre); --hue-ui: var(--hu-ochre); }
+[data-hue="teal"] { --hue: var(--h-teal); --hue-band: var(--hb-teal); --hue-ui: var(--hu-teal); }
+[data-hue="brick"] { --hue: var(--h-brick); --hue-band: var(--hb-brick); --hue-ui: var(--hu-brick); }
+[data-hue="sky"] { --hue: var(--h-sky); --hue-band: var(--hb-sky); --hue-ui: var(--hu-sky); }
+[data-hue="moss"] { --hue: var(--h-moss); --hue-band: var(--hb-moss); --hue-ui: var(--hu-moss); }
 
 /* Reading settings: one attribute each on <html>, read by the prose. */
 :root { --scale: 1; --lh-step: 1; --trk-step: 0em; --leading: calc(var(--lh) * var(--lh-step)); --tracking: calc(var(--trk) + var(--trk-step)); --measure: 63ch; --read-font: var(--sans); }
@@ -120,6 +126,9 @@ a { color: inherit; }
 :focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 2px; }
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* External links: the arrow is glued to the last word and never underlined. */
+.ext-tail { white-space: nowrap; }
+.ext-arrow { display: inline-block; margin-left: .12em; font-size: .72em; vertical-align: .35em; font-weight: 600; text-decoration: none; }
 .skip { position: absolute; left: var(--gutter); top: -3rem; background: var(--fg); color: var(--bg); padding: .5rem .8rem; z-index: 20; }
 .skip:focus { top: .5rem; }
 
@@ -169,4 +178,4 @@ main:focus { outline: none; }
 /* Chapter notches on the header's progress line (drawn by reading.ts). */
 .site .ticks { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; }
 .site .ticks i { position: absolute; top: -3px; width: 2px; height: 8px; margin-left: -1px; background: var(--fg-2); border-radius: 1px; }
-.site .ticks i.past { background: var(--hue); }
+.site .ticks i.past { background: var(--hue-ui); }

@@ -1,0 +1,11 @@
+---
+/* Hand-written external link: the same markup as rehype-external-links. */
+interface Props { href: string; rel?: string; }
+const { href, rel } = Astro.props;
+const text = (await Astro.slots.render('default')).trim();
+const cut = text.lastIndexOf(' ');
+const head = cut === -1 ? '' : text.slice(0, cut + 1);
+const last = text.slice(cut + 1);
+const rels = ['noopener', 'noreferrer', ...(rel ? [rel] : [])].join(' ');
+---
+<a href={href} target="_blank" rel={rels} class="ext"><Fragment set:html={head} /><span class="ext-tail"><Fragment set:html={last} /><span class="ext-arrow" aria-hidden="true">↗</span></span><span class="visually-hidden"> (abre en otra pestaña)</span></a>
