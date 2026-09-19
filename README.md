@@ -22,7 +22,7 @@ Editing the Markdown and pushing is the whole flow.
 - **The date comes from the filename.** Renaming the file is how a post moves to another date. The slug is the rest of the name, and the post lives at `/escritos/<slug>/`.
 - **A filename that doesn't match** `YYYY-MM-DD-slug.md` (lowercase letters, digits, hyphens, and a real date) **fails the build**, and so does a slug used twice. Unknown frontmatter keys fail the build too.
 - **Drafts** (`draft: true`) never reach a production build. In `npm run dev` they're labelled "borrador".
-- **The raw source** of every post is served at `/escritos/<slug>.md`, byte-identical to the repo file, as `text/markdown; charset=utf-8`.
+- **The raw source** of every post is served at `/escritos/<slug>.md`, as `text/markdown; charset=utf-8`: the repo file byte for byte, then a closing rule and one licence line (`David Aragort, <year>. CC BY-SA 4.0:` and the licence URL, the year taken from the post's date). The writing is licensed CC BY-SA 4.0 (`src/lib/licence.ts`); the footer says so too, with the build year.
 
 ### Margin notes
 
