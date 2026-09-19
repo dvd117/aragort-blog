@@ -11,7 +11,7 @@ const pruneFamilies = () => ({
   name: 'aragort-prune-families',
   hooks: {
     'astro:build:done': ({ dir }) => {
-      const keep = shippedFonts(buildFamily(), process.env.ARAGORT_PREVIEW === '1');
+      const keep = shippedFonts(buildFamily(), process.env.ARAGORT_SPECIMEN === '1');
       const candidates = new Set(Object.values(FAMILIES).flatMap((f) => f.fonts));
       const fonts = new URL('fonts/', dir);
       for (const file of readdirSync(fonts)) {

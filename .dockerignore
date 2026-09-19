@@ -5,3 +5,8 @@ dist
 mockups
 *.log
 .DS_Store
+# Test posts must never reach an image.
+tests/fixtures
+preview
+preview-build
+dist-fixture
