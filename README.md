@@ -78,6 +78,23 @@ Each setting is one `data-*` attribute on `<html>`, applied before first paint b
 
 **Preview.** `node scripts/preview.mjs` writes `preview/`, a small multi-page build with relative links that works from any subpath. It includes the labelled test posts in `tests/fixtures/posts` so hues and navigation can be judged; add `--real` for real content only.
 
+
+## Type
+
+One sans family carries display, UI and body. Newsreader stays only as the "Serif" option in Ajustes, next to Atkinson Hyperlegible. Four candidate families are tuned in `src/styles/families/*.css`, each with its own weights, display tracking, line-heights and emphasis:
+
+| Family | Mono role | Payload (woff2, Latin) | Italic |
+|---|---|---|---|
+| Bricolage Grotesque (optical sizes) | JetBrains Mono | 96 KB | none: emphasis is a weight step (620) |
+| Schibsted Grotesk | JetBrains Mono | 92 KB | true italic (400) |
+| Geist | Geist Mono | 52 KB | true italic (400–600) |
+| Space Grotesk | Space Mono | 38 KB | none: emphasis is a weight step (620) |
+
+Italic is never synthesized (`font-synthesis: none`).
+
+- **A normal build ships one family:** `ARAGORT_FAMILY` (default `geist`, see `src/lib/families.ts`). The other families' files are removed from `dist/`.
+- **The specimen build ships all four** plus a small "Tipo A B C D" switcher, remembered across pages: `ARAGORT_SPECIMEN=1`, or `docker build --build-arg SPECIMEN=1 .`. `node scripts/preview.mjs` always builds the specimen.
+
 ## Development
 
 ```sh
@@ -98,7 +115,8 @@ On a post, the rail's nodes light up in reading order from 1000px wide. Below th
 ## Container
 
 ```sh
-docker build -t aragort-blog .
+docker build -t aragort-blog .                          # one family (default)
+docker build --build-arg SPECIMEN=1 -t aragort-blog .   # all four + the Tipo switcher
 docker run --rm -p 8080:80 aragort-blog
 curl -sI http://localhost:8080/escritos/por-que-deje-los-chatbots.md   # text/markdown; charset=utf-8
 ```
