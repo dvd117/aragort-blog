@@ -3,8 +3,9 @@
    stays AA over it), a wire leaves its bottom-left node and becomes the thread
    down the left gutter, and every entry hangs on the thread by its hue node. */
 .index { position: relative; overflow-x: clip; padding-top: 1rem; }
-/* Tall enough to hold the net it carries (96vw wide, so 64vw tall), with room under it,
-   so nothing below the hero ever lands on top of a node or a wire. */
+/* Phone only: the net here is absolutely positioned and 96vw wide, so it is 64vw tall and
+   stands outside the flow. The hero is given that height so nothing below it ever lands on
+   a node or a wire. From 900px the net is back in the flow and sizes the hero itself. */
 .hero { position: relative; isolation: isolate; padding: 1.5rem 0 3rem; min-height: max(15rem, calc(64vw + 1rem)); }
 .hero-title { position: relative; z-index: 1; }
 /* Knockout: a halo in the page colour keeps every glyph on the background, so the
@@ -60,13 +61,15 @@
 @media (min-width: 900px) {
   .index { padding-top: 4rem; overflow-x: visible; }
   /* The title column is as wide as the title; the net takes the rest. */
-  .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 5rem; }
+  .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 5rem; min-height: 0; }
   .hero-title h1 { font-size: clamp(5rem, 9vw, 9rem); }
   .lede { font-size: 1.3125rem; max-width: 28ch; margin-top: 1.5rem; }
   .net-wrap { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .5; }
   .net-wrap .net circle { stroke-opacity: 1; }
   .entries { padding-left: 2.25rem; max-width: 60rem; }
-  .filter { max-width: 60rem; margin-bottom: 1.5rem; }
+  /* Flush with the net's right edge above it; the list below is narrower, so aligning
+     the box to the list instead would leave a gap between it and everything else. */
+  .filter { margin-bottom: 1.5rem; }
   .node { left: calc(-2.25rem + 5.5px - 6px); }
   .entry { grid-template-columns: 13rem 1fr; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
   .entry .ex, .entry .tag { grid-column: 2; }
