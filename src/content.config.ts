@@ -20,6 +20,8 @@ const posts = defineCollection({
     description: z.string().optional(),
     draft: z.boolean().optional(),
     hue: z.enum(HUES).optional(),
+    /** "En corto": two or three short lines shown under the title. */
+    resumen: z.array(z.string().min(1)).min(1).max(5).optional(),
   }),
 });
 

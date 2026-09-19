@@ -11,6 +11,7 @@ export interface Post {
   description?: string;
   draft: boolean;
   hue: Hue;
+  resumen?: string[];
   words: number;
   minutes: number;
   /** Path of the source file, relative to the project root. */
@@ -33,6 +34,7 @@ export async function getPosts(): Promise<Post[]> {
         description: entry.data.description,
         draft: entry.data.draft ?? false,
         hue: hueFor(slug, entry.data.hue),
+        resumen: entry.data.resumen,
         words,
         minutes: readingMinutes(words),
         file: entry.filePath ?? `src/content/posts/${entry.id}.md`,
