@@ -1,6 +1,33 @@
 ---
 import Base from '../layouts/Base.astro';
+import { getPosts } from '../lib/collection';
+import { formatDateEs } from '../lib/posts';
+import '../styles/index.css';
+
+const posts = await getPosts();
 ---
 <Base title="David Aragort" current="escritos">
-  <div class="wrap"><h1>Escritos</h1></div>
+  <section class="hero wrap">
+    <div>
+      <h1>Escritos</h1>
+      {/* TODO(david): one-line lede for the index goes here. Nothing renders until it is written. */}
+    </div>
+  </section>
+
+  <div class="wrap">
+    {posts.length === 0 ? (
+      <p class="empty">Todavía no hay escritos publicados.</p>
+    ) : (
+      <ol class="entries">
+        {posts.map((p) => (
+          <li class:list={['entry', { draft: p.draft }]}>
+            <time class="d" datetime={p.date}>{formatDateEs(p.date)}</time>
+            <a class="t" href={`/escritos/${p.slug}/`}>{p.title}</a>
+            {p.description && <p class="ex">{p.description}</p>}
+            {p.draft && <span class="tag">borrador</span>}
+          </li>
+        ))}
+      </ol>
+    )}
+  </div>
 </Base>

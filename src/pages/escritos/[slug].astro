@@ -1,0 +1,35 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { getPosts, type Post } from '../../lib/collection';
+import { formatDateEs } from '../../lib/posts';
+import '../../styles/post.css';
+
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}) satisfies GetStaticPaths;
+
+interface Props { post: Post; }
+const { post } = Astro.props;
+const { Content } = await render(post.entry);
+const words = new Intl.NumberFormat('es').format(post.words);
+---
+<Base title={post.title} description={post.description} current="escritos" type="article">
+  <article class="wrap post">
+    <header class="post-head">
+      <p class="meta">
+        <time datetime={post.date}>{formatDateEs(post.date)}</time> · {post.minutes} min de lectura · {words} palabras
+        {post.draft && <span> · borrador</span>}
+      </p>
+      <h1>{post.title}</h1>
+    </header>
+    <div class="post-grid">
+      <div class="prose">
+        <Content />
+      </div>
+      <p class="sig"><span>David Aragort</span></p>
+    </div>
+  </article>
+</Base>
