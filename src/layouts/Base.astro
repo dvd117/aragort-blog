@@ -39,6 +39,8 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
   {ogImage && <meta name="twitter:card" content="summary_large_image" />}
   <!-- Reading settings before first paint: no flash. Generated from src/lib/settings.ts. -->
   <script is:inline set:html={headScript()} />
+  <!-- JS-only controls take their final layout before first paint (no layout shift). -->
+  <script is:inline>document.documentElement.classList.add('js')</script>
   <slot name="head" />
 </head>
 <body>

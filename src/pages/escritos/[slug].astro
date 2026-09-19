@@ -44,7 +44,7 @@ const filename = `${post.id}.md`;
         {post.draft && <span> · borrador</span>}
       </p>
       <h1 style={`view-transition-name: t-${post.slug}`}>{post.title}</h1>
-      <div class="view" role="group" aria-label="Cómo ver el artículo" hidden>
+      <div class="view" role="group" aria-label="Cómo ver el artículo">
         <button type="button" data-view="read" aria-pressed="true">Vista leída</button>
         <button type="button" data-view="md" aria-pressed="false">Markdown</button>
       </div>
@@ -79,8 +79,6 @@ const filename = `${post.id}.md`;
 <script>
   /* Vista leída / Markdown: the real source, in place. Hidden without JS; the .md link still works. */
   const views = document.querySelectorAll<HTMLButtonElement>('[data-view]');
-  const group = document.querySelector<HTMLElement>('.view');
-  if (group) group.hidden = false;
   views.forEach((b) => b.addEventListener('click', () => {
     views.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     document.querySelectorAll<HTMLElement>('[data-pane]').forEach((p) => { p.hidden = p.dataset.pane !== b.dataset.view; });

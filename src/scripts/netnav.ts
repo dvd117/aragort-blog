@@ -44,7 +44,7 @@ export function initNetNav(): void {
   });
 
   // Phone: follow the scroll. The entry nearest the middle of the screen is current.
-  const phone = matchMedia('(hover: none), (max-width: 899px)');
+  const phone = matchMedia('(max-width: 899px), (hover: none) and (pointer: coarse)');
   let queued = false;
   const follow = () => {
     queued = false;
