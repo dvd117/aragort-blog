@@ -140,6 +140,7 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['light', 'Claro'],
 <script>
   import { DEFAULTS, LEGACY_THEME_KEY, parseSettings, serializeSettings, STORAGE_KEY, toAttributes, type Key, type Settings } from '../lib/settings';
   import { initFocus } from '../scripts/focus';
+  import { initSpeech } from '../scripts/speech';
 
   const root = document.documentElement;
   const btn = document.querySelector<HTMLButtonElement>('[data-ajustes-open]');
@@ -208,9 +209,9 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['light', 'Claro'],
   sync();
   initFocus();
 
-  // Read aloud: only on a post, only with the API and a Spanish voice. Loaded on demand.
+  // Read aloud: only on a post, only with the API and a local Spanish voice.
+  // Imported statically: a dynamic import brings Vite's preload helper, which
+  // uses root-absolute URLs and breaks the preview served from a subpath.
   const voz = document.querySelector<HTMLElement>('[data-voz]');
-  if (voz && 'speechSynthesis' in window && document.querySelector('.post .prose')) {
-    import('../scripts/speech').then((m) => m.initSpeech(voz));
-  }
+  if (voz && 'speechSynthesis' in window && document.querySelector('.post .prose')) initSpeech(voz);
 </script>
