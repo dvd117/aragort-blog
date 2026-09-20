@@ -10,3 +10,10 @@ tests/fixtures
 preview
 preview-build
 dist-fixture
+
+# Agent scaffolding: never reaches an image.
+AGENTS.md
+AGENTS.local.md
+BRIEF.md
+CLAUDE.md
+agent_docs

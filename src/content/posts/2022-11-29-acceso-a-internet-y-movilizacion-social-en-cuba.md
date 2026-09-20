@@ -11,6 +11,8 @@ Escribí este informe en español, en 2022, para Global Information Society Watc
 
 Nunca lo publiqué por mi cuenta porque no encontré un espacio donde tuviera sentido. Pero ahora que diseñé este espacio pensando en mejorar la experiencia de quien lee, con funciones de accesibilidad para adaptar la lectura a tu gusto… tiene más sentido que nunca que viva aquí.
 
+---
+
 Durante los últimos años Cuba ha experimentado una expansión progresiva del acceso a Internet entre sus ciudadanos, la cual ha estado parcialmente motivada por razones económicas. Sin embargo, esta conexión con el resto del mundo ha ocasionado profundos cambios en la sociedad cubana y ha representado un creciente desafío para sus gobernantes, quienes históricamente han dependido de la censura y el aislamiento para mantenerse en el poder. Con mayor acceso a información, los cubanos han sido capaces de cuestionar la “verdad” oficial que es difundida a través de los medios de comunicación estatales y también han podido comparar sus condiciones de vida con las que se pueden encontrar en otros países.
 
 Por esta razón, el régimen ha tratado de controlar la actividad de sus ciudadanos en Internet a través de bloqueos, filtrado y ralentización intencional del servicio, así como también amenazas e instrumentos legales. Sin embargo, esto no ha sido suficiente para impedir que las organizaciones de la sociedad civil conecten con una gran diáspora que también busca cambios políticos y una expansión de los derechos y libertades civiles en el país, convirtiendo a Internet en uno de los detonantes de la jornada de protestas más grande que el país ha vivido en las últimas décadas.
@@ -74,9 +76,7 @@ El ciberactivismo cubano tampoco se ha detenido. Una prueba de esto es el boicot
 ## Medidas de acción
 
 Acciones que se deben tomar para apoyar el acceso libre a Internet en Cuba:
-
 - Los gobiernos democráticos del mundo deben buscar formas de promover la expansión del acceso a Internet en Cuba. Por ejemplo, condicionando tratados comerciales con compromisos y acciones reales por parte del régimen cubano para proveer acceso a Internet libre y de calidad a sus ciudadanos.
-
 - Las organizaciones de la sociedad civil que se encuentren fuera de Cuba deben ayudar a encontrar soluciones alternativas que permitan mantener el acceso a Internet durante eventos de censura extrema por parte del Estado como el ocurrido en julio de 2021. En particular, se debe encontrar una alternativa a la red de Psiphon para que el acceso no se limite a un solo punto al que ETECSA pueda apuntar.
 - Los donantes deberían apoyar el trabajo de organizaciones sin fines de lucro que monitorean la censura en Internet en Cuba para que se pueda recolectar la mayor cantidad de evidencia posible sobre este tipo de censura.
 - Las organizaciones que defienden los derechos digitales en la región deben entrenar activistas y periodistas en Cuba para evadir la censura en Internet y recolectar evidencia sobre los bloqueos a sitios web y otras plataformas digitales usando herramientas abiertas como OONI Probe.
