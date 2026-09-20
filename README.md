@@ -67,11 +67,12 @@ Each value is the colour used as text and UI in that theme: ratio on the page / 
 ## Reading settings, motion and the preview
 
 **Ajustes de lectura** (the "Aa Ajustes" button in the header) is a bottom sheet on phones and a popover on desktop. It offers:
-- text size, line spacing, letter spacing and column width;
-- the typeface: Newsreader, Instrument Sans, or Atkinson Hyperlegible, which is downloaded only when chosen;
-- the theme: Sistema, Claro, Oscuro, Sepia or Alto contraste;
-- highlighting the paragraph being read, underlining every link, and reducing motion;
-- reading aloud, with a local Spanish voice only (the control is hidden when there is none).
+- primary preferences first: theme, text size and typeface;
+- text adjustments: line spacing, letter spacing and column width;
+- reading aids: highlighting the paragraph being read, underlining every link, and reducing motion;
+- the typeface choices are Sans (Geist), Serif (Newsreader), and Atkinson Hyperlegible; the additional families are downloaded only when chosen;
+- reading aloud on article pages, with a local Spanish voice only. The section stays visible when unavailable: its controls are disabled and the status distinguishes an unsupported browser (`Este navegador no admite la lectura en voz alta.`) from a device without a usable local Spanish voice (`No hay una voz local en español disponible en este dispositivo.`);
+- a separate reset control at the bottom returns every preference to its default.
 
 **Theme resolution:** the reader's saved choice first. With nothing saved, the OS preference applies (light or dark). With no preference, or none readable, the site is dark (OLED black). The base CSS is dark and a `prefers-color-scheme: light` rule applies only when nothing is saved, so there is no flash.
 
