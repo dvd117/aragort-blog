@@ -9,7 +9,8 @@ preview-build/
 docs/
 csp.caddy
 
-# Agent scaffolding (symlinks to ~/dev/token-efficient-karpathy, plus the local brief)
+# Agent scaffolding kept local (including repository-specific AGENTS.md)
+AGENTS.md
 AGENTS.local.md
 BRIEF.md
 CLAUDE.md
