@@ -98,7 +98,13 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
   }
   /* Reading on a phone the header carries the post's title, and the name does step aside. */
   @media (max-width: 519px) {
-    .site.reading .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .site.reading .name { position: absolute; left: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    /* With the name out of the flow the brand holds only the mark, and `flex: 0 1 auto`
+       plus `min-width: 0` let it shrink to 16px -- narrower than the 38px mark, which is
+       `flex: none` and so kept its size and hung out of its own box. The title was then
+       laid out against that 16px and started on top of the mark. The brand is the mark
+       here and nothing else, so it does not shrink. */
+    .site.reading .brand { flex: none; }
   }
   /* Reading on a phone: mark (home) · title and time left · Sobre mí · Aa. The nav used to
      step aside here, when it was two items competing with the title; one short pill fits,
