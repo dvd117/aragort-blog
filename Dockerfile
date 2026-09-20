@@ -2,7 +2,7 @@
 
 # Build: Node renders the static site. git is here so post versions can be read
 # from history; on a shallow clone the site builds anyway and shows no versions.
-FROM node:22-slim AS build
+FROM node:25-slim AS build
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git ca-certificates \
  && rm -rf /var/lib/apt/lists/*
