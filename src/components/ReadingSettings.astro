@@ -5,12 +5,10 @@
  * Esc or "Cerrar" closes it and focus returns to the button.
  */
 const group = (legend: string, key: string, options: [string, string, string?][]) => ({ legend, key, options });
-const text = [
-  group('Tamaño', 'size', [['1', 'A', 'Muy pequeño'], ['2', 'A', 'Pequeño'], ['3', 'A', 'Normal'], ['4', 'A', 'Grande'], ['5', 'A', 'Muy grande']]),
-  group('Interlineado', 'leading', [['1', 'Compacto'], ['2', 'Normal'], ['3', 'Amplio']]),
-  group('Espacio entre letras', 'tracking', [['1', 'Normal'], ['2', 'Amplio']]),
-  group('Ancho de columna', 'measure', [['1', 'Estrecho'], ['2', 'Normal'], ['3', 'Ancho']]),
-];
+const size = group('Tamaño', 'size', [['1', 'A', 'Muy pequeño'], ['2', 'A', 'Pequeño'], ['3', 'A', 'Normal'], ['4', 'A', 'Grande'], ['5', 'A', 'Muy grande']]);
+const leading = group('Interlineado', 'leading', [['1', 'Compacto'], ['2', 'Normal'], ['3', 'Amplio']]);
+const tracking = group('Espacio entre letras', 'tracking', [['1', 'Normal'], ['2', 'Amplio']]);
+const measure = group('Ancho de columna', 'measure', [['1', 'Estrecho'], ['2', 'Normal'], ['3', 'Ancho']]);
 const font = group('Tipografía', 'font', [['sans', 'Sans'], ['serif', 'Serif'], ['atkinson', 'Atkinson Hyperlegible']]);
 const theme = group('Tema', 'theme', [['system', 'Sistema'], ['dark', 'Oscuro'], ['light', 'Claro'], ['sepia', 'Sepia'], ['contrast', 'Alto contraste']]);
 ---
@@ -25,8 +23,24 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['dark', 'Oscuro'],
   </div>
 
   <div class="ajustes-body">
-    <h3>Texto</h3>
-    {text.map((g) => (
+    <h3>Preferencias de lectura</h3>
+    {[theme, size, font].map((g) => (
+      <fieldset class:list={['seg', ['theme', 'font'].includes(g.key) ? 'seg-wrap' : '', `seg-${g.key}`]}>
+        <legend>{g.legend}</legend>
+        <div class="opts">
+          {g.options.map(([value, label, name], i) => (
+            <label>
+              <input type="radio" name={`aj-${g.key}`} value={value} data-key={g.key} />
+              <span class={g.key === 'size' ? `sz sz-${i + 1}` : undefined} aria-hidden={name ? 'true' : undefined}>{label}</span>
+              {name && <span class="visually-hidden">{name}</span>}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    ))}
+
+    <h3>Ajustes del texto</h3>
+    {[leading, tracking, measure].map((g) => (
       <fieldset class:list={['seg', `seg-${g.key}`]}>
         <legend>{g.legend}</legend>
         <div class="opts">
@@ -41,19 +55,7 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['dark', 'Oscuro'],
       </fieldset>
     ))}
 
-    <h3>Tipografía y tema</h3>
-    {[font, theme].map((g) => (
-      <fieldset class:list={['seg', 'seg-wrap', `seg-${g.key}`]}>
-        <legend>{g.legend}</legend>
-        <div class="opts">
-          {g.options.map(([value, label]) => (
-            <label><input type="radio" name={`aj-${g.key}`} value={value} data-key={g.key} /><span>{label}</span></label>
-          ))}
-        </div>
-      </fieldset>
-    ))}
-
-    <h3>Enfoque y movimiento</h3>
+    <h3>Ayudas de lectura</h3>
     <div class="checks">
       <label><input type="checkbox" value="on" data-key="focus" /> <span>Resaltar el párrafo que lees</span></label>
       <label><input type="checkbox" value="all" data-key="links" /> <span>Subrayar todos los enlaces</span></label>
@@ -142,75 +144,11 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['dark', 'Oscuro'],
 </style>
 
 <script>
-  import { DEFAULTS, LEGACY_THEME_KEY, parseSettings, serializeSettings, STORAGE_KEY, toAttributes, type Key, type Settings } from '../lib/settings';
   import { initFocus } from '../scripts/focus';
   import { initSpeech } from '../scripts/speech';
+  import { initSettingsPanel } from '../scripts/settings-panel';
 
-  const root = document.documentElement;
-  const btn = document.querySelector<HTMLButtonElement>('[data-ajustes-open]');
-  const panel = document.getElementById('ajustes');
-  const title = document.getElementById('ajustes-title');
-
-  const load = (): Settings => {
-    try { return parseSettings(localStorage.getItem(STORAGE_KEY), localStorage.getItem(LEGACY_THEME_KEY)); }
-    catch { return { ...DEFAULTS }; }
-  };
-  let state = load();
-
-  const save = () => {
-    try {
-      localStorage.setItem(STORAGE_KEY, serializeSettings(state));
-      localStorage.removeItem(LEGACY_THEME_KEY);
-    } catch { /* private mode: settings last this page */ }
-  };
-
-  const sync = () => {
-    panel?.querySelectorAll<HTMLInputElement>('input[data-key]').forEach((i) => {
-      i.checked = state[i.dataset.key as Key] === i.value;
-    });
-  };
-
-  const apply = () => {
-    for (const [attr, v] of Object.entries(toAttributes(state))) {
-      if (v === null) root.removeAttribute(attr); else root.setAttribute(attr, v);
-    }
-    sync();
-    document.dispatchEvent(new CustomEvent('ajustes:change'));
-  };
-
-  panel?.addEventListener('change', (e) => {
-    const input = e.target as HTMLInputElement;
-    const key = input.dataset.key as Key | undefined;
-    if (!key) return;
-    const value = input.type === 'checkbox' ? (input.checked ? input.value : DEFAULTS[key]) : input.value;
-    state = { ...state, [key]: value } as Settings;
-    save();
-    apply();
-  });
-
-  document.querySelector('[data-ajustes-reset]')?.addEventListener('click', () => {
-    state = { ...DEFAULTS };
-    try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(LEGACY_THEME_KEY); } catch { /* ignore */ }
-    apply();
-  });
-
-  const open = () => {
-    if (!panel || !btn) return;
-    panel.hidden = false;
-    btn.setAttribute('aria-expanded', 'true');
-    title?.focus();
-  };
-  const close = () => {
-    if (!panel || !btn || panel.hidden) return;
-    panel.hidden = true;
-    btn.setAttribute('aria-expanded', 'false');
-    btn.focus();
-  };
-  btn?.addEventListener('click', () => (panel?.hidden ? open() : close()));
-  document.querySelector('[data-ajustes-close]')?.addEventListener('click', close);
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-
-  sync();
+  initSettingsPanel();
   initFocus();
 
   // Read aloud: only on a post, only with the API and a local Spanish voice.
