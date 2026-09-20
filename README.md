@@ -120,7 +120,7 @@ docker run --rm -p 8080:80 aragort-blog
 curl -sI http://localhost:8080/escritos/por-que-deje-los-chatbots.md   # text/markdown; charset=utf-8
 ```
 
-The Dockerfile has two stages: Node builds the site (with `git`, for versions), then Caddy serves `dist/` on port 80. Caddy was chosen for its one-file config, which covers the `.md` content type, immutable caching for hashed assets and fonts, security headers and the 404 page. TLS is terminated in front of it (Traefik on Dokploy).
+The Dockerfile has two stages: Node builds the site (with `git`, for versions), then Caddy serves `dist/` on port 80. Caddy was chosen for its one-file config, which covers the `.md` content type, immutable caching for hashed assets and fonts, security headers and the redirect that sends any miss back to the landing. TLS is terminated in front of it (Traefik on Dokploy).
 
 ## Contrast (WCAG 2.2, computed)
 
