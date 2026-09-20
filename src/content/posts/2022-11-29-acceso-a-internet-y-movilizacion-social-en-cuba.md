@@ -88,7 +88,7 @@ Acciones que se deben tomar para apoyar el acceso libre a Internet en Cuba:
 
 [^3]: BBC News. (29 de mayo de 2013). [Cuba amplía el acceso a internet](https://www.bbc.com/mundo/noticias/2013/05/130529_video_cuba_internet_rg). *BBC News*.
 
-[^4]: 20 Minutos. (18 de febrero de 2015). [Cuba reduce a la mitad las tarifas de Internet en los lugares públicos de forma temporal](https://www.20minutos.com/noticia/21146/0/cuba-reduce-mitad/precio-tasas/internet/). *20 Minutos*.
+[^4]: 20 Minutos. (18 de febrero de 2015). [Cuba reduce a la mitad las tarifas de Internet en los lugares públicos de forma temporal](http://web.archive.org/web/20210803151218/https://www.20minutos.com/noticia/21146/0/cuba-reduce-mitad/precio-tasas/internet/). *20 Minutos*.
 
 [^5]: Hamre, J. (3 de julio de 2015). [Cuba lanza red inalámbrica en todo el país](https://www.reuters.com/article/latinoamerica-cuba-internet-idLTAKCN0PC2T120150703). *Reuters*.
 
@@ -130,7 +130,7 @@ Acciones que se deben tomar para apoyar el acceso libre a Internet en Cuba:
 
 [^24]: Committee to Protect Journalists. (5 de marzo de 2021). [El personal de la organización cubana defensora de la libertad de prensa ICLEP pierde el servicio de Internet y teme ser objeto de interrupciones selectivas](https://cpj.org/?p=87648).
 
-[^25]: Agencia EFE. (10 de julio de 2021). [Crece la campaña para pedir un corredor humanitario de ayuda a Cuba](https://www.efe.com/efe/america/sociedad/crece-la-campana-para-pedir-un-corredor-humanitario-de-ayuda-a-cuba/20000013-4583410). *Agencia EFE*.
+[^25]: Agencia EFE. (10 de julio de 2021). [Crece la campaña para pedir un corredor humanitario de ayuda a Cuba](http://web.archive.org/web/20210710171759/https://www.efe.com/efe/america/sociedad/crece-la-campana-para-pedir-un-corredor-humanitario-de-ayuda-a-cuba/20000013-4583410). *Agencia EFE*.
 
 [^26]: Entrevista con el director de YucaByte, Norges Rodríguez, 3 de febrero de 2022.
 
