@@ -151,9 +151,10 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['dark', 'Oscuro'],
   initSettingsPanel();
   initFocus();
 
-  // Read aloud: only on a post, only with the API and a local Spanish voice.
+  // Read aloud: only on a post. The controller explains unsupported APIs and
+  // missing local Spanish voices instead of hiding the article-specific control.
   // Imported statically: a dynamic import brings Vite's preload helper, which
   // uses root-absolute URLs and breaks the preview served from a subpath.
   const voz = document.querySelector<HTMLElement>('[data-voz]');
-  if (voz && 'speechSynthesis' in window && document.querySelector('.post .prose')) initSpeech(voz);
+  if (voz && document.querySelector('.post .prose')) initSpeech(voz);
 </script>
