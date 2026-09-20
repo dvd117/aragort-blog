@@ -33,11 +33,13 @@ Con archivos de instrucciones ([AGENTS.md](https://agents.md/) o [CLAUDE.md](htt
 
 Eso hace que mi contexto sea portable. Es decir, si mañana quiero cambiar de proveedor, pago una suscripción, instalo otra herramienta, selecciono la misma carpeta y sigo trabajando sin perder contexto y sin estar atado a una empresa en específico. Funciona por dos razones: todo es texto plano, en formato [Markdown](https://es.wikipedia.org/wiki/Markdown); y buena parte de estas herramientas son de [código abierto](https://es.wikipedia.org/wiki/C%C3%B3digo_abierto) y usan formatos abiertos. Los mismos archivos de instrucciones y las mismas *skills* funcionan en Claude Code, Codex y OpenCode.
 
-## ¿Qué te llevas contigo?
+## El agente será el estándar
 
 Pero más allá de lo que yo opino, también hay una tendencia clara. Este año Anthropic y OpenAI desarrollaron herramientas para llevar los agentes a quienes no programan. Anthropic empezó con [Claude Cowork](https://claude.com/blog/cowork-is-now-claude) a principios de año y OpenAI lanzó [ChatGPT Work](https://openai.com/index/chatgpt-for-your-most-ambitious-work/) a mediados de año. Las dos llevan las capacidades de un agente a tareas de oficina y trabajan directamente con los archivos de tu computadora, incluidos PDF, Word, Excel y PowerPoint.
 
 Hace unos días, además, Anthropic integró Cowork en el chat de Claude. Antes era una sección aparte que tenías que ir a buscar y ahora está ahí desde que abres Claude. Para quien ya lo usaba no cambió mucho y quien no lo usaba ahora lo estará usando por defecto. Todo apunta a que el agente se va a convertir en la forma estándar de usar estas herramientas en poco tiempo.
+
+## ¿Qué te llevas contigo?
 
 Te conté mi caso, pero el tuyo puede ser distinto. Yo trabajo sobre todo con Claude Code y sus equivalentes. No uso Claude Cowork ni ChatGPT Work, así que no puedo explicarte cómo funcionan por dentro. Pero te invito a hacerte una pregunta: si mañana te cambias a otro proveedor, ¿qué te llevas contigo? Si tus instrucciones y tu contexto viven dentro de la aplicación, se quedan ahí. **Si viven en archivos en tus carpetas, se van contigo.** Esa pregunta te va a servir hoy y dentro de seis meses, cuando estas herramientas hayan vuelto a cambiar.
 
