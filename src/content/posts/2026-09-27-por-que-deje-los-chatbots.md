@@ -1,6 +1,6 @@
 ---
 title: "Por qué dejé los chatbots"
-description: "La conversación es desechable; el archivo no."
+description: "Por qué migré del chat a un agente, y cómo poner mi contexto en archivos de texto que controlo me dio mejores respuestas sin atarme a una sola empresa."
 resumen:
   - "Al chatbot le preguntas. Al agente lo diriges."
   - "Mi contexto vive en archivos que controlo, no dentro de la aplicación."
