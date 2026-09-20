@@ -215,6 +215,7 @@ export function initReading(minutes: number): void {
       update();
     };
     relayout = place;
+    document.fonts?.addEventListener('loadingdone', () => relayout());
     document.fonts?.ready.then(place);
     requestAnimationFrame(place);
   }
