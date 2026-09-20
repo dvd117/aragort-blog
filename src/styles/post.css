@@ -39,11 +39,14 @@
 /* A filename or a URL is one unbreakable token; on a narrow phone it ran past the edge
    and took the page's horizontal scroll with it. Break inside it only when it cannot fit. */
 .prose code, .prose a { overflow-wrap: anywhere; }
-/* The first paragraph is the lead: one step larger. Size only -- it used to take
-   --fg as well, but --fg and --fg-read are the same value in light, sepia and
-   contrast and differ only in dark, so the lead came out both bigger AND brighter
-   on exactly one theme and read as a font change rather than as a lead. */
-.prose > p:first-of-type { font-size: 1.12em; line-height: 1.55; }
+/* The first paragraph is the lead: one step larger, and that is the only thing that
+   changes. It used to take --fg and a 1.55 line-height too. Both backfired: --fg and
+   --fg-read are the same value everywhere but dark, so the lead came out brighter on
+   exactly one theme; and 1.55 against the body's 1.65 made the lead tighter as well as
+   bigger, which changes the texture of the block rather than its size. A phone shows
+   that worst -- a narrow column wraps the lead to ten lines where a desktop wraps it to
+   four -- and it read as a different typeface. One variable, not three. */
+.prose > p:first-of-type { font-size: 1.12em; }
 .prose > h2 ~ p:first-of-type { font-size: inherit; }
 /* E's highlighter, in D's palette: a band plus a 1px underline, so links never rely on the band alone. */
 /* Links: a thin underline in the post's hue; the highlight band only on hover, so
