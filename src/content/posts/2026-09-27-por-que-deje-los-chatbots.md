@@ -7,9 +7,9 @@ resumen:
   - "Lo que me llevo es lo que quedó escrito."
 ---
 
-## El primer problema
-
 Las herramientas de inteligencia artificial cambian prácticamente cada mes, pero la mayoría de las personas las siguen usando igual que cuando salió ChatGPT: abren un chat, hacen una pregunta, iteran y copian la respuesta. Hasta el año pasado, los "agentes" eran cosa de programadores. Pero eso está cambiando rápidamente y quiero contarte por qué dejé de usar los chatbots y qué gané con ese cambio.
+
+## El contexto no se exporta
 
 A principios de este año migré de ChatGPT a Claude y la experiencia no fue lo que esperaba. Después de años de uso, ChatGPT tenía mucho contexto sobre mí: mi trabajo, mis proyectos y la forma en que me gustaba trabajar con la herramienta. A pesar de que usé la función de Claude para importar la memoria desde otros proveedores, lo que llegó estaba incompleto, mezclaba temas que no tenían nada que ver entre sí y parte de la información era inexacta.
 
@@ -19,9 +19,9 @@ Ahí noté el primer problema. Cuando solo usas el chatbot, la empresa guarda en
 
 Poco después, en un taller práctico sobre inteligencia artificial, uno de los mentores me recomendó probar [Superpowers](https://github.com/obra/superpowers#how-it-works), un conjunto de habilidades (*skills*, en inglés) que le enseñan al agente a planificar antes de actuar y a revisar su trabajo antes de decir que terminó. El detalle es que, en ese momento, solo funcionaba con agentes y yo solo usaba el chatbot.
 
-Si te preguntas cuál es la diferencia, es sencilla. Un chatbot conversa contigo: tú preguntas, te responde y lo que hagas con esa respuesta depende de ti. Un agente trabaja: puede leer archivos de tu computadora, crear o editar documentos, usar otros programas y encadenar varios pasos hasta terminar una tarea. **Al chatbot le preguntas. Al agente lo diriges.**[^seguridad]
+Si te preguntas cuál es la diferencia, es sencilla. Un chatbot conversa contigo: tú preguntas, te responde y lo que hagas con esa respuesta depende de ti. Un agente trabaja: puede leer archivos de tu computadora, crear o editar documentos, usar otros programas y encadenar varios pasos hasta terminar una tarea.[^seguridad] **Al chatbot le preguntas. Al agente lo diriges.**
 
-## El experimento
+## Escribir el contexto
 
 Así que decidí experimentar y migrar mi flujo de trabajo completamente desde el chatbot a un agente. Me inspiré sobre todo en dos ideas: ["archivos por encima de aplicaciones" de Steph Ango](https://stephango.com/file-over-app), uno de los desarrolladores de Obsidian; y la ["LLM wiki" de Andrej Karpathy](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), uno de los miembros fundadores de OpenAI. Ango sostiene que, si quieres que lo que estás creando permanezca, tiene que estar en archivos que controlas y en formatos accesibles. Karpathy propone que un agente construya y mantenga una carpeta de archivos de texto, para que el conocimiento se acumule con el tiempo en vez de buscarse de nuevo cada vez que se necesite.
 
