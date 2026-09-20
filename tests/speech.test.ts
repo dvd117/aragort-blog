@@ -33,6 +33,13 @@ function createSpeech(voices: () => SpeechSynthesisVoice[]): MockSpeech {
   });
 }
 
+// happy-dom aliases PageTransitionEvent to Event and drops its init options.
+function pageTransition(type: 'pagehide' | 'pageshow', persisted: boolean): Event {
+  const event = new Event(type);
+  Object.defineProperty(event, 'persisted', { value: persisted });
+  return event;
+}
+
 function mountSpeech() {
   document.body.innerHTML = `
     <article class="post">
@@ -257,5 +264,71 @@ describe('read aloud playback lifecycle', () => {
     voices = [localVoice()];
     synth.dispatchEvent(new Event('voiceschanged'));
     expect(mounted.play.disabled).toBe(true);
+  });
+
+  it('cancels playback on every exit after cached-page restoration', () => {
+    const mounted = mountReadySpeech();
+
+    for (let visit = 0; visit < 3; visit += 1) {
+      mounted.play.click();
+      const utterance = mounted.synth.speak.mock.calls[visit][0];
+      utterance.onstart();
+      const cancellations = mounted.synth.cancel.mock.calls.length;
+
+      window.dispatchEvent(pageTransition('pagehide', true));
+
+      expect(mounted.synth.cancel).toHaveBeenCalledTimes(cancellations + 1);
+      expect(mounted.play.textContent).toBe('Reproducir');
+      expect(document.querySelector('.prose p')!.classList.contains('is-speaking')).toBe(false);
+      utterance.onend();
+      expect(mounted.synth.speak).toHaveBeenCalledTimes(visit + 1);
+      window.dispatchEvent(pageTransition('pageshow', true));
+    }
+
+    // A later permanent exit still tears down voice discovery.
+    window.dispatchEvent(pageTransition('pagehide', false));
+    mounted.synth.getVoices.mockReturnValue([]);
+    mounted.synth.dispatchEvent(new Event('voiceschanged'));
+    expect(mounted.play.disabled).toBe(false);
+  });
+
+  it('discovers a local voice arriving after cached-page restoration', () => {
+    const mounted = mountSpeech();
+    let voices: SpeechSynthesisVoice[] = [];
+    const synth = createSpeech(() => voices);
+    vi.stubGlobal('speechSynthesis', synth);
+    initSpeech(mounted.section);
+    window.dispatchEvent(pageTransition('pagehide', true));
+    window.dispatchEvent(pageTransition('pageshow', true));
+
+    voices = [localVoice()];
+    synth.dispatchEvent(new Event('voiceschanged'));
+
+    expect(mounted.play.disabled).toBe(false);
+    mounted.play.click();
+    expect(synth.speak.mock.calls[0][0].voice).toBe(voices[0]);
+  });
+
+  it.each([
+    { before: [], after: [localVoice()], disabled: false },
+    { before: [localVoice()], after: [remoteVoice()], disabled: true },
+  ])('refreshes voices changed while cached (disabled: $disabled)', ({ before, after, disabled }) => {
+    const mounted = mountSpeech();
+    let voices = before;
+    const synth = createSpeech(() => voices);
+    vi.stubGlobal('speechSynthesis', synth);
+    initSpeech(mounted.section);
+    window.dispatchEvent(pageTransition('pagehide', true));
+
+    voices = after;
+    // The page was frozen; do not rely on receiving a voiceschanged event.
+    window.dispatchEvent(pageTransition('pageshow', true));
+
+    expect(mounted.play.disabled).toBe(disabled);
+    expect(mounted.stop.disabled).toBe(disabled);
+    expect(mounted.rate.disabled).toBe(disabled);
+    expect(mounted.status.textContent).toBe(disabled
+      ? 'No hay una voz local en español disponible en este dispositivo.'
+      : '');
   });
 });

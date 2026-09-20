@@ -202,17 +202,22 @@ export function initSpeech(section: HTMLElement): void {
   };
 
   const onVoicesChanged = () => refreshAvailability();
+  const onPageShow = (event: PageTransitionEvent) => {
+    if (event.persisted) refreshAvailability();
+  };
   let cleanup: () => void;
-  const onPageHide = () => {
+  const onPageHide = (event: PageTransitionEvent) => {
     cancelCurrent();
     mode = 'idle';
     mark(null);
-    cleanup();
+    // Cached pages resume without rerunning initSpeech; keep their listeners.
+    if (!event.persisted) cleanup();
     render();
   };
   cleanup = () => {
     if (synth) synth.removeEventListener('voiceschanged', onVoicesChanged);
     window.removeEventListener('pagehide', onPageHide);
+    window.removeEventListener('pageshow', onPageShow);
     if (activeCleanup === cleanup) activeCleanup = undefined;
   };
 
@@ -222,6 +227,7 @@ export function initSpeech(section: HTMLElement): void {
   if (synth && supported) {
     synth.addEventListener('voiceschanged', onVoicesChanged);
     window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('pageshow', onPageShow);
     activeCleanup = cleanup;
   }
 
