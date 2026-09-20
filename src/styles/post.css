@@ -39,15 +39,14 @@
 /* A filename or a URL is one unbreakable token; on a narrow phone it ran past the edge
    and took the page's horizontal scroll with it. Break inside it only when it cannot fit. */
 .prose code, .prose a { overflow-wrap: anywhere; }
-/* The first paragraph is the lead: one step larger, and that is the only thing that
-   changes. It used to take --fg and a 1.55 line-height too. Both backfired: --fg and
-   --fg-read are the same value everywhere but dark, so the lead came out brighter on
-   exactly one theme; and 1.55 against the body's 1.65 made the lead tighter as well as
-   bigger, which changes the texture of the block rather than its size. A phone shows
-   that worst -- a narrow column wraps the lead to ten lines where a desktop wraps it to
-   four -- and it read as a different typeface. One variable, not three. */
-.prose > p:first-of-type { font-size: 1.12em; }
-.prose > h2 ~ p:first-of-type { font-size: inherit; }
+/* No lead treatment. It used to be a size step plus --fg plus a 1.55 line-height, and
+   each one was a way of saying "this paragraph is different" that landed as "this
+   paragraph is set in another typeface". Even size alone does it: at one colour value
+   bigger glyphs carry thicker stems, so on a dark background the block reads brighter
+   and heavier, which a phone's narrow column shows over ten lines instead of four.
+   The opening paragraph is now set exactly like every other one, which also retires the
+   `.prose > h2 ~ p:first-of-type { font-size: inherit }` that existed only to undo the
+   lead on a post that opens straight into a chapter. */
 /* E's highlighter, in D's palette: a band plus a 1px underline, so links never rely on the band alone. */
 /* Links: a thin underline in the post's hue; the highlight band only on hover, so
    1,300 words do not carry a dozen heavy bands. */
