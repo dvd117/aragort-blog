@@ -1,7 +1,6 @@
 ---
 title: "El acceso a Internet como nuevo motor de la movilización social en Cuba"
 description: "El informe que escribí para Global Information Society Watch en 2022. Se publicó en inglés durante el IGF y el original en español nunca salió. Aquí está."
-draft: true
 resumen:
   - "El acceso a internet llegó tarde a Cuba, y llegó censurado."
   - "Conectarse rompió el monopolio del régimen sobre la verdad."
