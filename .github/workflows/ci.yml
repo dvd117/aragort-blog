@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # A new advisory lands on a day nobody writes a post.
+  schedule:
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      # fetch-depth: 0 is not optional here. src/lib/versions.ts derives every
+      # post's version number and edit date from `git log --follow --format=%cs`,
+      # so a shallow clone builds a site with wrong dates and nothing fails.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22 # keep in step with the Dockerfile's base image
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+      # `npm run check` is deliberately NOT here. astro check needs
+      # @astrojs/check, whose 0.9.10 peers on typescript ^5 || ^6 while this
+      # repo is already on 7.0.2 — npm refuses to install it, and the script
+      # then prompts interactively, which would hang a runner. Add the step
+      # once @astrojs/check supports TypeScript 7.
+
+      # `high`, not `moderate`, and only because of one advisory that cannot be
+      # fixed forward: fflate's malformed-ZIP64 infinite loop reaches us through
+      # satori, and npm's only offered fix is to DOWNGRADE satori 0.33.4 → 0.32.0.
+      # satori runs at build time in src/lib/og.ts over our own fonts, never over
+      # attacker-supplied archives. Put this back to moderate the moment satori
+      # ships a release carrying a patched fflate.
+      - run: npm audit --audit-level=high
+
+  # `npm run build` is not `docker build`. This image builds Astro and then
+  # generates the CSP from the built pages, so a change that alters an inline
+  # script can pass the job above and still ship a page the CSP blocks.
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      # Same reason as above, and it matters more here: .git is deliberately
+      # kept in the build context (see .dockerignore) because the image build
+      # reads post history out of it.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: docker/setup-buildx-action@v4
+
+      - uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false
+          load: true
+          tags: aragort-blog:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # The runtime stage is Caddy serving static files, with no HEALTHCHECK to
+      # wait on, so ask it for the home page instead.
+      - name: Boot the image and fetch a page
+        run: |
+          docker run -d --name ci-smoke -p 8080:80 aragort-blog:ci
+          for i in $(seq 1 30); do
+            if curl -fsS -o /dev/null http://127.0.0.1:8080/; then
+              echo "served after ${i}s"
+              # The CSP is generated at build time; a missing header means
+              # scripts/csp.mjs silently produced nothing.
+              curl -fsSI http://127.0.0.1:8080/ | grep -i '^content-security-policy' \
+                || { echo "::error::no CSP header on the served page"; exit 1; }
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::the container never served a page"
+          docker logs ci-smoke
+          exit 1
+
+  # Dokploy watches a branch, not CI, so pointing it at the branch you push to
+  # means a red build ships as fast as a green one. It watches `production`;
+  # this job is the only thing that moves it. Writing posts still pushes to main.
+  #
+  # Fast-forward only, so a hand-push to production fails loudly rather than
+  # overwriting what is live.
+  ship:
+    needs: [verify, image]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Advance production to this commit
+        run: git push origin ${{ github.sha }}:refs/heads/production
