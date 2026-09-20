@@ -36,6 +36,9 @@
    desktop, about 63 characters per line, paragraphs well apart. */
 .prose { font-family: var(--read-font); font-size: calc(clamp(1.125rem, 1rem + .4vw, 1.25rem) * var(--scale)); line-height: var(--leading); letter-spacing: var(--tracking); color: var(--fg-read); max-width: var(--measure); }
 .prose p { margin: 0 0 1.35em; }
+/* A filename or a URL is one unbreakable token; on a narrow phone it ran past the edge
+   and took the page's horizontal scroll with it. Break inside it only when it cannot fit. */
+.prose code, .prose a { overflow-wrap: anywhere; }
 /* The first paragraph is the lead: one step larger. */
 .prose > p:first-of-type { font-size: 1.12em; line-height: 1.55; color: var(--fg); }
 .prose > h2 ~ p:first-of-type { font-size: inherit; }

@@ -185,10 +185,23 @@ export function initReading(minutes: number): void {
         const m = marks_[i]!;
         t.style.left = `${(m * 100).toFixed(2)}%`;
         t.hidden = m < 0.02;
-        // Near either end a centred label would hang off the screen; those two anchor to
-        // the gutter they are nearest instead.
-        t.classList.toggle('at-start', m < 0.18);
-        t.classList.toggle('at-end', m > 0.82);
+      });
+      // Near either end a centred label would hang off the screen; those anchor to the
+      // gutter they are nearest instead. Measured, not a fixed fraction of the bar: a
+      // long chapter title runs off from further in than a short one does, and a fixed
+      // threshold let a label poke past the edge and gave the page a sideways scroll.
+      const vw = document.documentElement.clientWidth;
+      const gutter = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gutter')) || 16;
+      ticks.forEach((t) => {
+        const tt = t.querySelector<HTMLElement>('.tt');
+        if (t.hidden || !tt) return;
+        const r = t.getBoundingClientRect();
+        const w = tt.offsetWidth;
+        // Where a centred label would start, and where it is allowed to start.
+        const want = r.left + r.width / 2 - w / 2;
+        const min = gutter;
+        const max = Math.max(gutter, vw - gutter - w);
+        t.style.setProperty('--tt-shift', `${Math.round(Math.min(Math.max(want, min), max) - want)}px`);
       });
       // A heading is a block like any other, so bandBlocks has already given it its
       // band; the rail's dock and the header's notches take the same one, and the

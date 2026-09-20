@@ -150,7 +150,11 @@ body {
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
-.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* Anchored with left/top: absolute with `auto` insets falls at its static position, and inside
+   a collapsed margin note (nowrap) that position is hundreds of px off-screen. The note's
+   overflow:hidden cannot clip it because the note is not a containing block, so it stretched
+   the document and the phone scrolled sideways. */
+.visually-hidden { position: absolute; left: 0; top: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 /* External links: the arrow is glued to the last word and never underlined. */
 .ext-tail { white-space: nowrap; }
 .ext-arrow { display: inline-block; margin-left: .12em; font-size: .72em; vertical-align: .35em; font-weight: 600; text-decoration: none; }
@@ -267,18 +271,18 @@ main:focus { outline: none; }
 .site .tick[hidden] { display: none; }
 /* The label: number and title, under the line, in the panel's chrome so it reads as a
    thing that opened rather than as text lying on the page. */
-.site .tick .tt { position: absolute; top: 15px; left: 50%; transform: translateX(-50%) translateY(-4px); display: flex; align-items: baseline; gap: .4rem; max-width: min(17rem, 72vw); padding: .4rem .65rem; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--fg); font: 500 .8125rem/1.2 var(--ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; pointer-events: none; transition: opacity 140ms ease, transform 140ms cubic-bezier(.2, 0, 0, 1); }
+.site .tick .tt { position: absolute; top: 15px; left: 50%; transform: translateX(calc(-50% + var(--tt-shift, 0px))) translateY(-4px); display: flex; align-items: baseline; gap: .4rem; max-width: min(17rem, calc(100vw - 2 * var(--gutter))); padding: .4rem .65rem; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--fg); font: 500 .8125rem/1.2 var(--ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; pointer-events: none; transition: opacity 140ms ease, transform 140ms cubic-bezier(.2, 0, 0, 1); }
 .site .tick[data-band="0"] { --hue: var(--h-amarillo); --hue-ui: var(--hu-amarillo); }
 .site .tick[data-band="1"] { --hue: var(--h-azul); --hue-ui: var(--hu-azul); }
 .site .tick[data-band="2"] { --hue: var(--h-rojo); --hue-ui: var(--hu-rojo); }
 .site .tick .tt b { flex: none; font: 600 .75rem/1.2 var(--mono); color: var(--hue); }
-.site .tick:hover .tt, .site .tick:focus-visible .tt, .site .tick.is-open .tt { opacity: 1; transform: translateX(-50%) translateY(0); }
+.site .tick:hover .tt, .site .tick:focus-visible .tt, .site .tick.is-open .tt { opacity: 1; transform: translateX(calc(-50% + var(--tt-shift, 0px))) translateY(0); }
 .site .tick:hover i, .site .tick:focus-visible i, .site .tick.is-open i { background: var(--hue-ui); height: 11px; }
-/* The first and last chapters would push their label off the screen if it stayed centred. */
-.site .tick.at-start .tt { left: var(--gutter); transform: translateX(0) translateY(-4px); }
-.site .tick.at-start:hover .tt, .site .tick.at-start:focus-visible .tt, .site .tick.at-start.is-open .tt { transform: translateX(0) translateY(0); }
-.site .tick.at-end .tt { left: auto; right: var(--gutter); transform: translateX(0) translateY(-4px); }
-.site .tick.at-end:hover .tt, .site .tick.at-end:focus-visible .tt, .site .tick.at-end.is-open .tt { transform: translateX(0) translateY(0); }
+/* A label near either edge would hang off the screen if it stayed centred. reading.ts
+   measures it and sets --tt-shift: the pixels needed to pull it back inside the gutter,
+   0 for every label that already fits. Anchoring to the tick instead of to the viewport
+   was the old bug -- `left: var(--gutter)` is relative to the tick, so it only landed on
+   the screen gutter for a tick that was already at the edge. */
 /* Desktop keeps the rail's dock; up here the notches are read-only again. */
 @media (min-width: 1000px) {
   .site .tick { pointer-events: none; width: 2px; margin-left: -1px; height: 8px; top: -3px; }
