@@ -153,7 +153,7 @@
 .dc-all a:hover { color: var(--fg); }
 
 /* Conventions that make a post easy to follow (all plain Markdown / GFM). */
-/* En corto: the frontmatter `resumen`, under the title. */
+/* "Las tres ideas": the frontmatter `resumen`, under the title. */
 .encorto { position: relative; margin: 1.75rem 0 0; padding: 1rem 1.1rem 1.05rem; background: var(--panel); border-left: 3px solid transparent; border-radius: 0 10px 10px 0; max-width: 40rem; }
 /* The bar is the three bands, like the three bullets beside it. Drawn rather than set as
    a border, because `border-image` would take the rounded right corners with it. */
@@ -161,7 +161,7 @@
 .encorto h2 { font: 600 .8125rem/1.2 var(--ui); color: var(--fg-2); margin: 0 0 .5rem; letter-spacing: .01em; }
 .encorto ul { margin: 0; padding: 0 0 0 1.1rem; font: 500 1.0625rem/1.45 var(--ui); color: var(--fg); }
 .encorto li + li { margin-top: .35rem; }
-/* Three bullets, three bands: "En corto" is the flag in miniature and stays those three
+/* Three bullets, three bands: "Las tres ideas" is the flag in miniature and stays those three
    under every post. */
 .encorto li:nth-child(1)::marker { color: var(--hu-amarillo); }
 .encorto li:nth-child(2)::marker { color: var(--hu-azul); }

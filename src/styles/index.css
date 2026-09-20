@@ -84,13 +84,13 @@
   .entry .t { font-size: clamp(1.9rem, 3.2vw, 2.9rem); }
 }
 
-/* Every post gets the room: near-display title, description, En corto and "Leer". */
+/* Every post gets the room: near-display title, description, the three ideas and "Leer". */
 .entry.feature { padding: 1rem 0 2rem; }
 .entry.feature .t { font-weight: var(--display-weight); font-size: clamp(2.4rem, 9vw, 4.6rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); max-width: 14ch; }
 .entry.feature .ex { font-size: 1.25rem; color: var(--fg); max-width: 40ch; }
 .teaser { margin: .9rem 0 0; padding: 0 0 0 1.1rem; font: 500 1.0625rem/1.45 var(--ui); color: var(--fg-2); max-width: 44ch; }
 .teaser li + li { margin-top: .3rem; }
-/* Three bullets, three bands: "En corto" is the flag in miniature and stays those three
+/* Three bullets, three bands: "Las tres ideas" is the flag in miniature and stays those three
    under every post. */
 .teaser li:nth-child(1)::marker { color: var(--hu-amarillo); }
 .teaser li:nth-child(2)::marker { color: var(--hu-azul); }

@@ -84,7 +84,7 @@ Each setting is one `data-*` attribute on `<html>`, applied before first paint b
 - At the end of a post, the net completes with one pulse and a card offers the next post and "Escríbeme".
 - "Sigue donde quedaste" offers to jump back to the last paragraph read. It is stored on the device only and forgotten after 30 days.
 
-**Buscar.** A box between the hero and the list, hard against its right edge and clear of the net, narrows the list as you type, over the title, description, En corto and date the landing already shows — accent- and case-insensitive, Escape to clear (`src/scripts/filter.ts`). It is built in JS, so it never appears without something to drive it, and it ships no search index: post bodies are not searched.
+**Buscar.** A box between the hero and the list, hard against its right edge and clear of the net, narrows the list as you type, over the title, description, the three ideas and date the landing already shows — accent- and case-insensitive, Escape to clear (`src/scripts/filter.ts`). It is built in JS, so it never appears without something to drive it, and it ships no search index: post bodies are not searched.
 
 **Preview.** `node scripts/preview.mjs` writes `preview/`, a small multi-page build with relative links that works from any subpath. It includes the labelled test posts in `tests/fixtures/posts` so hues and navigation can be judged; add `--real` for real content only.
 

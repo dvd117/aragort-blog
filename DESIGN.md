@@ -256,14 +256,14 @@ decoration that means nothing.
 - **Buscar:** one box between the hero and the list, hard against its right edge and below
   the net's reach on every width, so it never sits on a node or a wire. Filled rather than
   outlined, so it reads as a control and not as one more hairline. It narrows the list as
-  you type over what the landing already shows -- title, description, En corto and the
+  you type over what the landing already shows -- title, description, the three ideas and the
   date -- accent- and case-insensitive, so "deje" finds "dejé". Built by
   `src/scripts/filter.ts`, so it is never there without the JS to drive it; Escape clears
   it. No search index is shipped; post bodies are not searched.
 - **Landing, desktop (≥900px):** two columns, the title and lede on the left (as wide as
   they need) and the net taking the rest of the width on the right, at fuller strength.
 - **Every post is expanded on the landing:** date, near-display title, description, its
-  En corto as a teaser, "Leer · N min". After the posts, a "quién escribe" strip (the mark
+  the three ideas as a teaser, "Leer · N min". After the posts, a "quién escribe" strip (the mark
   beside one sentence and a link to Sobre mí). The thread runs past it to the footer
   mark: net, wire, posts, strip and footer are one line.
 - **Post:** a single column on a phone, with a progress hairline and a closed "En este

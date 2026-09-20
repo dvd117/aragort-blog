@@ -1,6 +1,6 @@
 /**
  * Buscar. One box under the hero narrows the list as you type: title,
- * description, "En corto" lines and the date, accent- and case-insensitive, so "deje"
+ * description, "Las tres ideas" lines and the date, accent- and case-insensitive, so "deje"
  * finds "dejé" and "septiembre" finds the date. It searches what the landing already
  * shows, not the body of the posts -- no index is shipped.
  *

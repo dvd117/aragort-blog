@@ -43,7 +43,7 @@ const filename = `${post.id}.md`;
       <h1 style={`view-transition-name: t-${post.slug}; view-transition-class: title`}>{post.title}</h1>
       {post.resumen && (
         <aside class="encorto" aria-labelledby="encorto-title">
-          <h2 id="encorto-title">En corto</h2>
+          <h2 id="encorto-title">Las tres ideas</h2>
           <ul>{post.resumen.map((r) => <li>{r}</li>)}</ul>
         </aside>
       )}

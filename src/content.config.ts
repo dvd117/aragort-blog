@@ -19,7 +19,7 @@ const posts = defineCollection({
     description: z.string().optional(),
     draft: z.boolean().optional(),
     /**
-     * "En corto": three short lines under the title. Exactly three, because three is the
+     * "Las tres ideas": three short lines under the title. Exactly three, because three is the
      * flag -- the bullets are amarillo, azul, rojo, in order, on the post and on the
      * landing alike. A post either has the three or has none.
      */
