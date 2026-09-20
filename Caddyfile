@@ -21,7 +21,10 @@
 		Cross-Origin-Opener-Policy same-origin
 		# TLS is terminated by Traefik in front; this header rides through it.
 		# includeSubDomains and preload are deliberately left off until every
-		# subdomain of aragort.com is known to be HTTPS-only.
+		# subdomain of aragort.com is known to be HTTPS-only. NOTE: the Deflect
+		# edge appends its own HSTS with both directives set. Ours wins only
+		# because a UA reads the first one (RFC 6797 8.1) -- fix at the edge
+		# toggle, not here. See README, "Security headers".
 		Strict-Transport-Security "max-age=31536000"
 		# Nothing here uses a permission-gated API. Read aloud is speech synthesis,
 		# which is not gated.

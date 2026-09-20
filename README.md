@@ -124,7 +124,20 @@ The Dockerfile has two stages: Node builds the site (with `git`, for versions), 
 
 ### Security headers
 
-`Strict-Transport-Security`, `Permissions-Policy` (every gated API denied; read aloud is speech synthesis, which is not gated), `Cross-Origin-Opener-Policy`, `X-Content-Type-Options` and `Referrer-Policy` are static, in the `Caddyfile`. HSTS deliberately omits `includeSubDomains` and `preload` until every subdomain of aragort.com is known to be HTTPS-only. `Cross-Origin-Resource-Policy` is deliberately **not** set: OG cards have to be fetchable cross-origin by social scrapers.
+`Strict-Transport-Security`, `Permissions-Policy` (every gated API denied; read aloud is speech synthesis, which is not gated), `Cross-Origin-Opener-Policy`, `X-Content-Type-Options` and `Referrer-Policy` are static, in the `Caddyfile`. `Cross-Origin-Resource-Policy` is deliberately **not** set: OG cards have to be fetchable cross-origin by social scrapers.
+
+**What this file says is the origin's half of the answer.** In production a Deflect CDN edge sits in front and *appends* its own copies of some of these, so the browser receives two values and the winner depends on the header:
+
+| Header | Origin (here) | Deflect appends | Effective |
+|---|---|---|---|
+| `Strict-Transport-Security` | `max-age=31536000` | `max-age=31536000; includeSubDomains; preload` | **origin** — first wins (RFC 6797 §8.1) |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | `no-referrer-when-downgrade` | **Deflect** — last valid wins |
+| `X-Frame-Options` | not set | `SAMEORIGIN` | Deflect's |
+| `Content-Security-Policy-Report-Only` | not set | a much looser policy | Deflect's, report-only |
+
+So the HSTS line here omits `includeSubDomains` and `preload` on purpose, but the edge adds them anyway and only header order keeps them from applying. Turn the edge toggle off rather than relying on order. The referrer case is the opposite and the edge's weaker value is the one in force — though nothing leaks today, because every external link carries `rel="noopener noreferrer"` (`src/lib/rehype-external-links.ts`) and the CSP confines subresources to `'self'`.
+
+**Check this table against `curl -D - https://aragort.com/`, not against memory.**
 
 **The CSP is generated from the built pages.** The site applies reading settings and the last hue before first paint, so those scripts must be inline. Rather than open `script-src` with `'unsafe-inline'`, `scripts/csp.mjs` hashes every inline script in `dist/` and writes the whole header to `csp.caddy`, which the `Caddyfile` imports. The Dockerfile runs it right after `astro build`. Hashes are never written by hand: one of the inline scripts is bundled by Astro and its bytes change between builds.
 
