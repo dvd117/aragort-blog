@@ -65,8 +65,11 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['dark', 'Oscuro'],
       <div class="voz-row">
         <button type="button" data-voz-play aria-pressed="false">Reproducir</button>
         <button type="button" data-voz-stop>Detener</button>
-        <label class="voz-rate">Velocidad
-          <select data-voz-rate>
+        <label class="voz-rate" for="voz-rate">Velocidad
+          <!-- id so the control is identifiable (a field with neither id nor name is
+               flagged by browsers); autocomplete off because this is a UI control, not
+               a value to fill in. -->
+          <select id="voz-rate" name="voz-rate" autocomplete="off" data-voz-rate>
             <option value="0.8">0,8×</option>
             <option value="1" selected>1×</option>
             <option value="1.2">1,2×</option>
