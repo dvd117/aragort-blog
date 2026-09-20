@@ -17,12 +17,12 @@
     "@astrojs/markdown-remark": "^7.3.1",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
-    "@resvg/resvg-js": "^2.6.2",
-    "astro": "^7.3.3",
-    "satori": "^0.33.4"
+    "astro": "^7.3.3"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/hast": "^3.0.5",
+    "satori": "^0.33.4",
     "typescript": "^7.0.2",
     "vitest": "^5.0.1"
   }
