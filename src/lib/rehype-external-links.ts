@@ -16,21 +16,45 @@ export function isExternal(href: string): boolean {
 const h = (tagName: string, properties: Element['properties'], children: ElementContent[]): Element =>
   ({ type: 'element', tagName, properties, children });
 
+/**
+ * Split the last text of `el` and glue the arrow to its final word, in place. Returns
+ * false when there is nothing to split on -- a single token like `AGENTS.md` -- so the
+ * caller wraps the element whole instead.
+ *
+ * Without this, a link whose whole label is one element (`[*a long tweet*](url)`) had
+ * that element wrapped in `.ext-tail`, and `white-space: nowrap` then made the entire
+ * label unbreakable: it ran off the margin instead of wrapping.
+ */
+function glueInside(el: Element, arrow: Element): boolean {
+  const kids = el.children;
+  const last = kids.at(-1);
+  if (last?.type === 'text') {
+    const text = last.value.replace(/\s+$/, '');
+    const cut = text.lastIndexOf(' ');
+    if (cut === -1) return false;
+    kids.splice(-1, 1,
+      { type: 'text', value: text.slice(0, cut + 1) },
+      h('span', { className: ['ext-tail'] }, [{ type: 'text', value: text.slice(cut + 1) }, arrow]));
+    return true;
+  }
+  return last?.type === 'element' ? glueInside(last, arrow) : false;
+}
+
 function mark(a: Element): void {
   a.properties = { ...a.properties, target: '_blank', rel: ['noopener', 'noreferrer'], className: ['ext'] };
   const arrow = h('span', { className: ['ext-arrow'], ariaHidden: 'true' }, [{ type: 'text', value: '↗' }]);
   const kids = a.children;
   const last = kids.at(-1);
-  let tail: Element;
   if (last?.type === 'text') {
     const text = last.value.replace(/\s+$/, '');
     const cut = text.lastIndexOf(' ');
     const head = cut === -1 ? '' : text.slice(0, cut + 1);
-    tail = h('span', { className: ['ext-tail'] }, [{ type: 'text', value: text.slice(cut + 1) }, arrow]);
+    const tail = h('span', { className: ['ext-tail'] }, [{ type: 'text', value: text.slice(cut + 1) }, arrow]);
     kids.splice(-1, 1, ...(head ? [{ type: 'text' as const, value: head }] : []), tail);
+  } else if (last?.type === 'element') {
+    if (!glueInside(last, arrow)) kids.splice(-1, 1, h('span', { className: ['ext-tail'] }, [last, arrow]));
   } else if (last) {
-    tail = h('span', { className: ['ext-tail'] }, [last, arrow]);
-    kids.splice(-1, 1, tail);
+    kids.splice(-1, 1, h('span', { className: ['ext-tail'] }, [last, arrow]));
   } else return;
   kids.push(h('span', { className: ['visually-hidden'] }, [{ type: 'text', value: ' (abre en otra pestaña)' }]));
 }

@@ -32,6 +32,13 @@ describe('external links', () => {
     expect(html).toContain('el archivo <span class="ext-tail"><code>AGENTS.md</code><span class="ext-arrow" aria-hidden="true">↗</span></span>');
   });
 
+  it('breaks inside a label that is one long element, instead of nowrapping all of it', async () => {
+    const html = await render('[*According to Kentik data, traffic from Cuba dropped for two hours*](https://twitter.com/DougMadory/status/1354581571840389127)');
+    // The arrow glues to the last word *inside* the <em>, so the label can still wrap.
+    expect(html).toContain('two <span class="ext-tail">hours<span class="ext-arrow" aria-hidden="true">↗</span></span></em>');
+    expect(html).not.toContain('<span class="ext-tail"><em>');
+  });
+
   it('leaves internal links and mailto alone', async () => {
     const html = await render('[Sobre mí](/sobre-mi/) y [correo](mailto:hola@aragort.com)');
     expect(html).toBe('<p><a href="/sobre-mi/">Sobre mí</a> y <a href="mailto:hola@aragort.com">correo</a></p>');
