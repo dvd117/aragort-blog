@@ -10,7 +10,6 @@ docs/
 csp.caddy
 
 # Agent scaffolding (symlinks to ~/dev/token-efficient-karpathy, plus the local brief)
-AGENTS.md
 AGENTS.local.md
 BRIEF.md
 CLAUDE.md
