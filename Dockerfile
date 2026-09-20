@@ -13,10 +13,14 @@ COPY . .
 # Test posts can never reach an image: tests/fixtures is outside the build context
 # (.dockerignore) and the fixtures switch is cleared here.
 RUN git config --global --add safe.directory /app \
- && env -u ARAGORT_POSTS_DIR npm run build
+ && env -u ARAGORT_POSTS_DIR npm run build \
+ && node scripts/csp.mjs dist csp.caddy
 
 # Serve: Caddy, static files only. TLS is terminated in front (Traefik on Dokploy).
 FROM caddy:2-alpine
 COPY Caddyfile /etc/caddy/Caddyfile
+# The CSP is generated from the built pages (a hash per inline script), so it
+# lives beside the Caddyfile rather than inside it.
+COPY --from=build /app/csp.caddy /etc/caddy/csp.caddy
 COPY --from=build /app/dist /srv
 EXPOSE 80

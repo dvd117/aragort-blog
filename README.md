@@ -122,6 +122,18 @@ curl -sI http://localhost:8080/escritos/por-que-deje-los-chatbots.md   # text/ma
 
 The Dockerfile has two stages: Node builds the site (with `git`, for versions), then Caddy serves `dist/` on port 80. Caddy was chosen for its one-file config, which covers the `.md` content type, immutable caching for hashed assets and fonts, security headers and the redirect that sends any miss back to the landing. TLS is terminated in front of it (Traefik on Dokploy).
 
+### Security headers
+
+`Strict-Transport-Security`, `Permissions-Policy` (every gated API denied; read aloud is speech synthesis, which is not gated), `Cross-Origin-Opener-Policy`, `X-Content-Type-Options` and `Referrer-Policy` are static, in the `Caddyfile`. HSTS deliberately omits `includeSubDomains` and `preload` until every subdomain of aragort.com is known to be HTTPS-only. `Cross-Origin-Resource-Policy` is deliberately **not** set: OG cards have to be fetchable cross-origin by social scrapers.
+
+**The CSP is generated from the built pages.** The site applies reading settings and the last hue before first paint, so those scripts must be inline. Rather than open `script-src` with `'unsafe-inline'`, `scripts/csp.mjs` hashes every inline script in `dist/` and writes the whole header to `csp.caddy`, which the `Caddyfile` imports. The Dockerfile runs it right after `astro build`. Hashes are never written by hand: one of the inline scripts is bundled by Astro and its bytes change between builds.
+
+`style-src` keeps `'unsafe-inline'` on purpose. Hashes do not cover inline `style` attributes (view-transition names, the net's per-node values) and no source expression does; style injection cannot execute script here.
+
+```sh
+npm run build && node scripts/csp.mjs dist csp.caddy && cat csp.caddy
+```
+
 ## Contrast (WCAG 2.2, computed)
 
 | Theme | Pair | Ratio | Needs |

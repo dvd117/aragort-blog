@@ -7,3 +7,4 @@ dist-fixture/
 preview/
 preview-build/
 docs/
+csp.caddy
