@@ -11,6 +11,9 @@
  *   image would be blocked and render broken; it is replaced by its alt text
  *   instead, which is honest about what happened and keeps the page's promise that
  *   it makes no external request.
+ *
+ * The reader can opt into `images: 'data-only'`; its pasted documents must not
+ * request same-origin paths either, because the URL would leak a filename to logs.
  */
 import type { Element, ElementContent, Root } from 'hast';
 
@@ -50,12 +53,17 @@ const caption = (node: Element): Element => ({
   children: [{ type: 'text', value: altText(node) }],
 });
 
-export default function rehypeSafeUrls() {
+interface Options { images?: 'same-origin' | 'data-only'; }
+
+export default function rehypeSafeUrls(options: Options = {}) {
   return (tree: Root) => {
     const walk = (parent: Root | Element) => {
       parent.children = parent.children.map((child) => {
         if (child.type !== 'element') return child;
-        if (child.tagName === 'img' && !allowed(child.properties.src, SRC_SCHEMES)) {
+        const imageAllowed = options.images === 'data-only'
+          ? schemeOf(child.properties.src) === 'data'
+          : allowed(child.properties.src, SRC_SCHEMES);
+        if (child.tagName === 'img' && !imageAllowed) {
           return caption(child);
         }
         if (child.tagName === 'a' && !allowed(child.properties.href, HREF_SCHEMES)) {

@@ -83,4 +83,14 @@ describe('renderMarkdown', () => {
     expect(doc.html).not.toContain('evil.test');
     expect(doc.html).toContain('<span class="img-alt">Un diagrama</span>');
   });
+
+  it('allows only data images in the reader', () => {
+    const doc = renderMarkdown(
+      '![Relativa](secreto/foto.png)\n\n![Raíz](/privado/foto.png)\n\n![Remota](https://evil.test/foto.png)\n\n![En línea](data:image/png;base64,AAA)',
+    );
+    expect(doc.html).toContain('<span class="img-alt">Relativa</span>');
+    expect(doc.html).toContain('<span class="img-alt">Raíz</span>');
+    expect(doc.html).toContain('<span class="img-alt">Remota</span>');
+    expect(doc.html).toContain('<img src="data:image/png;base64,AAA" alt="En línea">');
+  });
 });

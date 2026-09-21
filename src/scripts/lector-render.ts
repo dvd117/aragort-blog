@@ -18,6 +18,7 @@ import rehypeStringify from 'rehype-stringify';
 import GithubSlugger from 'github-slugger';
 import type { Element, Root } from 'hast';
 import { rehypePlugins } from '../lib/markdown-plugins.ts';
+import rehypeSafeUrls from '../lib/rehype-safe-urls.ts';
 import { countWords, documentTitle, stripFrontmatter } from '../lib/lector-doc.ts';
 import { readingMinutes } from '../lib/posts.ts';
 
@@ -98,6 +99,7 @@ export function renderMarkdown(source: string, filename?: string, reservedIds: r
       },
     })
     .use(rehypePlugins as never)
+    .use(rehypeSafeUrls, { images: 'data-only' })
     .use(rehypeHeadings, collect, reservedIds)
     .use(rehypeStringify)
     .processSync(body);
