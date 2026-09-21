@@ -53,7 +53,7 @@ it('refuses a dropped binary file without replacing the open document', () => {
   drop(new File(['\x89PNG'], 'foto.png', { type: 'image/png' }));
 
   expect(document.querySelector('[data-lector-title]')!.textContent).toBe('Inicial');
-  expect(document.querySelector('[data-lector-status]')!.textContent).toBe('Ese archivo no parece Markdown o texto plano.');
+  expect(document.querySelector('[data-lector-status]')!.textContent).toBe('Ese archivo no es Markdown ni texto plano. Prueba con un .md o un .txt.');
 });
 
 it('accepts an uppercase Markdown filename when the MIME type is empty', async () => {
