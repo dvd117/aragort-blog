@@ -2,9 +2,7 @@
 import { defineConfig } from 'astro/config';
 import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
-import rehypeMarginNotes from './src/lib/rehype-margin-notes.ts';
-import rehypeNetDivider from './src/lib/rehype-net-divider.ts';
-import rehypeExternalLinks from './src/lib/rehype-external-links.ts';
+import { markdownOptions, rehypePlugins } from './src/lib/markdown-plugins.ts';
 
 export default defineConfig({
   site: 'https://aragort.com',
@@ -18,10 +16,6 @@ export default defineConfig({
   markdown: {
     // unified (remark/rehype) instead of the default Sätteri pipeline, for the
     // standard rehype plugin API: footnotes become margin notes.
-    processor: unified({
-      gfm: true,
-      smartypants: true,
-      rehypePlugins: [rehypeMarginNotes, rehypeNetDivider, rehypeExternalLinks],
-    }),
+    processor: unified({ ...markdownOptions, rehypePlugins }),
   },
 });
