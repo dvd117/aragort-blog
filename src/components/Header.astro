@@ -4,26 +4,27 @@ import Net from './Net.astro';
 
 interface Props {
   current?: 'escritos' | 'sobre-mi';
-  netMark?: boolean;
   /** On a post: minutes to read. The header then carries "quedan N min" and the progress line. */
   minutes?: number;
+  /** Render the reading chrome (progress line and time-left slot) without a minute count yet. */
+  progress?: boolean;
   /** On a post: its title, shown in the header once the page title has scrolled away. */
   postTitle?: string;
 }
-const { current, netMark = true, minutes, postTitle } = Astro.props;
+const { current, minutes, postTitle, progress } = Astro.props;
 ---
 <!-- Always visible, one compact row (52px on a phone). On a post the mark is the
      reading progress, with the time left beside it and a progress line along the bottom. -->
 <header class="site">
   <div class="row wrap">
     <a class="brand" href="/">
-      <span class:list={['mark', { 'vt-net': netMark }]}><Net name="mark" /></span>
+      <span class="mark"><Net name="mark" /></span>
       <span class="name"><span>David</span> <span>Aragort</span></span>
     </a>
-    {minutes && (
+    {(minutes || progress) && (
       <span class="doc" aria-hidden="true">
         {postTitle && <span class="doc-title">{postTitle}</span>}
-        <span class="left" data-left>quedan {minutes} min</span>
+        <span class="left" data-left>{minutes ? `quedan ${minutes} min` : ''}</span>
       </span>
     )}
     <nav aria-label="Principal">
@@ -39,7 +40,7 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
     </nav>
     <ReadingSettings />
   </div>
-  {minutes && <div class="progress" aria-hidden="true"></div>}
+  {(minutes || progress) && <div class="progress" aria-hidden="true"></div>}
 </header>
 
 <style>
@@ -60,8 +61,8 @@ const { current, netMark = true, minutes, postTitle } = Astro.props;
      `overflow`, "quedan N min" is `nowrap` and simply ran on under the nav's pill. */
   .doc { display: flex; flex-direction: column; justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; gap: 3px; }
   .doc-title { display: none; font: var(--title-weight) .9375rem/1.15 var(--display); letter-spacing: -.01em; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .site.reading .doc-title { display: block; animation: doc-in 160ms ease both; }
-  @keyframes doc-in { from { opacity: 0; transform: translateY(3px); } }
+  .site.reading .doc-title { display: block; animation: doc-in var(--dur-draw) var(--ease) both; }
+  @keyframes doc-in { from { opacity: 0; transform: translateY(6px); } }
   .left { font: 500 .8125rem/1 var(--ui); color: var(--fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .site.reading .left { font-size: .75rem; }
   /* The post's Formato/Markdown toggle, with one segment: a pill on a panel that raises

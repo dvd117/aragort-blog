@@ -1,0 +1,89 @@
+/* Lector: the empty state, and the parts of Markdown David's own essays never use. */
+
+.lector { overflow-x: clip; }
+.lector-hero { padding-top: 1rem; }
+.lector-hero-main { position: relative; isolation: isolate; padding: 1.5rem 0 3rem; min-height: max(15rem, calc(64vw + 1rem)); }
+.lector-hero-title { position: relative; z-index: 1; }
+/* Knockout: the halo keeps the net's wires from touching the title and lede. */
+.lector-hero-title h1, .lector-hero-title .lede, .lector-hero-title .privacy { text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg), 0 0 8px var(--bg); }
+.lector-hero-title h1 { font-family: var(--display); font-weight: var(--display-weight); font-size: clamp(3.6rem, 18vw, 9rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); margin: 0; }
+.lector-hero-title .lede { font-family: var(--read); font-size: 1.125rem; line-height: 1.5; color: var(--fg-2); max-width: 24ch; margin: 1rem 0 0; }
+.lector .privacy { color: var(--fg-2); font-size: .9375rem; }
+.lector-net-wrap { position: absolute; z-index: 0; top: -.5rem; right: calc(-1 * var(--gutter) - 24vw); width: 96vw; pointer-events: none; --net-alpha: .26; }
+.lector-hero-net { opacity: .9; transition: opacity var(--dur-ui) var(--ease); }
+.lector-hero-net .net { display: block; width: 100%; height: auto; }
+.lector-hero-net .net line { stroke-opacity: var(--net-alpha); }
+.lector-hero-net .net circle { stroke-opacity: .5; }
+.lector-hero-net .net :is(line, circle) { transition: stroke var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); }
+.lector:has([data-lector-drop].is-over) .lector-hero-net { opacity: 1; }
+.lector:has([data-lector-drop].is-over) .lector-hero-net .net :is(line, circle) { stroke: var(--hue-ui); stroke-opacity: 1; }
+.lector:has([data-lector-drop].is-over) textarea { border-color: var(--hue-ui); }
+
+@media (min-width: 900px) {
+  .lector-hero { padding-top: 4rem; }
+  .lector-hero-main { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 5rem; min-height: 0; }
+  .lector-hero-title .lede { font-size: 1.3125rem; max-width: 28ch; margin-top: 1.5rem; }
+  .lector-net-wrap { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .5; }
+  .lector-net-wrap .net circle { stroke-opacity: 1; }
+}
+
+/* The input keeps a reading width, and its two ways in share one row under it. */
+.lector .drop { display: flex; flex-wrap: wrap; align-items: center; column-gap: 1.25rem; max-width: 44rem; margin-top: 0; }
+.lector .drop textarea { flex: 1 0 100%; }
+.lector textarea {
+  width: 100%; min-height: 12rem; padding: .7rem .9rem; resize: vertical;
+  font: 400 .9375rem/1.5 var(--mono); color: var(--fg);
+  background: var(--panel); border: 1px solid var(--rule); border-radius: 4px;
+  transition: border-color var(--dur-ui) var(--ease);
+}
+.lector textarea:hover { border-color: var(--fg-2); }
+.lector textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--hue-ui); }
+.lector .go { margin: .75rem 0 0; }
+.lector .go button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; font: 500 .875rem/1 var(--ui); color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; transition: border-color var(--dur-ui) var(--ease); }
+.lector .go button:hover { border-color: var(--fg-2); }
+.lector .pick { display: inline-flex; margin: .75rem 0 0; }
+.lector .pick label { color: var(--fg-2); text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
+.lector .pick label:hover { color: var(--fg); }
+.lector .pick:has(:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
+.lector .status:empty { display: none; }
+.lector .post-head button.back { appearance: none; -webkit-appearance: none; border: 0; padding: 0; background: none; cursor: pointer; text-align: left; }
+
+/* Code: the block scrolls, the page never does. */
+.lector .prose pre {
+  overflow-x: auto; padding: .9rem 1rem; background: var(--panel);
+  border: 1px solid var(--rule); border-radius: 6px;
+  font: 400 .875rem/1.55 var(--mono);
+}
+.lector .prose pre code { white-space: pre; }
+.lector .prose :not(pre) > code {
+  padding: .1em .35em; background: var(--panel);
+  border: 1px solid var(--rule); border-radius: 3px;
+  font: 500 .9em/1 var(--mono); overflow-wrap: anywhere;
+}
+
+/* Tables: a wide one scrolls inside its own box. */
+.lector .prose table { width: 100%; border-collapse: collapse; font-size: .9375rem; display: block; overflow-x: auto; }
+.lector .prose th, .lector .prose td { padding: .45rem .6rem; border: 1px solid var(--rule); text-align: left; vertical-align: top; }
+.lector .prose th { font-weight: 620; }
+
+/* Task lists lose their bullet but keep their box. */
+.lector .prose li:has(> input[type="checkbox"]) { list-style: none; margin-left: -1.1em; }
+.lector .prose input[type="checkbox"] { margin-right: .5em; }
+
+/* Nested lists retain readable indentation without overflowing narrow screens. */
+.lector .prose :is(ul, ol) { padding-inline-start: 1.4em; }
+.lector .prose li > :is(ul, ol) { margin-top: .35em; }
+
+/* A refused remote image: the meaning survives the missing picture. */
+.lector .prose .img-alt {
+  display: block; padding: .5rem .75rem; color: var(--fg-2);
+  border-left: 2px solid var(--rule); font-size: .9375rem; font-style: italic;
+}
+
+/* Long URLs must not give the page a sideways scroll. */
+.lector .prose a, .lector .prose p { overflow-wrap: anywhere; }
+.lector .prose .ext-tail { white-space: normal; overflow-wrap: anywhere; }
+
+/* Headings below a chapter carry no generated number. */
+.lector .prose :is(h3, h4, h5, h6) { font-weight: 620; letter-spacing: -.02em; }
+.lector .prose :is(h4, h5, h6) { font-size: 1.05rem; }

@@ -39,19 +39,19 @@ import AboutContent from './AboutContent.astro';
   /* Back to the text in one press, at the top of the panel where the reader's eye is. Its
      box starts at the gutter -- no negative margin pulling it out of line with the text
      under it -- and its padding is even, so the word sits centred in the button. */
-  .drawer-close { display: inline-flex; align-items: center; gap: .45rem; min-height: 40px; margin: 0; padding: 0 .85rem; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--fg-2); font: 500 .9375rem/1 var(--ui); cursor: pointer; transition: color 140ms ease, border-color 140ms ease; }
+  .drawer-close { display: inline-flex; align-items: center; gap: .45rem; min-height: 40px; margin: 0; padding: 0 .85rem; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--fg-2); font: 500 .9375rem/1 var(--ui); cursor: pointer; transition: color var(--dur-ui) var(--ease), border-color var(--dur-ui) var(--ease); }
   .drawer-close:hover { color: var(--fg); border-color: var(--fg-2); }
   .drawer-close svg { width: 15px; height: 15px; margin-left: -.15rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
   /* It slides; it does not appear. Both directions, so closing reads as putting it back. */
   @media (prefers-reduced-motion: no-preference) {
-    .drawer[open] { animation: drawer-in 260ms cubic-bezier(.2, 0, 0, 1); }
-    .drawer[open]::backdrop { animation: drawer-fade 260ms ease; }
+    .drawer[open] { animation: drawer-in var(--dur-page) var(--ease); }
+    .drawer[open]::backdrop { animation: drawer-fade var(--dur-page) var(--ease); }
     /* Its own name, not drawer-in reversed: re-declaring the same animation name on an
        element that has already run it does not restart it, so animationend never fires
        and the panel never closes. */
     .drawer.is-closing { animation: drawer-out 200ms cubic-bezier(.4, 0, 1, 1) forwards; }
-    .drawer.is-closing::backdrop { animation: drawer-fade-out 200ms ease forwards; }
+    .drawer.is-closing::backdrop { animation: drawer-fade-out 200ms cubic-bezier(.4, 0, 1, 1) forwards; }
   }
   @keyframes drawer-in { from { transform: translateX(100%); } }
   @keyframes drawer-out { to { transform: translateX(100%); } }

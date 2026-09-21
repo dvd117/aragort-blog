@@ -156,5 +156,5 @@ const theme = group('Tema', 'theme', [['system', 'Sistema'], ['dark', 'Oscuro'],
   // Imported statically: a dynamic import brings Vite's preload helper, which
   // uses root-absolute URLs and breaks the preview served from a subpath.
   const voz = document.querySelector<HTMLElement>('[data-voz]');
-  if (voz && document.querySelector('.post .prose')) initSpeech(voz);
+  if (voz && document.querySelector('.post:not([data-lector-shell]) .prose')) initSpeech(voz);
 </script>

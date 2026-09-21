@@ -2,7 +2,7 @@
  * Landing -> post on desktop: the hero net becomes the reading rail. On the landing, the
  * click on an entry stores where the hero's nodes are on screen. On the post, the rail
  * starts from those points (each rail node from the hero node at the same place in
- * reading order) and glides into its own shape in 450ms,
+ * reading order) and glides into its own shape in 280ms,
  * then reading lights it as usual. Phone, reduced motion, or no stored points: nothing.
  */
 import { reduced } from './motion';

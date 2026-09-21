@@ -16,14 +16,15 @@ interface Props {
   ogAlt?: string;
   type?: 'website' | 'article';
   hue?: string;
-  /** The index's hero net takes the shared `net` name; elsewhere the header mark does. */
-  heroNet?: boolean;
   /** On a post: minutes to read, shown in the header. */
   minutes?: number;
+  /** Render the reading chrome before a minute count exists (the reader route). */
+  progress?: boolean;
+  noindex?: boolean;
   /** On a post: its title, for the header while reading. */
   postTitle?: string;
 }
-const { title, description = 'Escritos de David Aragort.', current, ogImage, ogAlt, type = 'website', hue, heroNet = false, minutes, postTitle } = Astro.props;
+const { title, description = 'Escritos de David Aragort.', current, ogImage, ogAlt, type = 'website', hue, minutes, postTitle, progress, noindex } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort`;
 ---
@@ -35,6 +36,7 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
   <meta name="color-scheme" content="dark light" />
   <title>{pageTitle}</title>
   <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
   <link rel="canonical" href={canonical} />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="alternate" type="application/rss+xml" title="David Aragort" href="/rss.xml" />
@@ -67,7 +69,7 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
-  <Header current={current} netMark={!heroNet} minutes={minutes} postTitle={postTitle} />
+  <Header current={current} minutes={minutes} postTitle={postTitle} progress={progress} />
   <main id="contenido">
     <slot />
   </main>

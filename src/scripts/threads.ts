@@ -8,11 +8,23 @@ import { reduced } from './motion';
 
 const MARGIN = '(min-width: 1100px)';
 
-export function initThreads(): void {
-  const prose = document.querySelector<HTMLElement>('.post .prose');
-  const grid = document.querySelector<HTMLElement>('.post-grid');
-  const markers = [...document.querySelectorAll<HTMLAnchorElement>('.post .prose .nref')];
-  if (!prose || !grid || markers.length === 0) return;
+export function mountThreads(root: HTMLElement): () => void {
+  const prose = root.querySelector<HTMLElement>('.prose');
+  const grid = root.querySelector<HTMLElement>('.post-grid');
+  const markers = [...root.querySelectorAll<HTMLAnchorElement>('.prose .nref')];
+  if (!prose || !grid || markers.length === 0) return () => {};
+
+  const offs: Array<() => void> = [];
+  const timers: number[] = [];
+  const on = (
+    target: EventTarget,
+    type: string,
+    fn: EventListenerOrEventListenerObject,
+    options?: AddEventListenerOptions,
+  ) => {
+    target.addEventListener(type, fn, options);
+    offs.push(() => target.removeEventListener(type, fn, options));
+  };
 
   const margin = matchMedia(MARGIN);
   const noteOf = (m: HTMLAnchorElement) => document.getElementById(decodeURIComponent(m.hash.slice(1)))?.closest<HTMLElement>('.note') ?? null;
@@ -22,7 +34,7 @@ export function initThreads(): void {
     note.classList.remove('is-flash');
     void note.offsetWidth; // restart the highlight
     note.classList.add('is-flash');
-    setTimeout(() => note.classList.remove('is-flash'), 240);
+    timers.push(window.setTimeout(() => note.classList.remove('is-flash'), 240));
   };
   const open = (note: HTMLElement, marker?: HTMLAnchorElement) => {
     note.classList.add('is-open');
@@ -36,12 +48,12 @@ export function initThreads(): void {
     if (!note) continue;
     m.setAttribute('aria-controls', note.id || (note.id = `n-${m.hash.slice(1)}`));
     m.setAttribute('aria-expanded', 'false');
-    m.addEventListener('click', (e) => {
+    on(m, 'click', (e) => {
       if (margin.matches) { e.preventDefault(); draw(m); return; }
       e.preventDefault();
       open(note, m);
     });
-    note.addEventListener('click', (e) => {
+    on(note, 'click', (e) => {
       if (!margin.matches && !(e.target as Element).closest('a')) open(note);
     });
   }
@@ -88,10 +100,24 @@ export function initThreads(): void {
     note.classList.add('is-lit');
   };
   for (const m of markers) {
-    m.addEventListener('pointerenter', () => draw(m));
-    m.addEventListener('focus', () => draw(m));
-    m.addEventListener('pointerleave', () => { if (document.activeElement !== m) clear(); });
-    m.addEventListener('blur', clear);
+    on(m, 'pointerenter', () => draw(m));
+    on(m, 'focus', () => draw(m));
+    on(m, 'pointerleave', () => { if (document.activeElement !== m) clear(); });
+    on(m, 'blur', clear);
   }
-  addEventListener('resize', clear);
+  on(window, 'resize', clear);
+
+  return () => {
+    for (const off of offs.splice(0)) off();
+    for (const t of timers.splice(0)) clearTimeout(t);
+    svg.remove();
+    lit?.classList.remove('is-lit');
+    lit = null;
+  };
+}
+
+/** The article page: one mount against the whole document, never disposed. */
+export function initThreads(): void {
+  const post = document.querySelector<HTMLElement>('.post');
+  if (post) mountThreads(post);
 }
