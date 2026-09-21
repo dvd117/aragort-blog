@@ -34,10 +34,19 @@ const textOf = (node: Element): string =>
 
 /**
  * Keep text from raw HTML without ever allowing its tags into the output tree. The result
- * is a text node, which the stringifier escapes anyway; dropping any angle bracket left
- * after the tags go means no fragment can read as the start of one either.
+ * is a text node, which the stringifier escapes anyway. One pass that skips everything
+ * from a < to its > keeps no angle bracket at all, so no fragment can reassemble a tag.
  */
-const visibleRawHtml = (value: string): string => value.replace(/<[^>]*>/g, '').replace(/[<>]/g, '');
+const visibleRawHtml = (value: string): string => {
+  let text = '';
+  let inTag = false;
+  for (const ch of value) {
+    if (ch === '<') inTag = true;
+    else if (ch === '>') inTag = false;
+    else if (!inTag) text += ch;
+  }
+  return text;
+};
 
 /** Slug every heading and collect the h2s, which are this document's chapters. */
 function rehypeHeadings(collect: {
