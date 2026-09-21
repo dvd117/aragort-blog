@@ -123,7 +123,5 @@ const filename = `${post.id}.md`;
 <script>
   import { initReading } from '../../scripts/reading';
   import { whenActive } from '../../scripts/active';
-  import { arriveOnRail } from '../../scripts/netmorph';
   whenActive(() => initReading(Number(document.querySelector<HTMLElement>('.post')?.dataset.minutes) || 1));
-  whenActive(arriveOnRail);
 </script>

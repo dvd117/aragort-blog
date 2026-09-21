@@ -316,9 +316,7 @@ or Ajustes' "Reducir movimiento".
   display type never overlap. Only the hue dot travels, from the landing entry to the post.
   The nav's raised tab does not travel between pages -- it swaps like the Formato/Markdown
   toggle. Same-origin pages are prerendered on hover or focus.
-- **The net becomes the rail:** on desktop the hero's nodes glide into the post's rail,
-  vector and crisp, over 280ms; each rail node starts from the hero node at the same place
-  in reading order. On a phone the nets stay on their own pages.
+- Each page's net stays on its own page.
 - **The net is alive:** every net drifts in 3D (each node has a depth; a few degrees of
   turn, near nodes move more). Each node hangs on a spring, so every force moves it with
   inertia: the cursor (or a finger on the net) pulls nearby nodes in like gravity; a
