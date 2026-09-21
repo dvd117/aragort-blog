@@ -32,8 +32,12 @@ export interface RenderedDoc {
 const textOf = (node: Element): string =>
   node.children.map((c) => (c.type === 'text' ? c.value : c.type === 'element' ? textOf(c) : '')).join('');
 
-/** Keep text from raw HTML without ever allowing its tags into the output tree. */
-const visibleRawHtml = (value: string): string => value.replace(/<[^>]*>/g, '');
+/**
+ * Keep text from raw HTML without ever allowing its tags into the output tree. The result
+ * is a text node, which the stringifier escapes anyway; dropping any angle bracket left
+ * after the tags go means no fragment can read as the start of one either.
+ */
+const visibleRawHtml = (value: string): string => value.replace(/<[^>]*>/g, '').replace(/[<>]/g, '');
 
 /** Slug every heading and collect the h2s, which are this document's chapters. */
 function rehypeHeadings(collect: {

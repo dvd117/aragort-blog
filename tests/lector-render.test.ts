@@ -21,6 +21,14 @@ describe('renderMarkdown', () => {
     expect(doc.html).toContain('alert(1)');
   });
 
+  it('leaves no tag behind when stripping one reassembles another', () => {
+    for (const source of ['<scr<b></b>ipt>alert(1)</script>', '<<script>script>alert(1)</script>', '<div><img src=x onerror=alert(1)</div>']) {
+      const doc = renderMarkdown(source);
+      expect(doc.html).not.toMatch(/<(script|img)/i);
+      expect(doc.html).not.toMatch(/&lt;(script|img)/i);
+    }
+  });
+
   it('gives every h2 an id and reports it as a chapter', () => {
     const doc = renderMarkdown('## El primer problema\n\nA.\n\n## ¿Qué te llevas?\n\nB.');
     expect(doc.chapters.map((c) => c.text)).toEqual(['El primer problema', '¿Qué te llevas?']);
