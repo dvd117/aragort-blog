@@ -17,16 +17,42 @@
  */
 import { reduced } from './motion';
 
-export function initReading(minutes: number): void {
-  const grid = document.querySelector<HTMLElement>('.post-grid');
-  const prose = document.querySelector<HTMLElement>('.post .prose');
+export function mountReading(root: HTMLElement, opts: { minutes: number }): () => void {
+  const { minutes } = opts;
+  let disposed = false;
+  const offs: Array<() => void> = [];
+  const frames: number[] = [];
+  const pulseTimers: number[] = [];
+  /** Register a listener and remember how to remove it. */
+  const on = (
+    target: EventTarget | null | undefined,
+    type: string,
+    fn: EventListenerOrEventListenerObject,
+    options?: AddEventListenerOptions,
+  ) => {
+    if (!target) return;
+    target.addEventListener(type, fn, options);
+    offs.push(() => target.removeEventListener(type, fn, options));
+  };
+  /** Request a frame and remember it, so a pending one can be cancelled on dispose. */
+  const raf = (fn: FrameRequestCallback) => {
+    const id = requestAnimationFrame((t) => { if (!disposed) fn(t); });
+    frames.push(id);
+    return id;
+  };
+
+  const grid = root.querySelector<HTMLElement>('.post-grid');
+  const prose = root.querySelector<HTMLElement>('.prose');
   const bar = document.querySelector<HTMLElement>('.progress');
   const left = document.querySelector<HTMLElement>('[data-left]');
-  const card = document.querySelector<HTMLElement>('[data-done]');
-  const rail = document.querySelector<SVGSVGElement>('.rail .net');
-  if (!grid || !prose || !bar) return;
+  const card = root.querySelector<HTMLElement>('[data-done]');
+  const rail = root.querySelector<SVGSVGElement>('.rail .net');
+  if (!grid || !prose || !bar) return () => {};
 
-  const marks = [...document.querySelectorAll<SVGSVGElement>('.site .brand .net, .post .sig .net')];
+  const marks = [
+    ...document.querySelectorAll<SVGSVGElement>('.site .brand .net'),
+    ...root.querySelectorAll<SVGSVGElement>('.sig .net'),
+  ];
   const railNodes = rail ? [...rail.querySelectorAll<SVGCircleElement>('circle')] : [];
   // Drawn positions, read before the net starts to drift (netlive draws on the next frame).
   const railBase = railNodes.map((c) => [Number(c.getAttribute('cx')), Number(c.getAttribute('cy'))] as const);
@@ -62,7 +88,16 @@ export function initReading(minutes: number): void {
   const finish = () => {
     if (complete) return;
     complete = true;
-    if (!reduced()) nets.forEach((n) => { n.classList.add('pulse'); setTimeout(() => n.classList.remove('pulse'), 400); });
+    if (!reduced()) nets.forEach((n) => {
+      n.classList.add('pulse');
+      const id = window.setTimeout(() => {
+        if (disposed) return;
+        n.classList.remove('pulse');
+        const index = pulseTimers.indexOf(id);
+        if (index >= 0) pulseTimers.splice(index, 1);
+      }, 400);
+      pulseTimers.push(id);
+    });
     card?.classList.add('show');
   };
 
@@ -111,17 +146,17 @@ export function initReading(minutes: number): void {
   // and (below) the chapters' notches. `place` replaces this once there are chapters.
   let relayout = () => { bandBlocks(); update(); };
 
-  addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
-  addEventListener('resize', () => relayout());
-  document.addEventListener('ajustes:change', () => relayout());
-  card?.addEventListener('focusin', finish); // keyboard readers who jump to the end
+  on(window, 'scroll', () => { if (!queued) { queued = true; raf(update); } }, { passive: true });
+  on(window, 'resize', () => relayout());
+  on(document, 'ajustes:change', () => relayout());
+  on(card, 'focusin', finish); // keyboard readers who jump to the end
 
   // Chapters (## headings): notches on the header's progress line where each begins,
   // and "n/total" before the time left.
   const heads = [...prose.querySelectorAll<HTMLElement>(':scope > h2')];
   const siteHeader = document.querySelector<HTMLElement>('header.site');
   let marks_: number[] = [];
-  const tocLinks = [...document.querySelectorAll<HTMLAnchorElement>('.rail-toc a')];
+  const tocLinks = [...root.querySelectorAll<HTMLAnchorElement>('.rail-toc a')];
   // The dock (desktop): each chapter sits beside the rail node where reading reaches it,
   // and a dot beside the current chapter's node marks where you are.
   const dot = rail && tocLinks.length ? rail.parentElement!.appendChild(document.createElement('span')) : null;
@@ -131,15 +166,18 @@ export function initReading(minutes: number): void {
   const vb = rail?.viewBox.baseVal;
   const nodeAt = (i: number) => ({ y: (railBase[i]?.[1] ?? 0) / (vb?.height || 1) });
   let ticks: HTMLElement[] = [];
+  let host: HTMLElement | null = null;
+  let openTimer = 0;
   if (heads.length >= 3 && siteHeader) {
     // The chapters on the progress line. On a phone this is the rail's dock: each notch
     // is a link to its chapter with a 40px tap target around it, and a press or a hover
     // opens its number and title under the line. On desktop the rail carries the dock, so
     // the host is made inert there -- the notches stay as marks and the same chapters are
     // not in the tab order twice.
-    const host = document.createElement('nav');
-    host.className = 'ticks';
-    host.setAttribute('aria-label', 'Capítulos');
+    host = document.createElement('nav');
+    const mountedHost = host;
+    mountedHost.className = 'ticks';
+    mountedHost.setAttribute('aria-label', 'Capítulos');
     ticks = heads.map((h, i) => {
       const a = document.createElement('a');
       a.className = 'tick';
@@ -155,14 +193,13 @@ export function initReading(minutes: number): void {
       ttl.textContent = h.textContent ?? '';
       tt.append(num, ttl);
       a.append(notch, tt);
-      return host.appendChild(a);
+      return mountedHost.appendChild(a);
     });
-    siteHeader.append(host);
+    siteHeader.append(mountedHost);
 
     // A tap has no hover to show the label with, so the one you pressed opens for a
     // moment on the way to its chapter.
-    let openTimer = 0;
-    host.addEventListener('pointerdown', (e) => {
+    on(mountedHost, 'pointerdown', (e: Event) => {
       const t = (e.target as Element).closest<HTMLElement>('.tick');
       if (!t) return;
       ticks.forEach((x) => x.classList.remove('is-open'));
@@ -172,8 +209,8 @@ export function initReading(minutes: number): void {
     });
 
     const dockMq = matchMedia('(min-width: 1000px)');
-    const syncDock = () => { host.inert = dockMq.matches && tocLinks.length > 0; };
-    dockMq.addEventListener('change', syncDock);
+    const syncDock = () => { mountedHost.inert = dockMq.matches && tocLinks.length > 0; };
+    on(dockMq, 'change', syncDock);
     syncDock();
 
     const place = () => {
@@ -215,9 +252,9 @@ export function initReading(minutes: number): void {
       update();
     };
     relayout = place;
-    document.fonts?.addEventListener('loadingdone', () => relayout());
-    document.fonts?.ready.then(place);
-    requestAnimationFrame(place);
+    on(document.fonts, 'loadingdone', () => relayout());
+    document.fonts?.ready.then(() => { if (!disposed) place(); });
+    raf(place);
   }
   chapterOf = (p: number) => {
     if (!marks_.length) return '';
@@ -236,25 +273,45 @@ export function initReading(minutes: number): void {
 
   // The header carries the post title once the page's own title has scrolled away.
   const site = document.querySelector<HTMLElement>('header.site');
-  const h1 = document.querySelector<HTMLElement>('.post-head h1');
+  const h1 = root.querySelector<HTMLElement>('.post-head h1');
+  let titleObserver: IntersectionObserver | null = null;
   if (site && h1 && 'IntersectionObserver' in window) {
-    new IntersectionObserver(([e]) => site.classList.toggle('reading', !e!.isIntersecting && e!.boundingClientRect.top < 0))
-      .observe(h1);
+    titleObserver = new IntersectionObserver(([e]) =>
+      site.classList.toggle('reading', !e!.isIntersecting && e!.boundingClientRect.top < 0));
+    titleObserver.observe(h1);
   }
   // Dock magnification: labels near the pointer grow, like the macOS dock.
-  const dock = document.querySelector<HTMLElement>('.rail');
+  const dock = root.querySelector<HTMLElement>('.rail');
   if (dock && tocLinks.length) {
     const items = tocLinks.map((a) => a.parentElement as HTMLElement);
-    dock.addEventListener('pointermove', (e) => {
+    on(dock, 'pointermove', (e: Event) => {
       if (reduced()) return;
+      const pointer = e as PointerEvent;
       for (const li of items) {
         const r = li.getBoundingClientRect();
-        const d = Math.abs(e.clientY - (r.top + r.height / 2));
+        const d = Math.abs(pointer.clientY - (r.top + r.height / 2));
         li.style.setProperty('--s', (1 + 0.35 * Math.max(0, 1 - d / 110)).toFixed(3));
       }
     });
-    dock.addEventListener('pointerleave', () => items.forEach((li) => li.style.removeProperty('--s')));
+    on(dock, 'pointerleave', () => items.forEach((li) => li.style.removeProperty('--s')));
   }
-  document.fonts?.ready.then(() => relayout());
-  requestAnimationFrame(() => relayout()); // first layout read after first paint, not during load
+  document.fonts?.ready.then(() => { if (!disposed) relayout(); });
+  raf(() => relayout()); // first layout read after first paint, not during load
+  return () => {
+    if (disposed) return;
+    disposed = true;
+    for (const off of offs.splice(0)) off();
+    for (const id of frames.splice(0)) cancelAnimationFrame(id);
+    for (const id of pulseTimers.splice(0)) clearTimeout(id);
+    clearTimeout(openTimer);
+    titleObserver?.disconnect();
+    host?.remove();
+    dot?.remove();
+    site?.classList.remove('reading');
+  };
+}
+
+/** The article page: one mount against the whole document, never disposed. */
+export function initReading(minutes: number): void {
+  mountReading(document.body, { minutes });
 }
