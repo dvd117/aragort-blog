@@ -279,7 +279,7 @@ decoration that means nothing.
   transition: it swaps the way the toggle's buttons do, at once. "Escritos" is gone from
   here; the wordmark is already the way home, and on the landing the tab only repeated the
   title under it.
-- **"Sobre mí" is a panel, not a departure.** It slides in from the left over what you are
+- **"Sobre mí" is a panel, not a departure.** It slides in from the right over what you are
   reading -- a column at 30rem on desktop, the whole screen as a sheet under 600px -- so
   one press of "Volver" puts you back on the same line instead of costing a page load. The
   URL never changes: the panel is a view of this page, not a place. It is a `<dialog>`, so
@@ -305,18 +305,20 @@ passing behind type, not from shadows.
 
 ## Motion
 
-Functional motion is 120 to 360ms. The net is the one ambient exception (see the rule
-below). All of it is off under `prefers-reduced-motion` or Ajustes' "Reducir movimiento".
+I use one curve and three durations: `--ease: cubic-bezier(.2, 0, 0, 1)`,
+`--dur-ui: 140ms`, `--dur-draw: 220ms`, and `--dur-page: 280ms`. The net is the one
+ambient exception (see the rule below). All of it is off under `prefers-reduced-motion`
+or Ajustes' "Reducir movimiento".
 
-- **Between pages:** cross-document View Transitions, CSS only. An index title becomes the
-  post title; titles hand over in sequence (old out in the first 40%, new in over the last
-  60%) so two line breaks never overlap. The old page stays opaque while the new one fades
-  in on top (200ms, 6px rise). The nav's raised tab does not travel between pages -- it
-  swaps like the Formato/Markdown toggle. Same-origin pages are prerendered on hover or
-  focus.
-- **The net becomes the rail:** on desktop the hero's nodes glide into the post's rail
-  (~450ms; each rail node starts from the hero node at the same place in reading order). On a phone the
-  hero shrinks into the header mark.
+- **Between pages:** I use cross-document View Transitions, CSS only. Titles and nets stay
+  put instead of scaling between pages. The new page fades in over `--dur-page` with
+  `--ease` and a 6px rise while the old page stays solid. Only the landing node and post dot
+  pair by slug.
+  The nav's raised tab does not travel between pages -- it swaps like the Formato/Markdown
+  toggle. Same-origin pages are prerendered on hover or focus.
+- **The net becomes the rail:** on desktop the hero's nodes glide into the post's rail,
+  vector and crisp, over 280ms; each rail node starts from the hero node at the same place
+  in reading order. On a phone the nets stay on their own pages.
 - **The net is alive:** every net drifts in 3D (each node has a depth; a few degrees of
   turn, near nodes move more). Each node hangs on a spring, so every force moves it with
   inertia: the cursor (or a finger on the net) pulls nearby nodes in like gravity; a
