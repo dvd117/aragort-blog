@@ -230,12 +230,14 @@ a { color: inherit; }
 /* Moving between pages: cross-document View Transitions, CSS only.
    Titles and nets stay on their own pages instead of flying as scaled snapshots. The
    landing and post keep only the small hue dot paired by slug; on desktop the hero's
-   nodes still become the reading rail through netmorph.ts. The new page fades in with
-   a 6px rise over the shared page duration while the old page stays solid. */
+   nodes still become the reading rail through netmorph.ts. The pages fade through: the
+   old one is gone in the first 120ms, and the new one rises 6px in over the page
+   duration from 60ms, so two pages of large type never sit on top of each other. */
 @view-transition { navigation: auto; }
 ::view-transition-group(*) { animation-duration: var(--dur-page); animation-timing-function: var(--ease); }
-::view-transition-old(root) { animation: none; }
-::view-transition-new(root) { animation: var(--dur-page) var(--ease) both vt-rise-in; }
+::view-transition-old(root) { animation: 120ms var(--ease) both vt-out; }
+::view-transition-new(root) { animation: var(--dur-page) var(--ease) 60ms both vt-rise-in; }
+@keyframes vt-out { to { opacity: 0; } }
 @keyframes vt-rise-in { from { opacity: 0; transform: translateY(6px); } }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
