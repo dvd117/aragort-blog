@@ -33,6 +33,21 @@ describe('renderMarkdown', () => {
     expect(doc.chapters[0]!.id).not.toBe(doc.chapters[1]!.id);
   });
 
+  it('reserves margin-note ids before slugging headings', () => {
+    const doc = renderMarkdown('## nota-1\n\nTexto[^1].\n\n[^1]: Una nota.');
+    expect(doc.html).toContain('<h2 id="nota-1-1">nota-1</h2>');
+    expect(doc.html).toContain('<p id="nota-1">');
+  });
+
+  it('reserves ids supplied by the page outside the reader shell', () => {
+    const doc = renderMarkdown('## Contenido\n\nTexto.', undefined, ['contenido']);
+    expect(doc.chapters[0]!.id).toBe('contenido-1');
+  });
+
+  it('keeps an otherwise unused heading slug unchanged', () => {
+    expect(renderMarkdown('## Uno\n\nTexto.').chapters[0]!.id).toBe('uno');
+  });
+
   it('strips frontmatter and uses its title', () => {
     const doc = renderMarkdown('---\ntitle: Mi nota\n---\n\nHola.');
     expect(doc.title).toBe('Mi nota');

@@ -39,9 +39,19 @@ function rehypeHeadings(collect: {
   h1: string | null;
   chapters: RenderedDoc['chapters'];
   removeTitleHeading: boolean;
-}) {
+}, reservedIds: readonly string[]) {
   return (tree: Root) => {
     const slugger = new GithubSlugger();
+    const reserved = new Set(reservedIds);
+    const findReserved = (parent: Root | Element) => {
+      for (const child of parent.children) {
+        if (child.type !== 'element') continue;
+        if (typeof child.properties.id === 'string') reserved.add(child.properties.id);
+        findReserved(child);
+      }
+    };
+    findReserved(tree);
+    reserved.forEach((id) => slugger.slug(id));
     let removedTitleHeading = false;
     const walk = (parent: Root | Element) => {
       for (let i = 0; i < parent.children.length; i++) {
@@ -70,7 +80,7 @@ function rehypeHeadings(collect: {
 /** Plain text of the rendered document, for the word count. */
 const stripTags = (html: string): string => html.replace(/<[^>]*>/g, ' ');
 
-export function renderMarkdown(source: string, filename?: string): RenderedDoc {
+export function renderMarkdown(source: string, filename?: string, reservedIds: readonly string[] = []): RenderedDoc {
   const { body, title: frontmatter } = stripFrontmatter(source);
   const collect: {
     h1: string | null;
@@ -88,7 +98,7 @@ export function renderMarkdown(source: string, filename?: string): RenderedDoc {
       },
     })
     .use(rehypePlugins as never)
-    .use(rehypeHeadings, collect)
+    .use(rehypeHeadings, collect, reservedIds)
     .use(rehypeStringify)
     .processSync(body);
 

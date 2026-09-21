@@ -42,6 +42,9 @@ export function initLector(): void {
     : [];
   const initialProgressStyle = progress?.getAttribute('style') ?? null;
   const initialLeftText = left?.textContent ?? '';
+  const reservedIds = [...document.querySelectorAll<HTMLElement>('[id]')]
+    .filter((element) => !shell.contains(element))
+    .map((element) => element.id);
   const copy = shell.querySelector<HTMLButtonElement>('[data-copy]');
   let copyReset = 0;
   const teardown = () => { for (const dispose of disposers.splice(0)) dispose(); };
@@ -114,7 +117,7 @@ export function initLector(): void {
     if (tooLarge(source)) { say(TOO_BIG); return; }
     teardown();
     resetShell();
-    const doc = renderMarkdown(source, filename);
+    const doc = renderMarkdown(source, filename, reservedIds);
     titleEl.textContent = doc.title;
     minutesEl.textContent = `${doc.minutes} min de lectura`;
     prose.innerHTML = doc.html;
