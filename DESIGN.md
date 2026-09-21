@@ -310,10 +310,10 @@ I use one curve and three durations: `--ease: cubic-bezier(.2, 0, 0, 1)`,
 ambient exception (see the rule below). All of it is off under `prefers-reduced-motion`
 or Ajustes' "Reducir movimiento".
 
-- **Between pages:** I use cross-document View Transitions, CSS only. Titles and nets stay
-  put instead of scaling between pages. The new page fades in over `--dur-page` with
-  `--ease` and a 6px rise while the old page stays solid. Only the landing node and post dot
-  pair by slug.
+- **Between pages:** cross-document View Transitions, CSS only. Titles and nets stay on
+  their own pages instead of scaling between them. The pages fade through: the old one is
+  gone in 120ms, the new one rises 6px in over `--dur-page` from 60ms, so two pages of
+  display type never overlap. Only the hue dot travels, from the landing entry to the post.
   The nav's raised tab does not travel between pages -- it swaps like the Formato/Markdown
   toggle. Same-origin pages are prerendered on hover or focus.
 - **The net becomes the rail:** on desktop the hero's nodes glide into the post's rail,
