@@ -15,7 +15,7 @@
  * The reader can opt into `images: 'data-only'`; its pasted documents must not
  * request same-origin paths either, because the URL would leak a filename to logs.
  */
-import type { Element, ElementContent, Root } from 'hast';
+import type { Element, Root } from 'hast';
 
 const HREF_SCHEMES = new Set(['http', 'https', 'mailto']);
 const SRC_SCHEMES = new Set(['data']);
@@ -37,8 +37,6 @@ const allowed = (value: unknown, schemes: Set<string>): boolean => {
   const scheme = schemeOf(value);
   return scheme === null || schemes.has(scheme);
 };
-
-const isEl = (n: ElementContent): n is Element => n.type === 'element';
 
 function altText(node: Element): string {
   const alt = node.properties.alt;
