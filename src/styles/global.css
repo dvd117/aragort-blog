@@ -256,7 +256,7 @@ main:focus { outline: none; }
    carries the dock, so here the notches go back to being notches. */
 .site .ticks { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; z-index: 2; }
 .site .tick { position: absolute; top: -4px; width: 40px; height: 30px; margin-left: -20px; pointer-events: auto; text-decoration: none; -webkit-tap-highlight-color: transparent; }
-.site .tick i { position: absolute; left: 50%; top: 1px; width: 2px; height: 8px; margin-left: -1px; background: var(--fg-2); border-radius: 1px; transition: background-color var(--dur-ui) var(--ease), height var(--dur-ui) var(--ease); }
+.site .tick i { position: absolute; left: 50%; top: 1px; width: 2px; height: 8px; margin-left: -1px; background: var(--fg-2); border-radius: 1px; transform: scaleY(1); transform-origin: top center; transition: background-color var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease); }
 .site .tick.past i { background: var(--hue-ui); }
 .site .tick[hidden] { display: none; }
 /* The label: number and title, under the line, in the panel's chrome so it reads as a
@@ -267,7 +267,7 @@ main:focus { outline: none; }
 .site .tick[data-band="2"] { --hue: var(--h-rojo); --hue-ui: var(--hu-rojo); }
 .site .tick .tt b { flex: none; font: 600 .75rem/1.2 var(--mono); color: var(--hue); }
 .site .tick:hover .tt, .site .tick:focus-visible .tt, .site .tick.is-open .tt { opacity: 1; transform: translateX(calc(-50% + var(--tt-shift, 0px))) translateY(0); }
-.site .tick:hover i, .site .tick:focus-visible i, .site .tick.is-open i { background: var(--hue-ui); height: 11px; }
+.site .tick:hover i, .site .tick:focus-visible i, .site .tick.is-open i { background: var(--hue-ui); transform: scaleY(1.375); }
 /* A label near either edge would hang off the screen if it stayed centred. reading.ts
    measures it and sets --tt-shift: the pixels needed to pull it back inside the gutter,
    0 for every label that already fits. Anchoring to the tick instead of to the viewport
