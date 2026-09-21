@@ -225,8 +225,6 @@
 .net-hr circle.on[data-band="1"] { fill: var(--hu-azul); }
 
 @media (max-width: 899px) and (max-height: 500px) and (orientation: landscape) { .post-head { padding-top: 1.5rem; padding-bottom: 1.5rem; } .post-head h1 { font-size: clamp(2.2rem, 13vh, 4rem); max-width: 18ch; } }
-/* On desktop posts the hero goes to the rail, not to the header mark. */
-@media (min-width: 1000px) { .site .mark.vt-net { view-transition-name: none; } }
 /* Reduced motion: the dock simply appears, no slide and no magnification. */
 @media (prefers-reduced-motion: reduce) { .rail-toc li, .rail-toc a, .rail-toc .ttl, .rail-toc .num, .rail-dot { transition: none; } }
 :root[data-motion="reduce"] .rail-toc li, :root[data-motion="reduce"] .rail-toc a, :root[data-motion="reduce"] .rail-toc .ttl, :root[data-motion="reduce"] .rail-toc .num, :root[data-motion="reduce"] .rail-dot { transition: none; }

@@ -1,8 +1,7 @@
 ---
 /*
  * "Sobre mí", word for word. It is rendered twice over the site: as its own page, and as
- * the panel the header's button slides in over whatever you are reading. Only the page's
- * copy carries the view-transition names -- two elements in one document cannot share one.
+ * the panel the header's button slides in over whatever you are reading.
  */
 import Net from './Net.astro';
 import ExtLink from './ExtLink.astro';
@@ -10,20 +9,18 @@ import { nets } from '../assets/net/geometry';
 import { exitPath } from '../lib/netpath';
 
 interface Props {
-  /** The page's copy: it takes the shared `net` and `page-title` transition names. */
-  vt?: boolean;
   /** The drawer's copy: one column at every width, since it has a column's worth of room. */
   compact?: boolean;
 }
-const { vt = false, compact = false } = Astro.props;
+const { compact = false } = Astro.props;
 
 // The portrait lights the path from the net's lit node to where the thread begins.
 const path = exitPath(nets.hero);
 ---
   <div class:list={['about', { wrap: !compact, compact }]}>
     <header class="portrait">
-      <h1 style={vt ? 'view-transition-name: page-title; view-transition-class: title' : undefined}>Sobre mí</h1>
-      <div class="portrait-net" style={vt ? 'view-transition-name: net' : undefined} data-path={path.join(',')}><Net name="hero" respond flag /></div>
+      <h1>Sobre mí</h1>
+      <div class="portrait-net" data-path={path.join(',')}><Net name="hero" respond flag /></div>
     </header>
 
     <ol class="about-thread" data-about-thread>

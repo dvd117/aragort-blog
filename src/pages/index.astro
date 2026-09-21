@@ -15,15 +15,15 @@ const exit = exitPath(nets.hero).join(',');
 const oldest = [...posts].reverse();
 const regions = new Map(regionsFor(nets.hero, oldest.map((p) => p.slug)).map((r, i) => [oldest[i]!.slug, r.join(',')]));
 ---
-<Base title="David Aragort" description={LEDE} current="escritos" heroNet ogImage="/og/index.png" ogAlt={`David Aragort: ${LEDE}`}>
+<Base title="David Aragort" description={LEDE} current="escritos" ogImage="/og/index.png" ogAlt={`David Aragort: ${LEDE}`}>
   <div class="index wrap" data-netnav-root>
     <section class="hero">
       <div class="hero-title">
-        <h1 style="view-transition-name: page-title; view-transition-class: title">Escritos</h1>
+        <h1>Escritos</h1>
         <p class="lede">{LEDE}</p>
       </div>
       <div class="net-wrap" data-netnav data-exit={exit}>
-        <div class="hero-net" style="view-transition-name: net"><Net name="hero" respond flag pin={[exitNode(nets.hero)]} /></div>
+        <div class="hero-net"><Net name="hero" respond flag pin={[exitNode(nets.hero)]} /></div>
       </div>
     </section>
 
@@ -35,7 +35,7 @@ const regions = new Map(regionsFor(nets.hero, oldest.map((p) => p.slug)).map((r,
           {posts.map((p) => (
               <li class:list={['entry', 'feature', { draft: p.draft }]} data-hue={p.hue} data-post-hue={p.hue} data-region={regions.get(p.slug)}>
                 <p class="d"><span class="node" aria-hidden="true" style={`view-transition-name: dot-${p.slug}`}></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
-                <a class="t" href={`/escritos/${p.slug}/`} style={`view-transition-name: t-${p.slug}; view-transition-class: title`}>{p.title}</a>
+                <a class="t" href={`/escritos/${p.slug}/`}>{p.title}</a>
                 {p.description && <p class="ex">{p.description}</p>}
                 {p.resumen && <ul class="teaser">{p.resumen.map((r) => <li>{r}</li>)}</ul>}
                 <a class="more" href={`/escritos/${p.slug}/`}>Leer · {p.minutes} min</a>

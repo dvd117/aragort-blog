@@ -40,7 +40,7 @@ const filename = `${post.id}.md`;
         <time datetime={post.date}>{formatDateEs(post.date)}</time> · {post.minutes} min de lectura
         {post.draft && <span> · borrador</span>}
       </p>
-      <h1 style={`view-transition-name: t-${post.slug}; view-transition-class: title`}>{post.title}</h1>
+      <h1>{post.title}</h1>
       {post.resumen && (
         <aside class="encorto" aria-labelledby="encorto-title">
           <h2 id="encorto-title">Las tres ideas</h2>

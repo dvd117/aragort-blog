@@ -228,26 +228,15 @@ a { color: inherit; }
 .net[data-respond] .glow { transition-duration: 80ms; } /* in fast, out over 600ms */
 
 /* Moving between pages: cross-document View Transitions, CSS only.
-   - index <-> post: the entry's title and hue dot become the post's title and dot;
-   - the index's hero net shrinks into the header mark (and grows back); on desktop posts
-     it becomes the rail instead (netmorph.ts);
-   - "Escritos" <-> "Sobre mí": the page title morphs; the nav's raised tab does not
-     travel -- it swaps like the post's Formato/Markdown toggle;
-   - every page rises 6px over the old one, which stays solid.
-   All between 120 and 320ms, and none of it under reduced motion. */
+   Titles and nets stay on their own pages instead of flying as scaled snapshots. The
+   landing and post keep only the small hue dot paired by slug; on desktop the hero's
+   nodes still become the reading rail through netmorph.ts. The new page fades in with
+   a 6px rise over the shared page duration while the old page stays solid. */
 @view-transition { navigation: auto; }
-/* Groups move in 300ms. The old page stays opaque underneath while the new one fades in
-   on top (200ms, 6px rise), so nothing is ever half transparent. Titles hand over in
-   sequence: the old wrap fades out in the first 40%, the new wrap in over the last 60%. */
-::view-transition-group(*) { animation-duration: 300ms; animation-timing-function: cubic-bezier(.2, 0, 0, 1); }
-::view-transition-group(net) { animation-duration: 320ms; }
+::view-transition-group(*) { animation-duration: var(--dur-page); animation-timing-function: var(--ease); }
 ::view-transition-old(root) { animation: none; }
-::view-transition-new(root) { animation: 200ms cubic-bezier(.2, 0, 0, 1) both vt-rise-in; }
-::view-transition-old(*.title) { animation: 120ms linear both vt-out; }
-::view-transition-new(*.title) { animation: 180ms linear 120ms both vt-in; }
+::view-transition-new(root) { animation: var(--dur-page) var(--ease) both vt-rise-in; }
 @keyframes vt-rise-in { from { opacity: 0; transform: translateY(6px); } }
-@keyframes vt-out { to { opacity: 0; } }
-@keyframes vt-in { from { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
@@ -289,8 +278,6 @@ main:focus { outline: none; }
   .site .tick { pointer-events: none; width: 2px; margin-left: -1px; height: 8px; top: -3px; }
   .site .tick .tt { display: none; }
 }
-.site .mark.vt-net { view-transition-name: net; }
-
 /* The wordmark as progress: reading brightens it, it does not fill it in. The mark is a
    38px drawing of hollow rings, and painting each ring solid in the post's hue turned it
    into a gauge that changed colour from post to post. Its lit nodes keep the page behind

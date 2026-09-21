@@ -240,7 +240,7 @@ const nearNet = (x: number, y: number, pad: number) => nets.some((n) => {
   return x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad;
 });
 
-export function morphFrom(svg: SVGSVGElement, from: Pt[], ms = 450): void {
+export function morphFrom(svg: SVGSVGElement, from: Pt[], ms = 280): void {
   const n = nets.find((x) => x.svg === svg);
   if (!n || reduced() || from.length !== n.base.length) return;
   n.morph = { from, start: performance.now(), ms };

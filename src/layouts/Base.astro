@@ -16,8 +16,6 @@ interface Props {
   ogAlt?: string;
   type?: 'website' | 'article';
   hue?: string;
-  /** The index's hero net takes the shared `net` name; elsewhere the header mark does. */
-  heroNet?: boolean;
   /** On a post: minutes to read, shown in the header. */
   minutes?: number;
   /** Render the reading chrome before a minute count exists (the reader route). */
@@ -26,7 +24,7 @@ interface Props {
   /** On a post: its title, for the header while reading. */
   postTitle?: string;
 }
-const { title, description = 'Escritos de David Aragort.', current, ogImage, ogAlt, type = 'website', hue, heroNet = false, minutes, postTitle, progress, noindex } = Astro.props;
+const { title, description = 'Escritos de David Aragort.', current, ogImage, ogAlt, type = 'website', hue, minutes, postTitle, progress, noindex } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort`;
 ---
@@ -71,7 +69,7 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
 </head>
 <body>
   <a class="skip" href="#contenido">Saltar al contenido</a>
-  <Header current={current} netMark={!heroNet} minutes={minutes} postTitle={postTitle} progress={progress} />
+  <Header current={current} minutes={minutes} postTitle={postTitle} progress={progress} />
   <main id="contenido">
     <slot />
   </main>
