@@ -62,8 +62,8 @@ const { current, netMark = true, minutes, postTitle, progress } = Astro.props;
      `overflow`, "quedan N min" is `nowrap` and simply ran on under the nav's pill. */
   .doc { display: flex; flex-direction: column; justify-content: center; flex: 1 1 auto; min-width: 0; overflow: hidden; gap: 3px; }
   .doc-title { display: none; font: var(--title-weight) .9375rem/1.15 var(--display); letter-spacing: -.01em; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .site.reading .doc-title { display: block; animation: doc-in 160ms ease both; }
-  @keyframes doc-in { from { opacity: 0; transform: translateY(3px); } }
+  .site.reading .doc-title { display: block; animation: doc-in var(--dur-draw) var(--ease) both; }
+  @keyframes doc-in { from { opacity: 0; transform: translateY(6px); } }
   .left { font: 500 .8125rem/1 var(--ui); color: var(--fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .site.reading .left { font-size: .75rem; }
   /* The post's Formato/Markdown toggle, with one segment: a pill on a panel that raises

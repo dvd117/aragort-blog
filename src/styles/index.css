@@ -25,7 +25,7 @@
    bleeds off the right. Filled rather than outlined, so it reads as a control and not as
    one more hairline in a page full of them. */
 .filter { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-end; margin: 0 0 1rem; }
-.filter input { -webkit-appearance: none; appearance: none; width: 100%; max-width: 20rem; padding: .7rem .9rem; min-height: 44px; font: 1rem/1.3 var(--ui); color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; transition: border-color 140ms ease, background-color 140ms ease; }
+.filter input { -webkit-appearance: none; appearance: none; width: 100%; max-width: 20rem; padding: .7rem .9rem; min-height: 44px; font: 1rem/1.3 var(--ui); color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; transition: border-color var(--dur-ui) var(--ease), background-color var(--dur-ui) var(--ease); }
 .filter input::placeholder { color: var(--fg-2); opacity: 1; }
 .filter input:hover { border-color: var(--fg-2); }
 .filter input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--hue-ui); }
@@ -56,10 +56,10 @@
    30ms apart, so the light reads as travelling rather than switching on.
    The wire and the thread segment are the one line that belongs to a single entry, so
    they are drawn in that entry's hue (--trail, set by netnav.ts). */
-.net-wrap .net .path { stroke-opacity: 1; transition: stroke 120ms ease, fill 120ms ease, stroke-opacity 120ms ease; transition-delay: calc(var(--i, 0) * 30ms); }
+.net-wrap .net .path { stroke-opacity: 1; transition: stroke var(--dur-ui) var(--ease), fill var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); transition-delay: calc(var(--i, 0) * 30ms); }
 .wire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
 .wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
-.wire .lit { fill: none; stroke: var(--trail, var(--hue-ui)); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset 220ms cubic-bezier(.2, 0, 0, 1); }
+.wire .lit { fill: none; stroke: var(--trail, var(--hue-ui)); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
 
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */

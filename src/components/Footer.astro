@@ -66,13 +66,13 @@ const links = [
 
   .foot-links { display: flex; align-items: center; gap: .35rem; list-style: none; margin: 0; padding: 0; }
   /* 44px tap targets that still look like small marks. */
-  .foot-links a { display: inline-flex; align-items: center; justify-content: center; min-width: var(--foot-row); min-height: var(--foot-row); color: var(--fg-2); transition: color 140ms ease; }
+  .foot-links a { display: inline-flex; align-items: center; justify-content: center; min-width: var(--foot-row); min-height: var(--foot-row); color: var(--fg-2); transition: color var(--dur-ui) var(--ease); }
   .foot-links a[data-band="0"]:is(:hover, :focus-visible) { color: var(--hu-amarillo); }
   .foot-links a[data-band="1"]:is(:hover, :focus-visible) { color: var(--hu-azul); }
   .foot-links a[data-band="2"]:is(:hover, :focus-visible) { color: var(--hu-rojo); }
   .cc { display: inline-flex; align-items: center; gap: .22rem; }
   /* Drawn like the net: hairlines that do not thicken with the icon's size. */
-  .i { display: block; width: var(--foot-icon); height: var(--foot-icon); fill: none; stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: color 140ms ease; }
+  .i { display: block; width: var(--foot-icon); height: var(--foot-icon); fill: none; stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; transition: color var(--dur-ui) var(--ease); }
   .i .solid { fill: currentColor; stroke: none; }
   /* The solid GitHub mark reads heavier than the hairline glyphs; hold it back to match. */
   .i-gh { opacity: .82; }

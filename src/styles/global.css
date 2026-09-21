@@ -41,6 +41,7 @@
   --title-weight: 620; --title-tracking: -.035em; --title-leading: 1.04;
   --lh: 1.65; --trk: 0em; --body-weight: 400;
   --em-style: italic; --em-weight: 400;
+  --ease: cubic-bezier(.2, 0, 0, 1); --dur-ui: 140ms; --dur-draw: 220ms; --dur-page: 280ms;
   --gutter: 16px;
   /* Footer: the row every item centres on, and the size of its marks. */
   --foot-row: 44px;
@@ -145,7 +146,7 @@ body {
   font-size: 1rem;
   line-height: 1.5;
   font-synthesis: none;
-  transition: background-color 140ms ease, color 140ms ease;
+  transition: background-color var(--dur-ui) var(--ease), color var(--dur-ui) var(--ease);
 }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
@@ -220,7 +221,7 @@ a { color: inherit; }
 .net[data-flag] circle:is(.on, .path, .p, .glow)[data-band="2"] { fill: var(--hl-rojo); }
 .net[data-flag] circle[data-star]:is(.on, .path, .p, .glow) { fill: var(--star); }
 
-.net.live line, .net.live circle { transition: stroke 140ms ease, fill 140ms ease, stroke-opacity 140ms ease; }
+.net.live line, .net.live circle { transition: stroke var(--dur-ui) var(--ease), fill var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); }
 /* The net answers (netlive.ts): a node glows in its band and fades over 600ms. */
 .net .glow { transition-duration: 80ms; }
 .net[data-respond] line, .net[data-respond] circle { transition: stroke 600ms ease, fill 600ms ease, stroke-opacity 600ms ease; }
@@ -266,12 +267,12 @@ main:focus { outline: none; }
    carries the dock, so here the notches go back to being notches. */
 .site .ticks { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; z-index: 2; }
 .site .tick { position: absolute; top: -4px; width: 40px; height: 30px; margin-left: -20px; pointer-events: auto; text-decoration: none; -webkit-tap-highlight-color: transparent; }
-.site .tick i { position: absolute; left: 50%; top: 1px; width: 2px; height: 8px; margin-left: -1px; background: var(--fg-2); border-radius: 1px; transition: background-color 140ms ease, height 140ms ease; }
+.site .tick i { position: absolute; left: 50%; top: 1px; width: 2px; height: 8px; margin-left: -1px; background: var(--fg-2); border-radius: 1px; transition: background-color var(--dur-ui) var(--ease), height var(--dur-ui) var(--ease); }
 .site .tick.past i { background: var(--hue-ui); }
 .site .tick[hidden] { display: none; }
 /* The label: number and title, under the line, in the panel's chrome so it reads as a
    thing that opened rather than as text lying on the page. */
-.site .tick .tt { position: absolute; top: 15px; left: 50%; transform: translateX(calc(-50% + var(--tt-shift, 0px))) translateY(-4px); display: flex; align-items: baseline; gap: .4rem; max-width: min(17rem, calc(100vw - 2 * var(--gutter))); padding: .4rem .65rem; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--fg); font: 500 .8125rem/1.2 var(--ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; pointer-events: none; transition: opacity 140ms ease, transform 140ms cubic-bezier(.2, 0, 0, 1); }
+.site .tick .tt { position: absolute; top: 15px; left: 50%; transform: translateX(calc(-50% + var(--tt-shift, 0px))) translateY(-4px); display: flex; align-items: baseline; gap: .4rem; max-width: min(17rem, calc(100vw - 2 * var(--gutter))); padding: .4rem .65rem; border: 1px solid var(--rule); border-radius: 8px; background: var(--panel); color: var(--fg); font: 500 .8125rem/1.2 var(--ui); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0; pointer-events: none; transition: opacity var(--dur-draw) var(--ease), transform var(--dur-draw) var(--ease); }
 .site .tick[data-band="0"] { --hue: var(--h-amarillo); --hue-ui: var(--hu-amarillo); }
 .site .tick[data-band="1"] { --hue: var(--h-azul); --hue-ui: var(--hu-azul); }
 .site .tick[data-band="2"] { --hue: var(--h-rojo); --hue-ui: var(--hu-rojo); }
