@@ -1,7 +1,25 @@
 /* Lector: the empty state, and the parts of Markdown David's own essays never use. */
 
-.lector .lede { color: var(--fg); }
+.lector { overflow-x: clip; }
+.lector-hero { padding-top: 1rem; }
+.lector-hero-main { position: relative; isolation: isolate; padding: 1.5rem 0 3rem; min-height: max(15rem, calc(64vw + 1rem)); }
+.lector-hero-title { position: relative; z-index: 1; }
+/* Knockout: the halo keeps the net's wires from touching the title and lede. */
+.lector-hero-title h1, .lector-hero-title .lede { text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg), 0 0 8px var(--bg); }
+.lector-hero-title h1 { font-family: var(--display); font-weight: var(--display-weight); font-size: clamp(3.6rem, 18vw, 9rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); margin: 0; }
+.lector-hero-title .lede { font-family: var(--read); font-size: 1.125rem; line-height: 1.5; color: var(--fg-2); max-width: 24ch; margin: 1rem 0 0; }
 .lector .privacy { color: var(--fg-2); font-size: .9375rem; }
+.lector-net-wrap { position: absolute; z-index: 0; top: -.5rem; right: calc(-1 * var(--gutter) - 24vw); width: 96vw; pointer-events: none; --net-alpha: .26; }
+.lector-hero-net .net { display: block; width: 100%; height: auto; }
+.lector-net-wrap .net circle { stroke-opacity: .5; }
+
+@media (min-width: 900px) {
+  .lector-hero { padding-top: 4rem; }
+  .lector-hero-main { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 5rem; min-height: 0; }
+  .lector-hero-title .lede { font-size: 1.3125rem; max-width: 28ch; margin-top: 1.5rem; }
+  .lector-net-wrap { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .5; }
+  .lector-net-wrap .net circle { stroke-opacity: 1; }
+}
 
 .lector .drop { border: 1px dashed var(--rule); border-radius: 8px; padding: 1rem; }
 .lector .drop.is-over { border-color: var(--hue); background: var(--panel); }
