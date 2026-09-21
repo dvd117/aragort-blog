@@ -93,4 +93,12 @@ describe('renderMarkdown', () => {
     expect(doc.html).toContain('<span class="img-alt">Remota</span>');
     expect(doc.html).toContain('<img src="data:image/png;base64,AAA" alt="En línea">');
   });
+
+  it('refuses a data image disguised as a relative path', () => {
+    // The browser resolves "%20data:..." against /lector/ and asks the server for it.
+    const doc = renderMarkdown('![Espacio](< data:image/gif;base64,R0lGOD>)\n\n![Cifrada](%20data:image/gif;base64,R0lGOD)');
+    expect(doc.html).toContain('<span class="img-alt">Espacio</span>');
+    expect(doc.html).toContain('<span class="img-alt">Cifrada</span>');
+    expect(doc.html).not.toContain('<img');
+  });
 });

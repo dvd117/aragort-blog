@@ -60,8 +60,9 @@ export default function rehypeSafeUrls(options: Options = {}) {
     const walk = (parent: Root | Element) => {
       parent.children = parent.children.map((child) => {
         if (child.type !== 'element') return child;
+        // Raw prefix, not schemeOf: " data:" or "%20data:" is a relative path to a browser.
         const imageAllowed = options.images === 'data-only'
-          ? schemeOf(child.properties.src) === 'data'
+          ? typeof child.properties.src === 'string' && /^data:/i.test(child.properties.src)
           : allowed(child.properties.src, SRC_SCHEMES);
         if (child.tagName === 'img' && !imageAllowed) {
           return caption(child);
