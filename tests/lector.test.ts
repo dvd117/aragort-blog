@@ -3,7 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { initLector } from '../src/scripts/lector';
 
 const SHELL = `
-  <header class="site"><div class="brand"><svg class="net"></svg></div></header>
+  <header class="site"><div class="brand"><svg class="net"></svg></div><span data-left></span></header>
   <div class="lector">
     <section data-lector-empty>
       <textarea data-lector-paste></textarea>
@@ -29,7 +29,6 @@ const SHELL = `
           <button type="button" data-copy><span>Copiar</span></button>
           <pre data-lector-source></pre>
         </div>
-        <aside class="done-card" data-done></aside>
       </div>
     </article>
   </div>
@@ -138,7 +137,6 @@ it('restores the reading chrome before mounting a valid replacement document', (
   const copy = document.querySelector<HTMLButtonElement>('[data-copy]')!;
   copy.dataset.state = 'done';
   copy.querySelector('span')!.textContent = 'Copiado';
-  document.querySelector('[data-done]')!.classList.add('show', 'pending');
   document.querySelector('.site .brand .net')!.classList.add('pulse');
 
   Object.defineProperty(document.querySelector<HTMLElement>('.prose')!, 'getBoundingClientRect', {
@@ -154,8 +152,6 @@ it('restores the reading chrome before mounting a valid replacement document', (
   expect(document.querySelector<HTMLButtonElement>('[data-view="md"]')!.getAttribute('aria-pressed')).toBe('false');
   expect(copy.dataset.state).toBeUndefined();
   expect(copy.querySelector('span')!.textContent).toBe('Copiar');
-  expect(document.querySelector('[data-done]')!.classList.contains('show')).toBe(false);
-  expect(document.querySelector('[data-done]')!.classList.contains('pending')).toBe(true);
   expect(document.querySelector('.site .brand .net')!.classList.contains('pulse')).toBe(false);
 });
 
@@ -167,7 +163,6 @@ it('clears reading chrome and completion state on "Otro texto"', () => {
   const copy = document.querySelector<HTMLButtonElement>('[data-copy]')!;
   copy.dataset.state = 'done';
   copy.querySelector('span')!.textContent = 'Copiado';
-  document.querySelector('[data-done]')!.classList.add('show', 'pending');
   document.querySelector('.site .brand .net')!.classList.add('pulse');
 
   document.querySelector<HTMLButtonElement>('[data-lector-reset]')!.click();
@@ -178,9 +173,21 @@ it('clears reading chrome and completion state on "Otro texto"', () => {
   expect(document.querySelector<HTMLButtonElement>('[data-view="md"]')!.getAttribute('aria-pressed')).toBe('false');
   expect(copy.dataset.state).toBeUndefined();
   expect(copy.querySelector('span')!.textContent).toBe('Copiar');
-  expect(document.querySelector('[data-done]')!.classList.contains('show')).toBe(false);
-  expect(document.querySelector('[data-done]')!.classList.contains('pending')).toBe(false);
   expect(document.querySelector('.site .brand .net')!.classList.contains('pulse')).toBe(false);
+});
+
+it('shows terminado at the end without an empty done card', () => {
+  initLector();
+  type('# T\n\nTexto.');
+
+  expect(document.querySelector('[data-done]')).toBeNull();
+  const grid = document.querySelector<HTMLElement>('.post-grid')!;
+  const prose = document.querySelector<HTMLElement>('.prose')!;
+  Object.defineProperty(grid, 'getBoundingClientRect', { configurable: true, value: () => ({ top: 0, bottom: 700, height: 700 }) });
+  Object.defineProperty(prose, 'getBoundingClientRect', { configurable: true, value: () => ({ top: 0, bottom: 700, height: 700 }) });
+
+  dispatchEvent(new Event('scroll'));
+  expect(document.querySelector('[data-left]')!.textContent).toContain('terminado');
 });
 
 it('does not let a stale file read overwrite newer pasted input', async () => {
