@@ -10,8 +10,14 @@
 .lector-hero-title .lede { font-family: var(--read); font-size: 1.125rem; line-height: 1.5; color: var(--fg-2); max-width: 24ch; margin: 1rem 0 0; }
 .lector .privacy { color: var(--fg-2); font-size: .9375rem; }
 .lector-net-wrap { position: absolute; z-index: 0; top: -.5rem; right: calc(-1 * var(--gutter) - 24vw); width: 96vw; pointer-events: none; --net-alpha: .26; }
+.lector-hero-net { opacity: .9; transition: opacity 140ms cubic-bezier(.2, 0, 0, 1); }
 .lector-hero-net .net { display: block; width: 100%; height: auto; }
-.lector-net-wrap .net circle { stroke-opacity: .5; }
+.lector-hero-net .net line { stroke-opacity: var(--net-alpha); }
+.lector-hero-net .net circle { stroke-opacity: .5; }
+.lector-hero-net .net :is(line, circle) { transition: stroke 140ms cubic-bezier(.2, 0, 0, 1), stroke-opacity 140ms cubic-bezier(.2, 0, 0, 1); }
+.lector:has([data-lector-drop].is-over) .lector-hero-net { opacity: 1; }
+.lector:has([data-lector-drop].is-over) .lector-hero-net .net :is(line, circle) { stroke: var(--hue-ui); stroke-opacity: 1; }
+.lector:has([data-lector-drop].is-over) textarea { border-color: var(--hue-ui); }
 
 @media (min-width: 900px) {
   .lector-hero { padding-top: 4rem; }
