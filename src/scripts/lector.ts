@@ -33,9 +33,34 @@ export function initLector(): void {
 
   const disposers: Array<() => void> = [];
   let inputGeneration = 0;
+  const site = document.querySelector<HTMLElement>('header.site');
+  const progress = document.querySelector<HTMLElement>('.progress');
+  const left = document.querySelector<HTMLElement>('[data-left]');
+  const initialSiteClass = site?.getAttribute('class') ?? null;
+  const initialMarkClasses = site
+    ? [...site.querySelectorAll<HTMLElement>('.brand .net, .brand .net *')].map((element) => ({ element, className: element.getAttribute('class') }))
+    : [];
+  const initialProgressStyle = progress?.getAttribute('style') ?? null;
+  const initialLeftText = left?.textContent ?? '';
   const copy = shell.querySelector<HTMLButtonElement>('[data-copy]');
   let copyReset = 0;
   const teardown = () => { for (const dispose of disposers.splice(0)) dispose(); };
+
+  const restoreHeader = () => {
+    if (site) {
+      if (initialSiteClass === null) site.removeAttribute('class');
+      else site.setAttribute('class', initialSiteClass);
+    }
+    initialMarkClasses.forEach(({ element, className }) => {
+      if (className === null) element.removeAttribute('class');
+      else element.setAttribute('class', className);
+    });
+    if (progress) {
+      if (initialProgressStyle === null) progress.removeAttribute('style');
+      else progress.setAttribute('style', initialProgressStyle);
+    }
+    if (left) left.textContent = initialLeftText;
+  };
 
   const resetShell = () => {
     clearTimeout(copyReset);
@@ -54,6 +79,7 @@ export function initLector(): void {
     shell.querySelectorAll<Element>('[data-done]').forEach((card) => card.classList.remove('show', 'pending'));
     shell.querySelectorAll<Element>('.pulse').forEach((net) => net.classList.remove('pulse'));
     document.querySelectorAll<Element>('.site .brand .net.pulse').forEach((net) => net.classList.remove('pulse'));
+    restoreHeader();
   };
 
   const say = (message: string) => { status.textContent = message; };
