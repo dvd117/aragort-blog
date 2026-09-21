@@ -21,14 +21,22 @@
   .lector-net-wrap .net circle { stroke-opacity: 1; }
 }
 
-.lector .drop { border: 1px dashed var(--rule); border-radius: 8px; padding: 1rem; }
-.lector .drop.is-over { border-color: var(--hue); background: var(--panel); }
+.lector .drop { margin-top: 0; }
 .lector textarea {
-  width: 100%; min-height: 12rem; padding: .75rem; resize: vertical;
+  width: 100%; min-height: 12rem; padding: .7rem .9rem; resize: vertical;
   font: 400 .9375rem/1.5 var(--mono); color: var(--fg);
-  background: var(--panel); border: 1px solid var(--rule); border-radius: 6px;
+  background: var(--panel); border: 1px solid var(--rule); border-radius: 4px;
+  transition: border-color 140ms cubic-bezier(.2, 0, 0, 1);
 }
-.lector textarea:focus-visible, .lector .drop :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.lector textarea:hover { border-color: var(--fg-2); }
+.lector textarea:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-color: var(--hue-ui); }
+.lector .go { margin: .75rem 0 0; }
+.lector .go button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; font: 500 .875rem/1 var(--ui); color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; transition: border-color 140ms cubic-bezier(.2, 0, 0, 1); }
+.lector .go button:hover { border-color: var(--fg-2); }
+.lector .pick { display: inline-flex; margin: .75rem 0 0; }
+.lector .pick label { color: var(--fg-2); text-decoration: underline; text-underline-offset: .2em; cursor: pointer; }
+.lector .pick label:hover { color: var(--fg); }
+.lector .pick:has(:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
 .lector .status:empty { display: none; }
 
 /* Code: the block scrolls, the page never does. */
