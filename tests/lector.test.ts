@@ -14,12 +14,12 @@ const SHELL = `
     </section>
     <article class="post" data-lector-shell hidden>
       <header class="post-head">
+        <button type="button" class="back" data-lector-reset>← Otro texto</button>
         <h1 data-lector-title tabindex="-1"></h1>
         <span data-lector-minutes></span>
         <div class="view">
           <button type="button" data-view="read" aria-pressed="true">Formato</button>
           <button type="button" data-view="md" aria-pressed="false">Markdown</button>
-          <button type="button" data-lector-reset>Otro texto</button>
         </div>
       </header>
       <div class="post-grid">

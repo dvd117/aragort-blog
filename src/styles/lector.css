@@ -44,6 +44,7 @@
 .lector .pick label:hover { color: var(--fg); }
 .lector .pick:has(:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
 .lector .status:empty { display: none; }
+.lector .post-head button.back { appearance: none; -webkit-appearance: none; border: 0; padding: 0; background: none; cursor: pointer; text-align: left; }
 
 /* Code: the block scrolls, the page never does. */
 .lector .prose pre {

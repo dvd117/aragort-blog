@@ -46,6 +46,7 @@ export const getStaticPaths = () =>
 
     <article class="post" data-lector-shell hidden>
       <header class="post-head">
+        <button type="button" class="back" data-lector-reset>← Otro texto</button>
         <p class="meta">
           <span class="hue-dot" aria-hidden="true"></span>
           <span data-lector-minutes></span>
@@ -54,7 +55,6 @@ export const getStaticPaths = () =>
         <div class="view" role="group" aria-label="Cómo ver el documento">
           <button type="button" data-view="read" aria-pressed="true">Formato</button>
           <button type="button" data-view="md" aria-pressed="false">Markdown</button>
-          <button type="button" data-lector-reset>Otro texto</button>
         </div>
       </header>
       <div class="post-grid">

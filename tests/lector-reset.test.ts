@@ -15,7 +15,7 @@ const PAGE = `
       <p data-lector-status></p>
     </section>
     <article class="post" data-lector-shell hidden>
-      <header class="post-head"><h1 data-lector-title tabindex="-1"></h1><span data-lector-minutes></span><button type="button" data-lector-reset>Otro texto</button></header>
+      <header class="post-head"><button type="button" class="back" data-lector-reset>← Otro texto</button><h1 data-lector-title tabindex="-1"></h1><span data-lector-minutes></span></header>
       <div class="post-grid"><div class="prose" data-pane="read"></div><div class="source" data-pane="md" hidden><pre data-lector-source></pre></div><nav class="rail-toc" hidden><ol></ol></nav></div>
     </article>
   </div>`;
