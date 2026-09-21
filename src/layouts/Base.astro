@@ -22,10 +22,11 @@ interface Props {
   minutes?: number;
   /** Render the reading chrome before a minute count exists (the reader route). */
   progress?: boolean;
+  noindex?: boolean;
   /** On a post: its title, for the header while reading. */
   postTitle?: string;
 }
-const { title, description = 'Escritos de David Aragort.', current, ogImage, ogAlt, type = 'website', hue, heroNet = false, minutes, postTitle, progress } = Astro.props;
+const { title, description = 'Escritos de David Aragort.', current, ogImage, ogAlt, type = 'website', hue, heroNet = false, minutes, postTitle, progress, noindex } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort`;
 ---
@@ -37,6 +38,7 @@ const pageTitle = title === 'David Aragort' ? title : `${title} · David Aragort
   <meta name="color-scheme" content="dark light" />
   <title>{pageTitle}</title>
   <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
   <link rel="canonical" href={canonical} />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="alternate" type="application/rss+xml" title="David Aragort" href="/rss.xml" />

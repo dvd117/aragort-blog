@@ -1,0 +1,72 @@
+---
+/**
+ * Lector: read your own Markdown.
+ *
+ * Experimental. Emitted only when ARAGORT_LECTOR is set, so a production build
+ * cannot ship it by accident; it is also noindex and nothing links to it.
+ * A rest parameter is used because getStaticPaths only applies to dynamic routes,
+ * and returning [] is what keeps the page out of the build.
+ */
+import Base from '../../layouts/Base.astro';
+import Net from '../../components/Net.astro';
+import '../../styles/post.css';
+import '../../styles/lector.css';
+
+export const getStaticPaths = () =>
+  process.env.ARAGORT_LECTOR ? [{ params: { path: undefined } }] : [];
+---
+<Base title="Lector" description="Lee tus propios archivos Markdown." progress noindex>
+  <div class="lector wrap">
+    <section data-lector-empty>
+      <h1>Lector</h1>
+      <!-- TODO(david): copy. See "Needs David" in the spec. Placeholder below. -->
+      <p class="lede">Pega tu Markdown o suelta un archivo .md para leerlo aquí.</p>
+      <p class="privacy">Todo ocurre en tu navegador: el texto no se envía a ningún servidor.</p>
+
+      <div class="drop" data-lector-drop>
+        <label class="visually-hidden" for="lector-paste">Pega tu Markdown</label>
+        <textarea id="lector-paste" data-lector-paste rows="10" spellcheck="false"
+                  placeholder="# Mi documento"></textarea>
+        <p class="go"><button type="button" data-lector-read>Leer</button></p>
+        <p class="pick">
+          <label for="lector-file">o abre un archivo</label>
+          <input id="lector-file" type="file" data-lector-file
+                 accept=".md,.markdown,.txt,text/markdown" />
+        </p>
+      </div>
+      <p class="status" data-lector-status role="status" aria-live="polite"></p>
+    </section>
+
+    <article class="post" data-lector-shell hidden>
+      <header class="post-head">
+        <p class="meta">
+          <span class="hue-dot" aria-hidden="true"></span>
+          <span data-lector-minutes></span>
+        </p>
+        <h1 data-lector-title></h1>
+        <div class="view" role="group" aria-label="Cómo ver el documento">
+          <button type="button" data-view="read" aria-pressed="true">Formato</button>
+          <button type="button" data-view="md" aria-pressed="false">Markdown</button>
+          <button type="button" data-lector-reset>Otro texto</button>
+        </div>
+      </header>
+      <div class="post-grid">
+        <div class="rail">
+          <div class="rail-net" aria-hidden="true"><Net name="rail" progress flag dim /></div>
+          <nav class="rail-toc" aria-label="Capítulos" hidden><ol></ol></nav>
+        </div>
+        <div class="prose" data-pane="read"></div>
+        <div class="source" data-pane="md" hidden>
+          <p class="file"><button type="button" class="copy" data-copy><span aria-live="polite">Copiar</span></button></p>
+          <pre data-lector-source></pre>
+        </div>
+        <aside class="done-card" data-done aria-label="Fin del texto"></aside>
+      </div>
+    </article>
+  </div>
+</Base>
+
+<script>
+  import { initLector } from '../../scripts/lector';
+  initLector();
+</script>
