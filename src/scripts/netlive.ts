@@ -22,7 +22,6 @@ interface Live {
   lines: { el: SVGLineElement; a: number; b: number }[];
   adj: number[][];
   pinned: Set<number>; responsive: boolean; visible: boolean;
-  morph?: { from: Pt[]; start: number; ms: number };
 }
 
 const FRAME = 1000 / 30;
@@ -45,7 +44,6 @@ const sizeOf = (n: Live, px: number) => Math.min(1, Math.max(MIN_SIZE, (n.w * px
 const SESSION_KEY = 'aragort-net-pulsed';
 const rad = (d: number) => (d * Math.PI) / 180;
 const depth = (i: number) => ((Math.imul(i + 1, 2654435761) >>> 0) % 1000) / 500 - 1;
-const ease = (t: number) => 1 - (1 - t) ** 3;
 
 const nets: Live[] = [];
 let amp = 1, onPost = false;
@@ -153,7 +151,7 @@ function step(n: Live, target: Pt[], now: number): void {
 function frame(now: number): void {
   scheduled = false;
   if (!shouldRun()) {
-    if (reduced()) nets.forEach((n) => { n.morph = undefined; n.pos = n.base.map(([x, y]) => [x, y]); n.vel = n.base.map(() => [0, 0]); draw(n, n.base); });
+    if (reduced()) nets.forEach((n) => { n.pos = n.base.map(([x, y]) => [x, y]); n.vel = n.base.map(() => [0, 0]); draw(n, n.base); });
     kicks.length = 0;
     return;
   }
@@ -166,14 +164,9 @@ function frame(now: number): void {
   tiltX += (targetX - tiltX) * 0.08;
   tiltY += (targetY - tiltY) * 0.08;
   for (const n of nets) {
-    if (!n.visible || (frozen && !n.morph)) continue;
+    if (!n.visible || frozen) continue;
     const target = positions(n, clock);
-    if (n.morph) {
-      const k = Math.min(1, (now - n.morph.start) / n.morph.ms), e = ease(k), from = n.morph.from;
-      n.pos = target.map(([x, y], i) => [from[i]![0] + (x - from[i]![0]) * e, from[i]![1] + (y - from[i]![1]) * e]);
-      n.vel = n.base.map(() => [0, 0]);
-      if (k >= 1) n.morph = undefined;
-    } else step(n, target, now);
+    step(n, target, now);
     draw(n, n.pos);
   }
 }
@@ -239,15 +232,6 @@ const nearNet = (x: number, y: number, pad: number) => nets.some((n) => {
   const r = n.svg.getBoundingClientRect();
   return x > r.left - pad && x < r.right + pad && y > r.top - pad && y < r.bottom + pad;
 });
-
-export function morphFrom(svg: SVGSVGElement, from: Pt[], ms = 280): void {
-  const n = nets.find((x) => x.svg === svg);
-  if (!n || reduced() || from.length !== n.base.length) return;
-  n.morph = { from, start: performance.now(), ms };
-  n.visible = true;
-  draw(n, from); // start where the hero was, not one frame in place first
-  schedule();
-}
 
 export function initNetLive(): void {
   onPost = !!document.querySelector('.post');

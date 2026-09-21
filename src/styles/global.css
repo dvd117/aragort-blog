@@ -229,8 +229,7 @@ a { color: inherit; }
 
 /* Moving between pages: cross-document View Transitions, CSS only.
    Titles and nets stay on their own pages instead of flying as scaled snapshots. The
-   landing and post keep only the small hue dot paired by slug; on desktop the hero's
-   nodes still become the reading rail through netmorph.ts. The pages fade through: the
+   landing and post keep only the small hue dot paired by slug. The pages fade through: the
    old one is gone in the first 120ms, and the new one rises 6px in over the page
    duration from 60ms, so two pages of large type never sit on top of each other. */
 @view-transition { navigation: auto; }

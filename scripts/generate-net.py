@@ -6,8 +6,7 @@ Run once, commit the output, never at build time:
     python3 scripts/generate-net.py
 
 Writes src/assets/net/geometry.ts and public/favicon.svg. Standard library only.
-The rail has its own shape; landing -> post maps the hero's nodes onto it in reading
-order (src/lib/netmap.ts).
+The rail has its own shape.
 Python's `random` is reproducible for a given seed, so these seeds reproduce the
 net approved in mockups/round-2/d-vanguardia.html exactly. Changing a seed
 changes the mark: do it on purpose or not at all.
