@@ -47,6 +47,7 @@
 
 /* Long URLs must not give the page a sideways scroll. */
 .lector .prose a, .lector .prose p { overflow-wrap: anywhere; }
+.lector .prose .ext-tail { white-space: normal; overflow-wrap: anywhere; }
 
 /* Headings below a chapter carry no generated number. */
 .lector .prose :is(h3, h4, h5, h6) { font-weight: 620; letter-spacing: -.02em; }
