@@ -46,6 +46,18 @@ describe('renderMarkdown', () => {
     expect(renderMarkdown('Sin nada.').title).toBe('Sin título');
   });
 
+  it('removes the h1 that supplied the reader title', () => {
+    const doc = renderMarkdown('# Desde el h1\n\nX.');
+    expect(doc.title).toBe('Desde el h1');
+    expect(doc.html).not.toContain('<h1');
+  });
+
+  it('keeps an h1 when the title comes from frontmatter', () => {
+    const doc = renderMarkdown('---\ntitle: Título de portada\n---\n\n# Encabezado visible\n\nX.');
+    expect(doc.title).toBe('Título de portada');
+    expect(doc.html).toContain('<h1 id="encabezado-visible">Encabezado visible</h1>');
+  });
+
   it('computes minutes from the rendered text at 220 wpm', () => {
     expect(renderMarkdown('palabra '.repeat(440)).minutes).toBe(2);
     expect(renderMarkdown('corto').minutes).toBe(1);

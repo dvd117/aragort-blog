@@ -35,11 +35,17 @@ const textOf = (node: Element): string =>
 const visibleRawHtml = (value: string): string => value.replace(/<[^>]*>/g, '');
 
 /** Slug every heading and collect the h2s, which are this document's chapters. */
-function rehypeHeadings(collect: { h1: string | null; chapters: RenderedDoc['chapters'] }) {
+function rehypeHeadings(collect: {
+  h1: string | null;
+  chapters: RenderedDoc['chapters'];
+  removeTitleHeading: boolean;
+}) {
   return (tree: Root) => {
     const slugger = new GithubSlugger();
+    let removedTitleHeading = false;
     const walk = (parent: Root | Element) => {
-      for (const child of parent.children) {
+      for (let i = 0; i < parent.children.length; i++) {
+        const child = parent.children[i];
         if (child.type !== 'element') continue;
         if (/^h[1-6]$/.test(child.tagName)) {
           const text = textOf(child);
@@ -47,6 +53,12 @@ function rehypeHeadings(collect: { h1: string | null; chapters: RenderedDoc['cha
           child.properties.id = id;
           if (child.tagName === 'h1' && collect.h1 === null) collect.h1 = text;
           if (child.tagName === 'h2') collect.chapters.push({ id, text });
+          if (child.tagName === 'h1' && collect.removeTitleHeading && !removedTitleHeading) {
+            parent.children.splice(i, 1);
+            i--;
+            removedTitleHeading = true;
+            continue;
+          }
         }
         walk(child);
       }
@@ -60,7 +72,11 @@ const stripTags = (html: string): string => html.replace(/<[^>]*>/g, ' ');
 
 export function renderMarkdown(source: string, filename?: string): RenderedDoc {
   const { body, title: frontmatter } = stripFrontmatter(source);
-  const collect: { h1: string | null; chapters: RenderedDoc['chapters'] } = { h1: null, chapters: [] };
+  const collect: {
+    h1: string | null;
+    chapters: RenderedDoc['chapters'];
+    removeTitleHeading: boolean;
+  } = { h1: null, chapters: [], removeTitleHeading: !frontmatter };
 
   const file = unified()
     .use(remarkParse)
