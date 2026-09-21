@@ -72,10 +72,10 @@ rmSync(build, { recursive: true, force: true });
 // Guard: nothing may still point at the site root.
 const leftovers = [];
 const check = (dir) => {
-  for (const name of readdirSync(dir)) {
-    const abs = join(dir, name);
-    if (statSync(abs).isDirectory()) { check(abs); continue; }
-    if (!/\.(html|css)$/.test(name)) continue;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const abs = join(dir, entry.name);
+    if (entry.isDirectory()) { check(abs); continue; }
+    if (!/\.(html|css)$/.test(entry.name)) continue;
     const t = readFileSync(abs, 'utf8');
     for (const m of t.matchAll(/\b(?:href|src)="(\/(?!\/)[^"]*)"|url\(["']?(\/(?!\/)[^)"']*)/g)) leftovers.push(`${relative(out, abs)}: ${m[1] ?? m[2]}`);
   }

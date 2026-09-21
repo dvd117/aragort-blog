@@ -30,6 +30,31 @@ describe('CSP generation', () => {
     expect(hashes.filter((h) => h === sha('alert(1)'))).toHaveLength(1);
   });
 
+  it('matches script tags regardless of case and allows whitespace before the closing bracket', () => {
+    const html = {
+      'uppercase.html': '<SCRIPT>upper()</SCRIPT >',
+      'whitespace.html': '<script>lower()</script   >',
+    };
+    const readHtml = (file: string) => html[file as keyof typeof html];
+    expect(scriptHashes(Object.keys(html), readHtml)).toEqual(
+      [sha('upper()'), sha('lower()')].sort(),
+    );
+  });
+
+  it('matches end tags that carry junk after the tag name, as HTML parsers do', () => {
+    const html = { 'junk.html': '<script>junk()</script\t\n bar>' };
+    const readHtml = (file: string) => html[file as keyof typeof html];
+    expect(scriptHashes(Object.keys(html), readHtml)).toEqual([sha('junk()')]);
+  });
+
+  it('does not match tags whose names merely start with script', () => {
+    const html = {
+      'prefix.html': '<scripty>ignored()</script><script>real()</script>',
+    };
+    const readHtml = (file: string) => html[file as keyof typeof html];
+    expect(scriptHashes(Object.keys(html), readHtml)).toEqual([sha('real()')]);
+  });
+
   it('names the hashes in script-src and never falls back to unsafe-inline', () => {
     const p = policy([sha('alert(1)')]);
     expect(p).toContain(`script-src 'self' '${sha('alert(1)')}'`);
