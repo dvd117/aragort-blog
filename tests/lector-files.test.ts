@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { initLector } from '../src/scripts/lector';
+import * as lectorRender from '../src/scripts/lector-render';
 
 const PAGE = `
   <header class="site"><div class="brand"><svg class="net"></svg></div><span data-left></span><div class="progress"></div></header>
@@ -14,7 +15,7 @@ const PAGE = `
     </section>
     <article class="post" data-lector-shell hidden>
       <header class="post-head"><h1 data-lector-title tabindex="-1"></h1><span data-lector-minutes></span><button type="button" data-lector-reset>Otro texto</button></header>
-      <div class="post-grid"><div class="rail"><nav class="rail-toc" hidden><ol></ol></nav></div><div class="prose" data-pane="read"></div><div class="source" data-pane="md" hidden><pre data-lector-source></pre></div></div>
+      <div class="post-grid"><div class="rail"><nav class="rail-toc" hidden><ol></ol></nav></div><div class="prose" data-pane="read"></div><div class="source" data-pane="md" hidden><button type="button" data-copy><span>Copiar</span></button><pre data-lector-source></pre></div></div>
     </article>
   </div>`;
 
@@ -62,4 +63,35 @@ it('accepts an uppercase Markdown filename when the MIME type is empty', async (
   await Promise.resolve();
 
   expect(document.querySelector('[data-lector-title]')!.textContent).toBe('Notas');
+});
+
+it('keeps the open document when rendering a replacement fails', () => {
+  initLector();
+  type('# Inicial\n\nTexto.');
+  const render = vi.spyOn(lectorRender, 'renderMarkdown').mockImplementation(() => { throw new Error('falló'); });
+
+  expect(() => type('# Nuevo\n\nTexto.')).not.toThrow();
+  expect(document.querySelector('[data-lector-title]')!.textContent).toBe('Inicial');
+  expect(document.querySelector('.prose')!.textContent).toContain('Texto.');
+  expect(document.querySelector<HTMLElement>('[data-lector-shell]')!.hidden).toBe(false);
+  expect(document.querySelector('[data-lector-status]')!.textContent).toBe('No se pudo leer ese archivo.');
+  render.mockRestore();
+});
+
+it('does not mark a new document copied when an old clipboard write resolves', async () => {
+  initLector();
+  type('# Inicial\n\nTexto.');
+  let resolve!: () => void;
+  const pending = new Promise<void>((done) => { resolve = done; });
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: vi.fn(() => pending) } });
+
+  document.querySelector<HTMLButtonElement>('[data-copy]')!.click();
+  document.querySelector<HTMLButtonElement>('[data-lector-reset]')!.click();
+  type('# Nuevo\n\nTexto.');
+  resolve();
+  await Promise.resolve();
+  await Promise.resolve();
+
+  expect(document.querySelector('[data-copy]')!.dataset.state).toBeUndefined();
+  expect(document.querySelector('[data-copy] span')!.textContent).toBe('Copiar');
 });

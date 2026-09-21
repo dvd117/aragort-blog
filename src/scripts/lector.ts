@@ -117,9 +117,11 @@ export function initLector(): void {
 
   const show = (source: string, filename?: string) => {
     if (tooLarge(source)) { say(TOO_BIG); return; }
+    let doc: ReturnType<typeof renderMarkdown>;
+    try { doc = renderMarkdown(source, filename, reservedIds); }
+    catch { say(UNREADABLE); return; }
     teardown();
     resetShell();
-    const doc = renderMarkdown(source, filename, reservedIds);
     titleEl.textContent = doc.title;
     minutesEl.textContent = `${doc.minutes} min de lectura`;
     prose.innerHTML = doc.html;
@@ -189,7 +191,10 @@ export function initLector(): void {
 
   // Copiar: the same text the reader pasted in.
   copy?.addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(sourcePane.textContent ?? ''); } catch { return; }
+    const generation = inputGeneration;
+    const source = sourcePane.textContent ?? '';
+    try { await navigator.clipboard.writeText(source); } catch { return; }
+    if (generation !== inputGeneration || shell.hidden || sourcePane.textContent !== source) return;
     const label = copy.querySelector('span')!;
     copy.dataset.state = 'done';
     label.textContent = 'Copiado';
