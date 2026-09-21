@@ -17,6 +17,8 @@ import { tooLarge } from '../lib/lector-doc.ts';
 const KEY = 'aragort-lector';
 const TOO_BIG = 'Ese archivo es demasiado grande para leerlo aquí (el límite son 2 MB).';
 const UNREADABLE = 'No se pudo leer ese archivo.';
+// TODO(david): copy.
+const UNSUPPORTED = 'Ese archivo no parece Markdown o texto plano.';
 
 export function initLector(): void {
   const page = document.querySelector<HTMLElement>('.lector');
@@ -153,6 +155,9 @@ export function initLector(): void {
 
   const readFile = (file: File | null | undefined) => {
     if (!file) return;
+    const nameAllowed = /\.(?:md|markdown|txt)$/i.test(file.name);
+    const typeAllowed = file.type === 'text/markdown' || file.type === 'text/plain';
+    if (!nameAllowed && !typeAllowed) { say(UNSUPPORTED); return; }
     const generation = ++inputGeneration;
     if (file.size > 2 * 1024 * 1024) { say(TOO_BIG); return; }
     file.text()
