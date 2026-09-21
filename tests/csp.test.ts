@@ -41,6 +41,12 @@ describe('CSP generation', () => {
     );
   });
 
+  it('matches end tags that carry junk after the tag name, as HTML parsers do', () => {
+    const html = { 'junk.html': '<script>junk()</script\t\n bar>' };
+    const readHtml = (file: string) => html[file as keyof typeof html];
+    expect(scriptHashes(Object.keys(html), readHtml)).toEqual([sha('junk()')]);
+  });
+
   it('does not match tags whose names merely start with script', () => {
     const html = {
       'prefix.html': '<scripty>ignored()</script><script>real()</script>',

@@ -33,7 +33,7 @@ function htmlFiles(dir) {
 export function scriptHashes(files, read = (f) => readFileSync(f, 'utf8')) {
   const hashes = new Set();
   for (const file of files) {
-    for (const m of read(file).matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)) {
+    for (const m of read(file).matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)) {
       if (/\ssrc\s*=/i.test(m[1])) continue;
       hashes.add(`sha256-${createHash('sha256').update(m[2]).digest('base64')}`);
     }
