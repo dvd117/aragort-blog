@@ -1,1 +1,53 @@
-/* Lector visual styles are added in Task 10. */
+/* Lector: the empty state, and the parts of Markdown David's own essays never use. */
+
+.lector .lede { color: var(--fg); }
+.lector .privacy { color: var(--fg-2); font-size: .9375rem; }
+
+.lector .drop { border: 1px dashed var(--rule); border-radius: 8px; padding: 1rem; }
+.lector .drop.is-over { border-color: var(--hue); background: var(--panel); }
+.lector textarea {
+  width: 100%; min-height: 12rem; padding: .75rem; resize: vertical;
+  font: 400 .9375rem/1.5 var(--mono); color: var(--fg);
+  background: var(--panel); border: 1px solid var(--rule); border-radius: 6px;
+}
+.lector textarea:focus-visible, .lector .drop :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.lector .status:empty { display: none; }
+
+/* Code: the block scrolls, the page never does. */
+.lector .prose pre {
+  overflow-x: auto; padding: .9rem 1rem; background: var(--panel);
+  border: 1px solid var(--rule); border-radius: 6px;
+  font: 400 .875rem/1.55 var(--mono);
+}
+.lector .prose pre code { white-space: pre; }
+.lector .prose :not(pre) > code {
+  padding: .1em .35em; background: var(--panel);
+  border: 1px solid var(--rule); border-radius: 3px;
+  font: 500 .9em/1 var(--mono); overflow-wrap: anywhere;
+}
+
+/* Tables: a wide one scrolls inside its own box. */
+.lector .prose table { width: 100%; border-collapse: collapse; font-size: .9375rem; display: block; overflow-x: auto; }
+.lector .prose th, .lector .prose td { padding: .45rem .6rem; border: 1px solid var(--rule); text-align: left; vertical-align: top; }
+.lector .prose th { font-weight: 620; }
+
+/* Task lists lose their bullet but keep their box. */
+.lector .prose li:has(> input[type="checkbox"]) { list-style: none; margin-left: -1.1em; }
+.lector .prose input[type="checkbox"] { margin-right: .5em; }
+
+/* Nested lists retain readable indentation without overflowing narrow screens. */
+.lector .prose :is(ul, ol) { padding-inline-start: 1.4em; }
+.lector .prose li > :is(ul, ol) { margin-top: .35em; }
+
+/* A refused remote image: the meaning survives the missing picture. */
+.lector .prose .img-alt {
+  display: block; padding: .5rem .75rem; color: var(--fg-2);
+  border-left: 2px solid var(--rule); font-size: .9375rem; font-style: italic;
+}
+
+/* Long URLs must not give the page a sideways scroll. */
+.lector .prose a, .lector .prose p { overflow-wrap: anywhere; }
+
+/* Headings below a chapter carry no generated number. */
+.lector .prose :is(h3, h4, h5, h6) { font-weight: 620; letter-spacing: -.02em; }
+.lector .prose :is(h4, h5, h6) { font-size: 1.05rem; }
