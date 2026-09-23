@@ -23,8 +23,13 @@ afterEach(() => {
   document.body.innerHTML = '';
 });
 
-it('hides desktop chapter notches when the rail dock is active', () => {
-  expect(globalCss).toContain('.site .ticks[inert] { display: none; }');
+it('hides the header notches on desktop, where the rail carries progress', () => {
+  expect(globalCss).toMatch(/@media \(min-width: 1000px\) \{\s*\.site \.ticks \{ display: none; \}/);
+});
+
+it('opens a notch label on hover only where the pointer can hover', () => {
+  expect(globalCss).not.toMatch(/(^|,\s*)\.site \.tick:hover/m);
+  expect(globalCss).toMatch(/@media \(hover: hover\) \{\s*\.site \.tick:hover \.tt/);
 });
 
 it('recomputes chapter placement when a selected font finishes loading', () => {

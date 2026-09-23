@@ -276,19 +276,23 @@ main:focus { outline: none; }
 .site .tick[data-band="1"] { --hue: var(--h-azul); --hue-ui: var(--hu-azul); }
 .site .tick[data-band="2"] { --hue: var(--h-rojo); --hue-ui: var(--hu-rojo); }
 .site .tick .tt b { flex: none; font: 600 .75rem/1.2 var(--mono); color: var(--hue); }
-.site .tick:hover .tt, .site .tick:focus-visible .tt, .site .tick.is-open .tt, .site .tick.is-scrubbing .tt { opacity: 1; transform: translateX(calc(-50% + var(--tt-shift, 0px))) translateY(0); }
-.site .tick:hover i, .site .tick:focus-visible i, .site .tick.is-open i, .site .tick.is-scrubbing i { background: var(--hue-ui); transform: scaleY(1.375); }
+.site .tick:focus-visible .tt, .site .tick.is-open .tt, .site .tick.is-scrubbing .tt { opacity: 1; transform: translateX(calc(-50% + var(--tt-shift, 0px))) translateY(0); }
+.site .tick:focus-visible i, .site .tick.is-open i, .site .tick.is-scrubbing i { background: var(--hue-ui); transform: scaleY(1.375); }
+/* A touch screen keeps :hover on the last notch pressed -- and on the captured notch for a
+   whole drag -- so hover opens a label only where a pointer can actually hover. */
+@media (hover: hover) {
+  .site .tick:hover .tt { opacity: 1; transform: translateX(calc(-50% + var(--tt-shift, 0px))) translateY(0); }
+  .site .tick:hover i { background: var(--hue-ui); transform: scaleY(1.375); }
+}
 /* A label near either edge would hang off the screen if it stayed centred. reading.ts
    measures it and sets --tt-shift: the pixels needed to pull it back inside the gutter,
    0 for every label that already fits. Anchoring to the tick instead of to the viewport
    was the old bug -- `left: var(--gutter)` is relative to the tick, so it only landed on
    the screen gutter for a tick that was already at the edge. */
-/* syncDock in reading.ts makes the host inert when the desktop rail dock exists. */
 @media (max-width: 999.98px) {
   .site .tick { touch-action: none; }
 }
+/* Desktop reads its progress off the rail, so the header's line and its notches go. */
 @media (min-width: 1000px) {
-  .site .ticks[inert] { display: none; }
-  .site .tick { pointer-events: none; width: 2px; margin-left: -1px; height: 8px; top: -3px; }
-  .site .tick .tt { display: none; }
+  .site .ticks { display: none; }
 }
