@@ -208,6 +208,8 @@ export function mountReading(root: HTMLElement, opts: { minutes: number }): () =
     let pointerId: number | null = null;
     let startX = 0;
     let dragging = false;
+    let pressTick: HTMLElement | null = null;
+    let suppressClickTick: HTMLElement | null = null;
     let scrubTick: HTMLElement | null = null;
     const hideScrubTick = () => {
       scrubTick?.classList.remove('is-scrubbing');
@@ -231,19 +233,40 @@ export function mountReading(root: HTMLElement, opts: { minutes: number }): () =
       window.scrollTo({ top: window.scrollY + g.top - targetTop, behavior: 'instant' });
       showScrubTick(p);
     };
-    on(scrub, 'pointerdown', (e: Event) => {
+    on(mountedHost, 'click', (e: Event) => {
+      if (!suppressClickTick) return;
+      const click = e as MouseEvent;
+      const target = e.target as Element;
+      const tick = target.closest<HTMLElement>('.tick');
+      if (click.detail > 0 && (tick === suppressClickTick || target === mountedHost)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      suppressClickTick = null;
+    }, { capture: true });
+    on(mountedHost, 'pointerdown', (e: Event) => {
       const pointer = e as PointerEvent;
-      if (dockMq.matches) return;
+      if (dockMq.matches || pointerId !== null) return;
+      const target = e.target as Element;
+      const tick = target.closest<HTMLElement>('.tick');
+      const surface = tick ?? target.closest<HTMLElement>('.scrub-strip');
+      if (!surface) return;
+      suppressClickTick = null;
+      pressTick = tick;
       pointerId = pointer.pointerId;
       startX = pointer.clientX;
       dragging = false;
-      scrub.setPointerCapture(pointerId);
-      e.preventDefault();
+      surface.setPointerCapture(pointerId);
+      if (!tick) e.preventDefault();
     });
-    on(scrub, 'pointermove', (e: Event) => {
+    on(mountedHost, 'pointermove', (e: Event) => {
       const pointer = e as PointerEvent;
       if (pointerId !== pointer.pointerId) return;
       if (!dragging && Math.abs(pointer.clientX - startX) < 6) return;
+      if (!dragging && pressTick) {
+        pressTick.classList.remove('is-open');
+        clearTimeout(openTimer);
+      }
       dragging = true;
       e.preventDefault();
       scrubTo(pointer.clientX);
@@ -251,13 +274,15 @@ export function mountReading(root: HTMLElement, opts: { minutes: number }): () =
     const endScrub = (e: Event) => {
       const pointer = e as PointerEvent;
       if (pointerId !== pointer.pointerId) return;
+      if (e.type === 'pointerup' && dragging) suppressClickTick = pressTick;
       pointerId = null;
       if (dragging) hideScrubTick();
       dragging = false;
+      pressTick = null;
     };
-    on(scrub, 'pointerup', endScrub);
-    on(scrub, 'pointercancel', endScrub);
-    on(scrub, 'lostpointercapture', endScrub);
+    on(mountedHost, 'pointerup', endScrub);
+    on(mountedHost, 'pointercancel', endScrub);
+    on(mountedHost, 'lostpointercapture', endScrub);
 
     const place = () => {
       bandBlocks();

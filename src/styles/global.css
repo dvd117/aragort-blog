@@ -284,6 +284,9 @@ main:focus { outline: none; }
    was the old bug -- `left: var(--gutter)` is relative to the tick, so it only landed on
    the screen gutter for a tick that was already at the edge. */
 /* syncDock in reading.ts makes the host inert when the desktop rail dock exists. */
+@media (max-width: 999.98px) {
+  .site .tick { touch-action: none; }
+}
 @media (min-width: 1000px) {
   .site .ticks[inert] { display: none; }
   .site .tick { pointer-events: none; width: 2px; margin-left: -1px; height: 8px; top: -3px; }

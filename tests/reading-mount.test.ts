@@ -173,16 +173,60 @@ it('does not scroll for a press below the drag threshold', () => {
   dispose();
 });
 
-it('keeps the chapter tick tap opening its pill', () => {
+it('scrubs and suppresses the chapter click when a drag starts on a tick', () => {
+  const { scrub, dispose, scrollTo } = prepareScrub();
+  expect(scrub).not.toBeNull();
+  if (!scrub) { dispose(); return; }
+  const tick = document.querySelectorAll<HTMLElement>('.site .tick')[1]!;
+  const capture = vi.fn();
+  Object.defineProperty(tick, 'setPointerCapture', { configurable: true, value: capture });
+
+  tick.dispatchEvent(pointer('pointerdown', 100));
+  tick.dispatchEvent(pointer('pointermove', 300));
+  tick.dispatchEvent(pointer('pointerup', 300));
+  const click = new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 });
+  document.querySelector('.ticks')!.dispatchEvent(click);
+
+  expect(capture).toHaveBeenCalledWith(1);
+  expect(scrollTo).toHaveBeenCalledWith({ top: 500, behavior: 'instant' });
+  expect(click.defaultPrevented).toBe(true);
+  expect(document.querySelector('.tick.is-scrubbing')).toBeNull();
+  dispose();
+});
+
+it('does not suppress keyboard activation when a drag emitted no click', () => {
+  const { scrub, dispose } = prepareScrub();
+  expect(scrub).not.toBeNull();
+  if (!scrub) { dispose(); return; }
+  const tick = document.querySelectorAll<HTMLElement>('.site .tick')[1]!;
+  Object.defineProperty(tick, 'setPointerCapture', { configurable: true, value: vi.fn() });
+
+  tick.dispatchEvent(pointer('pointerdown', 100));
+  tick.dispatchEvent(pointer('pointermove', 300));
+  tick.dispatchEvent(pointer('pointerup', 300));
+  const keyboardClick = new MouseEvent('click', { bubbles: true, cancelable: true, detail: 0 });
+  tick.dispatchEvent(keyboardClick);
+
+  expect(keyboardClick.defaultPrevented).toBe(false);
+  dispose();
+});
+
+it('keeps a plain chapter tick tap navigating and opening its pill', () => {
   stubEnv();
   const { article } = build();
   const dispose = mountReading(article, { minutes: 5 });
   const tick = document.querySelectorAll<HTMLElement>('.site .tick')[1]!;
+  Object.defineProperty(tick, 'setPointerCapture', { configurable: true, value: vi.fn() });
 
   tick.dispatchEvent(pointer('pointerdown', 240));
+  tick.dispatchEvent(pointer('pointerup', 240));
+  const click = new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 });
+  tick.dispatchEvent(click);
 
   expect(tick.getAttribute('href')).toBe('#two');
   expect(tick.classList.contains('is-open')).toBe(true);
+  expect(click.defaultPrevented).toBe(false);
+  expect(location.hash).toBe('#two');
   dispose();
 });
 
