@@ -9,7 +9,7 @@ const rect = (top: number, height: number) => ({
 
 function build() {
   document.body.innerHTML = `
-    <header class="site"></header>
+    <header class="site"><a class="brand"><svg class="net"><line data-a="0" data-b="1"></line><circle data-o="0"></circle><circle data-o="1"></circle></svg></a></header>
     <article class="post">
       <div class="post-grid">
         <div class="prose">
@@ -17,6 +17,7 @@ function build() {
           <h2 id="two">Dos</h2><p>Texto.</p>
           <h2 id="three">Tres</h2><p>Texto.</p>
         </div>
+        <div class="sig"><svg class="net"><line data-a="0" data-b="1"></line><circle data-o="0"></circle><circle data-o="1"></circle></svg></div>
         <nav class="rail-toc"><ol>
           <li><a href="#one">Uno</a></li><li><a href="#two">Dos</a></li><li><a href="#three">Tres</a></li>
         </ol></nav>
@@ -41,6 +42,7 @@ function buildPulseRoot() {
   root.innerHTML = `
     <div class="post-grid">
       <div class="prose"><p>Texto.</p></div>
+      <div class="rail"><svg class="net"></svg></div>
       <div class="sig"><svg class="net"></svg></div>
       <div data-done></div>
     </div>`;
@@ -52,7 +54,8 @@ function buildPulseRoot() {
   return {
     root,
     card: root.querySelector<HTMLElement>('[data-done]')!,
-    net: root.querySelector<SVGSVGElement>('.net')!,
+    railNet: root.querySelector<SVGSVGElement>('.rail .net')!,
+    sigNet: root.querySelector<SVGSVGElement>('.sig .net')!,
   };
 }
 
@@ -98,6 +101,18 @@ it('stops updating the progress bar once the disposer has run', () => {
   expect(bar.style.clipPath).toBe(before);
 });
 
+it('keeps the site and signature logos static while reading', () => {
+  stubEnv();
+  const { article, setTop } = build();
+
+  const dispose = mountReading(article, { minutes: 5 });
+  setTop(-900);
+  dispatchEvent(new Event('scroll'));
+
+  expect(document.querySelectorAll('.site .brand .net .p, .sig .net .p')).toHaveLength(0);
+  dispose();
+});
+
 it('removes the chapter notches it added to the site header', () => {
   stubEnv();
   const { article } = build();
@@ -135,18 +150,20 @@ it('clears pending net pulse timers when disposed', () => {
   stubEnv();
   const pending = stubTimers();
   document.body.innerHTML = '<header class="site"></header><div class="progress"></div>';
-  const { root, card, net } = buildPulseRoot();
+  const { root, card, railNet, sigNet } = buildPulseRoot();
 
   const dispose = mountReading(root, { minutes: 5 });
   card.dispatchEvent(new Event('focusin'));
 
-  expect(net.classList.contains('pulse')).toBe(true);
+  expect(railNet.classList.contains('pulse')).toBe(true);
+  expect(sigNet.classList.contains('pulse')).toBe(false);
   expect(pending.size).toBe(1);
 
   dispose();
 
   expect(pending.size).toBe(0);
-  expect(net.classList.contains('pulse')).toBe(true);
+  expect(railNet.classList.contains('pulse')).toBe(true);
+  expect(sigNet.classList.contains('pulse')).toBe(false);
 });
 
 it('keeps a second root mount independent when the first is disposed', () => {
@@ -164,8 +181,10 @@ it('keeps a second root mount independent when the first is disposed', () => {
 
   expect(pending.size).toBe(1);
   [...pending.values()][0]!();
-  expect(first.net.classList.contains('pulse')).toBe(true);
-  expect(second.net.classList.contains('pulse')).toBe(false);
+  expect(first.railNet.classList.contains('pulse')).toBe(true);
+  expect(first.sigNet.classList.contains('pulse')).toBe(false);
+  expect(second.railNet.classList.contains('pulse')).toBe(false);
+  expect(second.sigNet.classList.contains('pulse')).toBe(false);
 
   disposeSecond();
 });

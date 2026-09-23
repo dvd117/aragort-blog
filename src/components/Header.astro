@@ -13,12 +13,12 @@ interface Props {
 }
 const { current, minutes, postTitle, progress } = Astro.props;
 ---
-<!-- Always visible, one compact row (52px on a phone). On a post the mark is the
-     reading progress, with the time left beside it and a progress line along the bottom. -->
+<!-- Always visible, one compact row (52px on a phone). The mark is the static site logo;
+     on a post the time left sits beside it, and the line along the bottom carries progress. -->
 <header class="site">
   <div class="row wrap">
     <a class="brand" href="/">
-      <span class="mark"><Net name="mark" /></span>
+      <span class="mark"><Net name="mark" logo /></span>
       <span class="name"><span>David</span> <span>Aragort</span></span>
     </a>
     {(minutes || progress) && (

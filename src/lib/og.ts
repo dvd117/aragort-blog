@@ -8,10 +8,9 @@ import { resolve } from 'node:path';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import { nets } from '../assets/net/geometry';
+import { FLAG_COLORS, flagNodes } from './flag';
 
 const DARK = { bg: '#000000', fg: '#ece9e1', muted: '#9ea3aa' };
-/** The dark theme's three hues, as `:root` declares them in global.css. */
-const FLAG = { amarillo: '#e2a638', azul: '#6298dd', rojo: '#e0705e' } as const;
 
 /**
  * A card carries no post's hue: the hue runs by place in the list, so it rotates with every
@@ -23,27 +22,21 @@ const FLAG = { amarillo: '#e2a638', azul: '#6298dd', rojo: '#e0705e' } as const;
  * generated and committed, so the indices hold; tests/og.test.ts fails if they ever stop
  * being a connected path running downwards.
  */
-const FLAG_PATH = [9, 10, 11] as const;
-const FLAG_ORDER = ['amarillo', 'azul', 'rojo'] as const;
-/** Node index -> its hue, for the three on the path. */
-export const flagNodes: ReadonlyMap<number, string> = new Map(
-  FLAG_PATH.map((n, i) => [n as number, FLAG[FLAG_ORDER[i]!] as string]),
-);
-
 function markSvg(): string {
   const g = nets.mark;
   const lines = g.edges
     .map(([a, b]) => {
       // A wire takes the flag only when both of its ends are on the path: the colour of the
       // upper end, so each band owns the wire leaving it.
-      const on = flagNodes.has(a) && flagNodes.has(b);
-      return `<line x1="${g.nodes[a]![0]}" y1="${g.nodes[a]![1]}" x2="${g.nodes[b]![0]}" y2="${g.nodes[b]![1]}" stroke="${on ? flagNodes.get(a)! : DARK.fg}" stroke-opacity="${on ? 1 : 0.6}" stroke-width="${on ? 0.9 : 0.6}"/>`;
+      const hue = flagNodes.has(a) && flagNodes.has(b) ? flagNodes.get(a) : undefined;
+      return `<line x1="${g.nodes[a]![0]}" y1="${g.nodes[a]![1]}" x2="${g.nodes[b]![0]}" y2="${g.nodes[b]![1]}" stroke="${hue ? FLAG_COLORS[hue] : DARK.fg}" stroke-opacity="${hue ? 1 : 0.6}" stroke-width="${hue ? 0.9 : 0.6}"/>`;
     })
     .join('');
   const dots = g.nodes
     .map(([x, y], i) => {
       const hue = flagNodes.get(i);
-      return `<circle cx="${x}" cy="${y}" r="${g.r}" fill="${hue ?? DARK.bg}" stroke="${hue ?? DARK.fg}" stroke-width="0.6"/>`;
+      const color = hue ? FLAG_COLORS[hue] : undefined;
+      return `<circle cx="${x}" cy="${y}" r="${g.r}" fill="${color ?? DARK.bg}" stroke="${color ?? DARK.fg}" stroke-width="0.6"/>`;
     })
     .join('');
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 ${g.w + 4} ${g.h + 4}">${lines}${dots}</svg>`;

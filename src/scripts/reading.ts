@@ -8,12 +8,13 @@
  * - the progress line along the header's bottom edge: the same three bands, uncovered
  *   left to right. Its notches are the chapters, and on a phone they are the dock --
  *   tap one to go there, press or hover to open its number and title;
- * - the header mark: the rail in miniature, with "quedan N min" beside it;
+ * - the header mark: the static site logo, independent of reading; the time left and the
+ *   progress line beside and below it answer where you are;
  * - every top-level block of the prose is given the band of the third of the text it
  *   sits in. The text itself does not take it -- links, bold, quotes and notes are the
  *   post's one hue -- but the rail's dock and the header's notch for a chapter read the
  *   band of the block it starts at, so the flag stays on the drawing and off the page;
- * - at the end: every net completes with one short pulse, and the end card appears.
+ * - at the end: the rail completes with one short pulse, and the end card appears.
  */
 import { reduced } from './motion';
 
@@ -49,15 +50,11 @@ export function mountReading(root: HTMLElement, opts: { minutes: number }): () =
   const rail = root.querySelector<SVGSVGElement>('.rail .net');
   if (!grid || !prose || !bar) return () => {};
 
-  const marks = [
-    ...document.querySelectorAll<SVGSVGElement>('.site .brand .net'),
-    ...root.querySelectorAll<SVGSVGElement>('.sig .net'),
-  ];
   const railNodes = rail ? [...rail.querySelectorAll<SVGCircleElement>('circle')] : [];
   // Drawn positions, read before the net starts to drift (netlive draws on the next frame).
   const railBase = railNodes.map((c) => [Number(c.getAttribute('cx')), Number(c.getAttribute('cy'))] as const);
   const railWires = rail ? [...rail.querySelectorAll<SVGLineElement>('line')] : [];
-  const nets = [...marks, ...(rail ? [rail] : [])];
+  const nets = rail ? [rail] : [];
 
   let complete = false;
   let chapterOf: (p: number) => string = () => '';
@@ -66,19 +63,9 @@ export function mountReading(root: HTMLElement, opts: { minutes: number }): () =
   let queued = false;
   card?.classList.add('pending');
 
-  const lightMarks = (k: number) => {
-    for (const m of marks) {
-      const n = m.querySelectorAll('circle').length;
-      const upTo = Math.round(k * n);
-      m.querySelectorAll<SVGCircleElement>('circle').forEach((c) => c.classList.toggle('p', Number(c.dataset.o) < upTo));
-      m.querySelectorAll<SVGLineElement>('line').forEach((l) => l.classList.toggle('p', Number(l.dataset.a) < upTo && Number(l.dataset.b) < upTo));
-    }
-  };
-
-  // Light every net to the same fraction of itself. The rail is grey until reading
-  // reaches a node; the colour a node takes is its band's, not one ruling hue.
+  // Light the rail to the reading position. It is grey until reading reaches a node; the
+  // colour a node takes is its band's, not one ruling hue.
   const lightTo = (k: number, still: boolean) => {
-    lightMarks(k);
     if (!rail) return;
     const upTo = still ? 0 : Math.round(k * railNodes.length);
     railNodes.forEach((c) => c.classList.toggle('on', Number(c.dataset.o) < upTo));
@@ -133,8 +120,8 @@ export function mountReading(root: HTMLElement, opts: { minutes: number }): () =
     if (end) finish();
     const still = reduced();
     rail?.classList.toggle('live', !still);
-    // Everything follows where you are, both ways. Reading back up gives the rail and the
-    // mark back, so they always answer "where am I" and never "how far did I once get".
+    // The rail follows where you are, both ways. Reading back up gives it back, so it
+    // always answers "where am I" and never "how far did I once get".
     lightTo(end ? 1 : p, still);
     // Where you are now: the current chapter, its dot on the rail, and the time left.
     if (left) left.textContent = end

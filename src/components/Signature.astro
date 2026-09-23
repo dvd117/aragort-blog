@@ -20,6 +20,6 @@ interface Props {
 const { thread = false } = Astro.props;
 ---
 <aside class:list={['who', { 'who-thread': thread }]} aria-label="Quién escribe">
-  <p class="who-name"><Net name="mark" /><span>David Aragort</span></p>
+  <p class="who-name"><Net name="mark" logo /><span>David Aragort</span></p>
   <p class="who-text">{WHO} <a href="/sobre-mi/">Sobre mí</a></p>
 </aside>

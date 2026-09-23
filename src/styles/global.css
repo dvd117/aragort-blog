@@ -170,10 +170,8 @@ a { color: inherit; }
   transition: none !important; animation: none !important; scroll-behavior: auto !important;
 }
 
-/* The net, after Gego's Reticulárea: thin wires, hollow nodes, the flag's three bands by
-   height. Every net on the page -- header mark, hero, rail, portrait, footer mark, the
-   signature -- carries the same three bands, so the flag is the site's identity at every
-   size rather than something only the big nets do. */
+/* The net, after Gego's Reticulárea: thin wires and hollow nodes. The large nets carry the
+   flag's three bands by height; the small mark carries its connected flag path instead. */
 /* Quién escribe: the same block ends the landing and every post -- the wordmark (the mark
    beside David's name) over the sentence and the way through to "Sobre mí"
    (Signature.astro). Only the landing's copy carries the thread down its left edge. */
@@ -211,15 +209,22 @@ a { color: inherit; }
    solid points among hollow rings is the same reading; a white core would be nothing. */
 .net[data-flag] circle[data-star] { fill: var(--star); }
 
-.net :is(line, circle).on, .net :is(line, circle).path, .net :is(line, circle).p, .net :is(line, circle).glow { stroke: var(--hue-ui); stroke-opacity: 1; }
-.net circle:is(.on, .path, .p, .glow) { fill: var(--hue-ui); }
-.net[data-flag] :is(line, circle):is(.on, .path, .p, .glow)[data-band="0"] { stroke: var(--hl-amarillo); stroke-opacity: 1; }
-.net[data-flag] :is(line, circle):is(.on, .path, .p, .glow)[data-band="1"] { stroke: var(--hl-azul); stroke-opacity: 1; }
-.net[data-flag] :is(line, circle):is(.on, .path, .p, .glow)[data-band="2"] { stroke: var(--hl-rojo); stroke-opacity: 1; }
-.net[data-flag] circle:is(.on, .path, .p, .glow)[data-band="0"] { fill: var(--hl-amarillo); }
-.net[data-flag] circle:is(.on, .path, .p, .glow)[data-band="1"] { fill: var(--hl-azul); }
-.net[data-flag] circle:is(.on, .path, .p, .glow)[data-band="2"] { fill: var(--hl-rojo); }
-.net[data-flag] circle[data-star]:is(.on, .path, .p, .glow) { fill: var(--star); }
+.net :is(line, circle).on, .net :is(line, circle).path, .net :is(line, circle).glow { stroke: var(--hue-ui); stroke-opacity: 1; }
+.net circle:is(.on, .path, .glow) { fill: var(--hue-ui); }
+.net[data-flag] :is(line, circle):is(.on, .path, .glow)[data-band="0"] { stroke: var(--hl-amarillo); stroke-opacity: 1; }
+.net[data-flag] :is(line, circle):is(.on, .path, .glow)[data-band="1"] { stroke: var(--hl-azul); stroke-opacity: 1; }
+.net[data-flag] :is(line, circle):is(.on, .path, .glow)[data-band="2"] { stroke: var(--hl-rojo); stroke-opacity: 1; }
+.net[data-flag] circle:is(.on, .path, .glow)[data-band="0"] { fill: var(--hl-amarillo); }
+.net[data-flag] circle:is(.on, .path, .glow)[data-band="1"] { fill: var(--hl-azul); }
+.net[data-flag] circle:is(.on, .path, .glow)[data-band="2"] { fill: var(--hl-rojo); }
+.net[data-flag] circle[data-star]:is(.on, .path, .glow) { fill: var(--star); }
+
+/* The small mark is the static logo, not a reading gauge: its path keeps the flag's
+   three colours, and the rest stays in the same neutral net as every other drawing. */
+.net[data-logo] line:not([data-logo-hue]) { stroke: var(--net); }
+.net[data-logo] circle:not([data-logo-hue]) { fill: var(--bg); stroke: var(--fg); stroke-opacity: var(--net-alpha); }
+.net[data-logo] :is(line, circle)[data-logo-hue] { stroke: var(--logo-hue); stroke-opacity: 1; }
+.net[data-logo] circle[data-logo-hue] { fill: var(--logo-hue); }
 
 .net.live line, .net.live circle { transition: stroke var(--dur-ui) var(--ease), fill var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); }
 /* The net answers (netlive.ts): a node glows in its band and fades over 600ms. */
@@ -279,10 +284,3 @@ main:focus { outline: none; }
   .site .tick { pointer-events: none; width: 2px; margin-left: -1px; height: 8px; top: -3px; }
   .site .tick .tt { display: none; }
 }
-/* The wordmark as progress: reading brightens it, it does not fill it in. The mark is a
-   38px drawing of hollow rings, and painting each ring solid in the post's hue turned it
-   into a gauge that changed colour from post to post. Its lit nodes keep the page behind
-   them and only gain strength -- full-strength bone against the resting half -- so the
-   mark still reads as the mark at every scroll position. */
-.site .brand .net :is(line, circle).p { stroke: var(--net); stroke-opacity: 1; }
-.site .brand .net circle.p { fill: var(--bg); }
