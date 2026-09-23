@@ -28,6 +28,60 @@ export function mountThreads(root: HTMLElement): () => void {
 
   const margin = matchMedia(MARGIN);
   const noteOf = (m: HTMLAnchorElement) => document.getElementById(decodeURIComponent(m.hash.slice(1)))?.closest<HTMLElement>('.note') ?? null;
+  const notes = [...prose.querySelectorAll<HTMLElement>(':scope > .note')];
+  const noteAnchors = new Map<HTMLElement, HTMLElement>();
+  for (const m of markers) {
+    const note = noteOf(m);
+    if (note && !noteAnchors.has(note)) noteAnchors.set(note, m.closest<HTMLElement>('p, li') ?? m);
+  }
+
+  // Desktop notes cannot stay in their grid rows: the tallest note makes that row as tall
+  // as its content, stretching the paragraph beside it and leaving a blank in the text.
+  // Keep each note at its marker's paragraph, then push only one that would meet the note
+  // above it. The final note's overhang becomes padding after the prose, keeping the author
+  // block clear; ResizeObserver and resize run this only after layout changes, never scrolling.
+  const noteGap = 16;
+  let layoutFrame = 0;
+  let disposed = false;
+  const layoutNotes = () => {
+    if (!margin.matches) {
+      prose.classList.remove('notes-ready');
+      prose.style.removeProperty('--note-tail');
+      for (const note of notes) note.style.removeProperty('top');
+      return;
+    }
+
+    prose.classList.add('notes-ready');
+    const proseRect = prose.getBoundingClientRect();
+    const oldTail = Number.parseFloat(prose.style.getPropertyValue('--note-tail')) || 0;
+    const contentHeight = Math.max(0, proseRect.height - oldTail);
+    let previousBottom = Number.NEGATIVE_INFINITY;
+
+    for (const note of notes) {
+      const anchor = noteAnchors.get(note);
+      if (!anchor) continue;
+      const marginTop = Number.parseFloat(getComputedStyle(note).marginTop) || 0;
+      const anchorTop = anchor.getBoundingClientRect().top - proseRect.top;
+      const top = Math.max(anchorTop, previousBottom + noteGap - marginTop);
+      note.style.top = `${Math.round(top * 100) / 100}px`;
+      previousBottom = note.getBoundingClientRect().bottom - proseRect.top;
+    }
+
+    const tail = Number.isFinite(previousBottom) ? Math.max(0, previousBottom - contentHeight) : 0;
+    if (Math.abs(tail - oldTail) > 0.5) prose.style.setProperty('--note-tail', `${Math.round(tail * 100) / 100}px`);
+  };
+  const scheduleLayout = () => {
+    if (disposed || layoutFrame) return;
+    layoutFrame = requestAnimationFrame(() => {
+      layoutFrame = 0;
+      if (!disposed) layoutNotes();
+    });
+  };
+  layoutNotes();
+  const layoutObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(scheduleLayout);
+  layoutObserver?.observe(prose);
+  for (const note of notes) layoutObserver?.observe(note);
+  if (document.fonts) void document.fonts.ready.then(scheduleLayout);
 
   // Phone: notes rest compact (CSS, keyed on html.js), opened by their marker.
   const flash = (note: HTMLElement) => {
@@ -105,11 +159,17 @@ export function mountThreads(root: HTMLElement): () => void {
     on(m, 'pointerleave', () => { if (document.activeElement !== m) clear(); });
     on(m, 'blur', clear);
   }
-  on(window, 'resize', clear);
+  on(window, 'resize', () => { clear(); scheduleLayout(); });
 
   return () => {
+    disposed = true;
+    if (layoutFrame) cancelAnimationFrame(layoutFrame);
+    layoutObserver?.disconnect();
     for (const off of offs.splice(0)) off();
     for (const t of timers.splice(0)) clearTimeout(t);
+    prose.classList.remove('notes-ready');
+    prose.style.removeProperty('--note-tail');
+    for (const note of notes) note.style.removeProperty('top');
     svg.remove();
     lit?.classList.remove('is-lit');
     lit = null;
