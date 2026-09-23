@@ -82,6 +82,8 @@ const { current, minutes, postTitle, progress } = Astro.props;
     background: linear-gradient(90deg, var(--hl-amarillo) 0 33.333%, var(--hl-azul) 33.333% 66.667%, var(--hl-rojo) 66.667% 100%);
     clip-path: inset(0 100% 0 0);
   }
+  /* Desktop reads its progress off the rail's net; a second bar up here only repeated it. */
+  @media (min-width: 1000px) { .progress { display: none; } }
   /* Phone: "Sobre mí" was a pill of words competing with the title and the time left for a
      row that has none to spare. It becomes one mark beside "Aa" -- the same size, the same
      chrome -- and keeps its words for screen readers. */

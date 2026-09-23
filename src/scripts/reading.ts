@@ -197,7 +197,7 @@ export function mountReading(root: HTMLElement, opts: { minutes: number }): () =
       ticks.forEach((x) => x.classList.remove('is-open'));
       t.classList.add('is-open');
       clearTimeout(openTimer);
-      openTimer = window.setTimeout(() => t.classList.remove('is-open'), 1600);
+      openTimer = window.setTimeout(() => t.classList.remove('is-open'), 1000);
     });
 
     const dockMq = matchMedia('(min-width: 1000px)');
