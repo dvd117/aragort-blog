@@ -93,9 +93,11 @@
 .note p + p { margin-top: .5rem; }
 .note .n { font: 600 .875rem/1 var(--mono); color: var(--hue); margin-right: .2rem; }
 @media (min-width: 1100px) {
-  .prose { display: grid; grid-template-columns: minmax(0, var(--measure)) 14rem; column-gap: 3rem; max-width: none; align-content: start; }
+  .prose { position: relative; display: grid; grid-template-columns: minmax(0, var(--measure)) 14rem; column-gap: 3rem; max-width: none; align-content: start; padding-bottom: var(--note-tail, 0px); }
   .prose > * { grid-column: 1; }
   .prose > .note { grid-column: 2; align-self: start; margin: .25em 0 0; padding: 0 0 0 .8rem; background: none; border-radius: 0; font-size: .9375rem; }
+  /* The script frees notes from their grid rows and stacks only the collisions. */
+  .js .prose.notes-ready > .note { position: absolute; top: 0; right: 0; width: 14rem; }
 }
 
 /* Enfoque: the paragraph on the reading line keeps full strength; the rest drop

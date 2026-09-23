@@ -1,6 +1,9 @@
 // @vitest-environment happy-dom
+import { readFileSync } from 'node:fs';
 import { afterEach, expect, it, vi } from 'vitest';
 import { initReading } from '../src/scripts/reading';
+
+const globalCss = readFileSync('src/styles/global.css', 'utf8');
 
 const rect = (top: number, height: number) => ({
   top,
@@ -18,6 +21,10 @@ afterEach(() => {
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
   document.body.innerHTML = '';
+});
+
+it('hides desktop chapter notches when the rail dock is active', () => {
+  expect(globalCss).toContain('.site .ticks[inert] { display: none; }');
 });
 
 it('recomputes chapter placement when a selected font finishes loading', () => {

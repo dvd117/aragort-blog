@@ -20,9 +20,34 @@ function build() {
   };
 }
 
-function stubEnv() {
-  vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
+function stubEnv(desktop = false) {
+  vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: desktop, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
   vi.stubGlobal('innerHeight', 800);
+}
+
+function buildTwoNotes() {
+  document.body.innerHTML = `
+    <article class="post">
+      <div class="post-grid">
+        <div class="prose">
+          <p id="p-1">Texto<a class="nref" href="#nota-1">1</a>.</p>
+          <aside class="note"><p id="nota-1"><span class="n">1</span> La primera nota.</p></aside>
+          <p id="p-2">Más texto<a class="nref" href="#nota-2">2</a>.</p>
+          <aside class="note"><p id="nota-2"><span class="n">2</span> La segunda nota.</p></aside>
+        </div>
+      </div>
+    </article>`;
+  return {
+    article: document.querySelector<HTMLElement>('.post')!,
+    prose: document.querySelector<HTMLElement>('.prose')!,
+    first: document.querySelector<HTMLElement>('.note')!,
+    second: document.querySelectorAll<HTMLElement>('.note')[1]!,
+    paragraphs: [...document.querySelectorAll<HTMLElement>('.prose > p')],
+  };
+}
+
+function rect(x: number, y: number, width: number, height: number): DOMRect {
+  return { x, y, left: x, top: y, right: x + width, bottom: y + height, width, height, toJSON: () => ({}) } as DOMRect;
 }
 
 afterEach(() => {
@@ -61,5 +86,26 @@ it('reads its markers from the root it is given', () => {
   const dispose = mountThreads(detached);
 
   expect(grid.querySelector('svg.thread')).toBeNull();
+  dispose();
+});
+
+it('lets desktop notes hang below their citing paragraphs and pushes colliding notes down', () => {
+  stubEnv(true);
+  const { article, prose, first, second, paragraphs } = buildTwoNotes();
+  first.style.marginTop = '4px';
+  second.style.marginTop = '4px';
+
+  vi.spyOn(prose, 'getBoundingClientRect').mockReturnValue(rect(100, 100, 500, 110));
+  vi.spyOn(paragraphs[0]!, 'getBoundingClientRect').mockReturnValue(rect(100, 120, 200, 40));
+  vi.spyOn(paragraphs[1]!, 'getBoundingClientRect').mockReturnValue(rect(100, 160, 200, 30));
+  vi.spyOn(first, 'getBoundingClientRect').mockImplementation(() => rect(400, 100 + (parseFloat(first.style.top) || 0) + 4, 100, 80));
+  vi.spyOn(second, 'getBoundingClientRect').mockImplementation(() => rect(400, 100 + (parseFloat(second.style.top) || 0) + 4, 100, 100));
+
+  const dispose = mountThreads(article);
+
+  expect(first.style.top).toBe('20px');
+  expect(second.style.top).toBe('116px');
+  expect(prose.style.getPropertyValue('--note-tail')).toBe('110px');
+
   dispose();
 });

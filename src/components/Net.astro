@@ -1,6 +1,7 @@
 ---
 /* The net, after Gego's Reticulárea. Geometry is frozen in src/assets/net/geometry.ts. */
 import { nets, type NetName } from '../assets/net/geometry';
+import { flagNodes } from '../lib/flag';
 
 interface Props {
   name: NetName;
@@ -11,10 +12,11 @@ interface Props {
   respond?: boolean;
   /** Nodes that never drift (the exit node the index wire hangs from). */
   pin?: number[];
+  /** The static site logo: the same connected flag path used on the OG card. */
+  logo?: boolean;
   /**
-   * Paint the net in the flag's three bands by height: amarillo over azul over rojo.
-   * Every net takes it now -- the mark included -- so the flag is the site's one identity
-   * and not a thing that only the big nets do.
+   * Paint a large net in the flag's three bands by height: amarillo over azul over rojo.
+   * The small logo uses its connected path instead; three bands in 48px would be mush.
    */
   flag?: boolean;
   /**
@@ -24,7 +26,7 @@ interface Props {
    */
   dim?: boolean;
 }
-const { name, class: className, progress = false, respond = false, pin, flag = false, dim = false } = Astro.props;
+const { name, class: className, progress = false, respond = false, pin, flag = false, dim = false, logo = false } = Astro.props;
 const g = nets[name];
 const lit = new Set<number>(g.lit);
 // Which third of the net a y falls in. A wire takes the band of its midpoint, so a wire
@@ -53,27 +55,38 @@ if (flag) {
   viewBox={`0 0 ${g.w} ${g.h}`}
   data-progress={progress ? '' : undefined}
   data-respond={respond ? '' : undefined}
+  data-logo={logo ? '' : undefined}
   data-flag={flag ? '' : undefined}
   data-dim={dim ? '' : undefined}
   data-pin={pin?.length ? pin.join(',') : undefined}
   aria-hidden="true"
   focusable="false"
 >
-  {g.edges.map(([a, b]) => (
-    <line
-      x1={g.nodes[a]![0]} y1={g.nodes[a]![1]} x2={g.nodes[b]![0]} y2={g.nodes[b]![1]}
-      data-a={a} data-b={b}
-      data-band={band((g.nodes[a]![1] + g.nodes[b]![1]) / 2)}
-      class={lit.has(a) && lit.has(b) ? 'on' : undefined}
-    />
-  ))}
-  {g.nodes.map(([x, y], i) => (
-    <circle
-      cx={x} cy={y} r={g.r}
-      data-o={i}
-      data-band={band(y)}
-      data-star={stars.has(i) ? '' : undefined}
-      class={lit.has(i) ? 'on' : undefined}
-    />
-  ))}
+  {g.edges.map(([a, b]) => {
+    const hue = logo && flagNodes.has(a) && flagNodes.has(b) ? flagNodes.get(a) : undefined;
+    return (
+      <line
+        x1={g.nodes[a]![0]} y1={g.nodes[a]![1]} x2={g.nodes[b]![0]} y2={g.nodes[b]![1]}
+        data-a={a} data-b={b}
+        data-band={band((g.nodes[a]![1] + g.nodes[b]![1]) / 2)}
+        data-logo-hue={hue}
+        style={hue ? `--logo-hue: var(--hl-${hue})` : undefined}
+        class={lit.has(a) && lit.has(b) ? 'on' : undefined}
+      />
+    );
+  })}
+  {g.nodes.map(([x, y], i) => {
+    const hue = logo ? flagNodes.get(i) : undefined;
+    return (
+      <circle
+        cx={x} cy={y} r={g.r}
+        data-o={i}
+        data-band={band(y)}
+        data-star={stars.has(i) ? '' : undefined}
+        data-logo-hue={hue}
+        style={hue ? `--logo-hue: var(--hl-${hue})` : undefined}
+        class={lit.has(i) ? 'on' : undefined}
+      />
+    );
+  })}
 </svg>
