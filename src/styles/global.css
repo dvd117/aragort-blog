@@ -259,7 +259,7 @@ main:focus { outline: none; }
 /* The chapters on the header's progress line (built by reading.ts). On a phone this is
    the rail's dock: each notch is a tap target that takes you to its chapter, and a press
    or a hover opens the number and the title under the line. On desktop the rail already
-   carries the dock, so here the notches go back to being notches. */
+   carries the dock, so the inert host is hidden and the progress bar stays clear. */
 .site .ticks { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; z-index: 2; }
 .site .tick { position: absolute; top: -4px; width: 40px; height: 30px; margin-left: -20px; pointer-events: auto; text-decoration: none; -webkit-tap-highlight-color: transparent; }
 .site .tick i { position: absolute; left: 50%; top: 1px; width: 2px; height: 8px; margin-left: -1px; background: var(--fg-2); border-radius: 1px; transform: scaleY(1); transform-origin: top center; transition: background-color var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease); }
@@ -279,8 +279,9 @@ main:focus { outline: none; }
    0 for every label that already fits. Anchoring to the tick instead of to the viewport
    was the old bug -- `left: var(--gutter)` is relative to the tick, so it only landed on
    the screen gutter for a tick that was already at the edge. */
-/* Desktop keeps the rail's dock; up here the notches are read-only again. */
+/* syncDock in reading.ts makes the host inert when the desktop rail dock exists. */
 @media (min-width: 1000px) {
+  .site .ticks[inert] { display: none; }
   .site .tick { pointer-events: none; width: 2px; margin-left: -1px; height: 8px; top: -3px; }
   .site .tick .tt { display: none; }
 }

@@ -159,8 +159,7 @@ export function mountReading(root: HTMLElement, opts: { minutes: number }): () =
     // The chapters on the progress line. On a phone this is the rail's dock: each notch
     // is a link to its chapter with a 40px tap target around it, and a press or a hover
     // opens its number and title under the line. On desktop the rail carries the dock, so
-    // the host is made inert there -- the notches stay as marks and the same chapters are
-    // not in the tab order twice.
+    // the host is made inert and hidden by global.css; the same chapters are not duplicated.
     host = document.createElement('nav');
     const mountedHost = host;
     mountedHost.className = 'ticks';
