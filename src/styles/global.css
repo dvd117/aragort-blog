@@ -261,7 +261,11 @@ main:focus { outline: none; }
    or a hover opens the number and the title under the line. On desktop the rail already
    carries the dock, so the inert host is hidden and the progress bar stays clear. */
 .site .ticks { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; pointer-events: none; z-index: 2; }
-.site .tick { position: absolute; top: -4px; width: 40px; height: 30px; margin-left: -20px; pointer-events: auto; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+/* The phone-only scrub target straddles the header edge. Chapter links sit above it, while
+   the row's own controls keep their higher layer so a larger hit area cannot steal a tap. */
+.site .scrub-strip { position: absolute; left: 0; right: 0; top: -11px; width: 100%; height: 24px; box-sizing: border-box; padding: 0; border: 0; border-radius: 0; background: transparent; color: transparent; touch-action: none; pointer-events: auto; z-index: 0; -webkit-tap-highlight-color: transparent; }
+.site .brand, .site nav, .site .ajustes-btn { position: relative; z-index: 3; }
+.site .tick { position: absolute; top: -4px; z-index: 1; width: 40px; height: 30px; margin-left: -20px; pointer-events: auto; text-decoration: none; -webkit-tap-highlight-color: transparent; }
 .site .tick i { position: absolute; left: 50%; top: 1px; width: 2px; height: 8px; margin-left: -1px; background: var(--fg-2); border-radius: 1px; transform: scaleY(1); transform-origin: top center; transition: background-color var(--dur-ui) var(--ease), transform var(--dur-ui) var(--ease); }
 .site .tick.past i { background: var(--hue-ui); }
 .site .tick[hidden] { display: none; }
@@ -272,8 +276,8 @@ main:focus { outline: none; }
 .site .tick[data-band="1"] { --hue: var(--h-azul); --hue-ui: var(--hu-azul); }
 .site .tick[data-band="2"] { --hue: var(--h-rojo); --hue-ui: var(--hu-rojo); }
 .site .tick .tt b { flex: none; font: 600 .75rem/1.2 var(--mono); color: var(--hue); }
-.site .tick:hover .tt, .site .tick:focus-visible .tt, .site .tick.is-open .tt { opacity: 1; transform: translateX(calc(-50% + var(--tt-shift, 0px))) translateY(0); }
-.site .tick:hover i, .site .tick:focus-visible i, .site .tick.is-open i { background: var(--hue-ui); transform: scaleY(1.375); }
+.site .tick:hover .tt, .site .tick:focus-visible .tt, .site .tick.is-open .tt, .site .tick.is-scrubbing .tt { opacity: 1; transform: translateX(calc(-50% + var(--tt-shift, 0px))) translateY(0); }
+.site .tick:hover i, .site .tick:focus-visible i, .site .tick.is-open i, .site .tick.is-scrubbing i { background: var(--hue-ui); transform: scaleY(1.375); }
 /* A label near either edge would hang off the screen if it stayed centred. reading.ts
    measures it and sets --tt-shift: the pixels needed to pull it back inside the gutter,
    0 for every label that already fits. Anchoring to the tick instead of to the viewport

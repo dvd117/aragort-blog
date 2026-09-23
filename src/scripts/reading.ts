@@ -164,6 +164,12 @@ export function mountReading(root: HTMLElement, opts: { minutes: number }): () =
     const mountedHost = host;
     mountedHost.className = 'ticks';
     mountedHost.setAttribute('aria-label', 'Capítulos');
+    const scrub = document.createElement('button');
+    scrub.type = 'button';
+    scrub.className = 'scrub-strip';
+    scrub.tabIndex = -1;
+    scrub.setAttribute('aria-hidden', 'true');
+    mountedHost.append(scrub);
     ticks = heads.map((h, i) => {
       const a = document.createElement('a');
       a.className = 'tick';
@@ -198,6 +204,60 @@ export function mountReading(root: HTMLElement, opts: { minutes: number }): () =
     const syncDock = () => { mountedHost.inert = dockMq.matches && tocLinks.length > 0; };
     on(dockMq, 'change', syncDock);
     syncDock();
+
+    let pointerId: number | null = null;
+    let startX = 0;
+    let dragging = false;
+    let scrubTick: HTMLElement | null = null;
+    const hideScrubTick = () => {
+      scrubTick?.classList.remove('is-scrubbing');
+      scrubTick = null;
+    };
+    const showScrubTick = (p: number) => {
+      const current = Math.max(0, marks_.filter((m) => m <= p + 0.001).length - 1);
+      const next = ticks[current] ?? null;
+      if (next !== scrubTick) {
+        hideScrubTick();
+        scrubTick = next;
+        scrubTick?.classList.add('is-scrubbing');
+      }
+    };
+    const scrubTo = (clientX: number) => {
+      const r = scrub.getBoundingClientRect();
+      if (!r.width) return;
+      const p = Math.min(1, Math.max(0, (clientX - r.left) / r.width));
+      const g = grid.getBoundingClientRect();
+      const targetTop = innerHeight * 0.65 - p * g.height;
+      window.scrollTo({ top: window.scrollY + g.top - targetTop, behavior: 'instant' });
+      showScrubTick(p);
+    };
+    on(scrub, 'pointerdown', (e: Event) => {
+      const pointer = e as PointerEvent;
+      if (dockMq.matches) return;
+      pointerId = pointer.pointerId;
+      startX = pointer.clientX;
+      dragging = false;
+      scrub.setPointerCapture(pointerId);
+      e.preventDefault();
+    });
+    on(scrub, 'pointermove', (e: Event) => {
+      const pointer = e as PointerEvent;
+      if (pointerId !== pointer.pointerId) return;
+      if (!dragging && Math.abs(pointer.clientX - startX) < 6) return;
+      dragging = true;
+      e.preventDefault();
+      scrubTo(pointer.clientX);
+    });
+    const endScrub = (e: Event) => {
+      const pointer = e as PointerEvent;
+      if (pointerId !== pointer.pointerId) return;
+      pointerId = null;
+      if (dragging) hideScrubTick();
+      dragging = false;
+    };
+    on(scrub, 'pointerup', endScrub);
+    on(scrub, 'pointercancel', endScrub);
+    on(scrub, 'lostpointercapture', endScrub);
 
     const place = () => {
       bandBlocks();

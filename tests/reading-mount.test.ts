@@ -59,6 +59,37 @@ function buildPulseRoot() {
   };
 }
 
+function prepareScrub() {
+  stubEnv();
+  const { article, setTop } = build();
+  setTop(520);
+  [100, 400, 700].forEach((offset, index) => {
+    Object.defineProperty(article.querySelectorAll<HTMLElement>('.prose > h2')[index]!, 'getBoundingClientRect', {
+      configurable: true,
+      value: () => rect(520 + offset, 40),
+    });
+  });
+  const scrollTo = vi.fn();
+  vi.stubGlobal('scrollTo', scrollTo);
+  const dispose = mountReading(article, { minutes: 5 });
+  const scrub = document.querySelector<HTMLButtonElement>('.scrub-strip');
+  if (scrub) {
+    Object.defineProperty(scrub, 'getBoundingClientRect', { configurable: true, value: () => rect(0, 24) });
+    Object.defineProperty(scrub, 'setPointerCapture', { configurable: true, value: vi.fn() });
+  }
+  return { scrub, dispose, scrollTo };
+}
+
+const pointer = (type: string, clientX: number, pointerId = 1) => {
+  const event = new Event(type, { bubbles: true, cancelable: true });
+  Object.defineProperties(event, {
+    clientX: { value: clientX },
+    pointerId: { value: pointerId },
+    pointerType: { value: 'touch' },
+  });
+  return event as PointerEvent;
+};
+
 function stubTimers() {
   const pending = new Map<number, () => void>();
   let next = 1;
@@ -111,6 +142,62 @@ it('keeps the site and signature logos static while reading', () => {
 
   expect(document.querySelectorAll('.site .brand .net .p, .sig .net .p')).toHaveLength(0);
   dispose();
+});
+
+it('scrubs to the reading position under the pointer', () => {
+  const { scrub, dispose, scrollTo } = prepareScrub();
+  expect(scrub).not.toBeNull();
+  if (!scrub) { dispose(); return; }
+
+  scrub.dispatchEvent(pointer('pointerdown', 100));
+  scrub.dispatchEvent(pointer('pointermove', 300));
+  expect(document.querySelector('.tick.is-scrubbing')).not.toBeNull();
+  scrub.dispatchEvent(pointer('pointerup', 300));
+
+  expect(scrub.setPointerCapture).toHaveBeenCalledWith(1);
+  expect(scrollTo).toHaveBeenCalledWith({ top: 500, behavior: 'instant' });
+  expect(document.querySelector('.tick.is-scrubbing')).toBeNull();
+  dispose();
+});
+
+it('does not scroll for a press below the drag threshold', () => {
+  const { scrub, dispose, scrollTo } = prepareScrub();
+  expect(scrub).not.toBeNull();
+  if (!scrub) { dispose(); return; }
+
+  scrub.dispatchEvent(pointer('pointerdown', 200));
+  scrub.dispatchEvent(pointer('pointermove', 205));
+  scrub.dispatchEvent(pointer('pointerup', 205));
+
+  expect(scrollTo).not.toHaveBeenCalled();
+  dispose();
+});
+
+it('keeps the chapter tick tap opening its pill', () => {
+  stubEnv();
+  const { article } = build();
+  const dispose = mountReading(article, { minutes: 5 });
+  const tick = document.querySelectorAll<HTMLElement>('.site .tick')[1]!;
+
+  tick.dispatchEvent(pointer('pointerdown', 240));
+
+  expect(tick.getAttribute('href')).toBe('#two');
+  expect(tick.classList.contains('is-open')).toBe(true);
+  dispose();
+});
+
+it('removes the scrub pointer listeners when disposed', () => {
+  const { scrub, dispose, scrollTo } = prepareScrub();
+  expect(scrub).not.toBeNull();
+  if (!scrub) { dispose(); return; }
+  const capture = vi.spyOn(scrub, 'setPointerCapture');
+
+  dispose();
+  scrub.dispatchEvent(pointer('pointerdown', 100));
+  scrub.dispatchEvent(pointer('pointermove', 300));
+
+  expect(capture).not.toHaveBeenCalled();
+  expect(scrollTo).not.toHaveBeenCalled();
 });
 
 it('removes the chapter notches it added to the site header', () => {
