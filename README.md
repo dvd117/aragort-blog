@@ -51,7 +51,7 @@ A post is **v1 when published**. Each commit to its file **after the filename da
 
 Each post owns one of the three colours of the Venezuelan flag, in the order they appear on it: `amarillo`, `azul`, `rojo`. They are muted to the page's palette — a quiet reference, not a flag drawn on the screen. Set one with `hue:` in the frontmatter, or leave it out: it is then assigned from the slug by a hash (`src/lib/hue.ts`), stable across builds and independent of post order. The order never shuffles.
 
-Only one hue rules a page at a time. It sits on `<html>`, and everything reads it — links, dots, rules, the reading rail, the progress line, footnote markers, the margin-note edge, and every net on the page (header mark, hero, rail, portrait, footer mark). A post wears its own; the landing takes the hue of whichever entry is under the cursor, so a post's colour stays hidden until you reach for it and then takes the whole page. The landing and Sobre mí open in the hue of the last post read on this device, applied inline before first paint (`src/lib/lasthue.ts`). `--focus` is the one mark that never changes hue: the focus ring, and the favicon.
+Only one hue rules a page at a time. It sits on `<html>`, and everything reads it — links, dots, rules, the reading rail, the progress line, footnote markers, the margin-note edge, and every net on the page (header mark, hero, rail, portrait, footer mark). A post wears its own; the landing takes the hue of whichever entry is under the cursor, so a post's colour stays hidden until you reach for it and then takes the whole page. The landing and Sobre mí open in the hue of the last post read on this device, applied inline before first paint (`src/lib/lasthue.ts`). `--focus` is the one mark that never changes hue: the focus ring. The favicon is fixed too: the mark's three flag nodes.
 
 Links are set in the hue (text); dots, nodes, rails and rules use a more saturated UI variant in the light themes (3:1).
 
@@ -107,7 +107,7 @@ Requires Node 22.12 or later. After changing a Markdown plugin (`src/lib/rehype-
 
 ## The net
 
-The mark, the index figure and the reading rail share one frozen geometry, after Gego's *Reticulárea*: `src/assets/net/geometry.ts`. It was generated once by `scripts/generate-net.py` (standard library, fixed seeds) and is committed, so the mark is identical on every build. Rerun the script only to change the mark on purpose; it also writes `public/favicon.svg`.
+The mark, the index figure and the reading rail share one frozen geometry, after Gego's *Reticulárea*: `src/assets/net/geometry.ts`. It was generated once by `scripts/generate-net.py` (standard library, fixed seeds) and is committed, so the mark is identical on every build. Rerun the script only to change the mark on purpose. The favicon and the Apple touch icon are built from the same geometry (`src/lib/favicon.ts`).
 
 The rail keeps its own column shape (42 nodes).
 

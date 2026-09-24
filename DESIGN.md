@@ -194,9 +194,13 @@ decoration that means nothing.
   dark), then dark. The base CSS is dark. Dark is OLED black (`#000`), with reading text
   at `#cfccc4` against halation; panels (`#101113`) and rules (`#24272c`) still separate
   from black. "Sistema" is the first option in Ajustes.
-- **`--focus`** is the focus ring and the favicon: the one mark that never changes hue.
+- **`--focus`** is the focus ring: the one mark that never changes hue.
   Nothing else is a fixed brand colour any more -- the wordmark node and every other lit
   node take the ruling hue like everything else.
+- **The favicon is the flag thread.** Only the mark's three flag nodes -- amarillo, azul,
+  rojo, at their place in the net -- on the dark card in every theme, like the OG card,
+  because the whole net is mush at 16px. It is built from the frozen geometry
+  (`src/lib/favicon.ts`), with a 180px Apple touch icon beside it.
 - **The three post hues are the flag's**, in the order they appear on it: amarillo, azul,
   rojo, muted to the page. A quiet reference, not a flag drawn on the screen. Each belongs
   to one post by its place in the list. A hue colours its post's rail, progress line,
