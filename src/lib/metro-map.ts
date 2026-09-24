@@ -154,6 +154,35 @@ export function buildAndenLines(posts: readonly MetroPostSummary[]): AndenLineMo
   });
 }
 
+export interface AndenPostRouteModel {
+  line: MetroLine;
+  station: MetroStation;
+  stops: MetroStation[];
+  stationNumber: number;
+  nextStop: MetroStation | undefined;
+  transfers: MetroLine[];
+}
+
+/** Route position and onward connections for one published Andén essay. */
+export function buildAndenPostRoute(slug: string): AndenPostRouteModel | undefined {
+  const station = STATIONS.find((candidate) => candidate.slug === slug);
+  const line = lineOf(slug);
+  if (!station || !line) return undefined;
+
+  const stops = stopsOf(line.id);
+  const index = stops.findIndex(({ id }) => id === station.id);
+  if (index < 0) return undefined;
+
+  return {
+    line,
+    station,
+    stops,
+    stationNumber: index + 1,
+    nextStop: stops[index + 1],
+    transfers: transfersAt(station.id, line.id),
+  };
+}
+
 export function buildMap(direction: Direction, opts: { unit?: number } = {}): MetroMapModel {
   const unit = opts.unit ?? DEFAULT_UNIT;
   const rawTracks = LINES.map((line) => ({

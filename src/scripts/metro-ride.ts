@@ -2,6 +2,14 @@ interface LitMarker {
   dataset: { lit?: string };
 }
 
+type RideOrientation = 'horizontal' | 'vertical';
+
+export function rideAxis(orientation: RideOrientation | undefined, narrowViewport: boolean): 'x' | 'y' {
+  if (orientation === 'horizontal') return 'x';
+  if (orientation === 'vertical') return 'y';
+  return narrowViewport ? 'x' : 'y';
+}
+
 export function markStopLit(marker: LitMarker): boolean {
   if (marker.dataset.lit === 'true') return false;
   marker.dataset.lit = 'true';
@@ -64,8 +72,13 @@ function initChapterStrip(): void {
   let furthest = 0;
   let frame = 0;
   const update = () => {
-    const horizontal = window.matchMedia('(max-width: 999px)').matches;
-    list.dataset.rideAxis = horizontal ? 'x' : 'y';
+    const requestedOrientation = strip.dataset.rideOrientation;
+    const orientation = requestedOrientation === 'horizontal' || requestedOrientation === 'vertical'
+      ? requestedOrientation
+      : undefined;
+    const axis = rideAxis(orientation, window.matchMedia('(max-width: 999px)').matches);
+    const horizontal = axis === 'x';
+    list.dataset.rideAxis = axis;
     const listRect = list.getBoundingClientRect();
     const dotRects = stations.map((station) => station.querySelector<HTMLElement>('[data-ride-dot]')!.getBoundingClientRect());
     const first = dotRects[0]!;
@@ -86,6 +99,10 @@ function initChapterStrip(): void {
       if (index === active) station.setAttribute('aria-current', 'location');
       else station.removeAttribute('aria-current');
     });
+
+    const currentTitle = strip.querySelector<HTMLElement>('[data-ride-current-title]');
+    const activeTitle = stations[active]?.querySelector<HTMLElement>('.metro-ride-title')?.textContent?.trim() ?? '';
+    if (currentTitle && currentTitle.textContent !== activeTitle) currentTitle.textContent = activeTitle;
 
     furthest = advanceHighWater(furthest, chapterProgress(headingPositions, readingLine));
     const carWidth = train.getBoundingClientRect().width || 26;

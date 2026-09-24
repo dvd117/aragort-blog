@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildAndenLines, type MetroPostSummary } from '../src/lib/metro-map';
+import { buildAndenLines, buildAndenPostRoute, type MetroPostSummary } from '../src/lib/metro-map';
 
 const posts: MetroPostSummary[] = [
   {
@@ -53,5 +53,35 @@ describe('Andén landing route model', () => {
       post: { slug: 'acceso-a-internet-y-movilizacion-social-en-cuba' },
       transfers: [],
     });
+  });
+});
+
+describe('Andén post route model', () => {
+  it('derives the chatbots station number, planned next stop and other service line', () => {
+    const route = buildAndenPostRoute('por-que-deje-los-chatbots');
+
+    expect(route).toMatchObject({
+      station: { id: 'chatbots', slug: 'por-que-deje-los-chatbots' },
+      line: { id: 'l1', num: 1 },
+      stops: [{ id: 'chatbots' }, { id: 'terminal' }, { id: 'markdown' }, { id: 'carrera' }],
+      stationNumber: 1,
+      nextStop: { id: 'terminal' },
+      transfers: [{ id: 'l5', num: 5 }],
+    });
+    expect(route?.nextStop?.slug).toBeUndefined();
+  });
+
+  it('keeps the final Cuba station at the end of line five with no next stop or transfer', () => {
+    const route = buildAndenPostRoute('acceso-a-internet-y-movilizacion-social-en-cuba');
+
+    expect(route).toMatchObject({
+      station: { id: 'cuba' },
+      line: { id: 'l5', num: 5 },
+      stationNumber: 2,
+      stops: [{ id: 'chatbots' }, { id: 'cuba' }],
+      transfers: [],
+    });
+    expect(route?.nextStop).toBeUndefined();
+    expect(buildAndenPostRoute('not-a-live-post')).toBeUndefined();
   });
 });

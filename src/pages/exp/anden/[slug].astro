@@ -1,0 +1,135 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Interchange from '../../../components/metro/Interchange.astro';
+import Metro from '../../../layouts/Metro.astro';
+import { COPY, STATIONS } from '../../../data/metro';
+import { getPosts, type Post } from '../../../lib/collection';
+import { buildAndenPostRoute } from '../../../lib/metro-map';
+import { formatDateEs } from '../../../lib/posts';
+import '../../../styles/post.css';
+import '../../../styles/metro-anden.css';
+
+export const getStaticPaths = (async () => {
+  const liveSlugs = new Set(STATIONS.flatMap((station) => station.slug ? [station.slug] : []));
+  return (await getPosts())
+    .filter((post) => liveSlugs.has(post.slug))
+    .map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}) satisfies GetStaticPaths;
+
+interface Props { post: Post; }
+const { post } = Astro.props;
+const { Content, headings } = await render(post.entry);
+const chapters = headings.filter((heading) => heading.depth === 2);
+const route = buildAndenPostRoute(post.slug);
+if (!route) throw new Error(`No Andén service route for ${post.slug}.`);
+
+const hueStyle = [
+  `--line-colour:${route.line.colour.anden}`,
+  `--hue:${route.line.text.anden}`,
+  `--hue-ui:${route.line.colour.anden}`,
+  `--hue-band:${route.line.colour.anden}26`,
+].join(';');
+---
+
+<Metro direction="anden" title={`${post.title} · ${COPY.autor}`}>
+  <div class="anden-post-head wrap" slot="header" style={hueStyle}>
+    <a class="anden-back" href="/exp/anden/">{COPY.volverAnden}</a>
+    <p class="anden-post-kicker">
+      {COPY.linea} {route.line.num}
+      <span aria-hidden="true"> · </span>
+      {route.line.name}
+      <span aria-hidden="true"> · </span>
+      {COPY.estacion} {route.stationNumber} {COPY.de} {route.stops.length}
+    </p>
+    <h1>{post.title}</h1>
+    <p class="anden-post-meta">
+      <time datetime={post.date}>{formatDateEs(post.date)}</time>
+      <span>{post.minutes} {COPY.minLectura}</span>
+    </p>
+  </div>
+
+  <article class="anden-post" data-chapter-ride style={hueStyle}>
+    <nav
+      class="anden-chapter-strip"
+      data-ride-strip
+      data-ride-orientation="horizontal"
+      aria-label={COPY.capitulos}
+    >
+      <div class="anden-chapter-band" aria-hidden="true"></div>
+      <ol class="metro-ride-stations wrap" data-ride-stations data-ride-axis="x">
+        {chapters.map((chapter, index) => (
+          <li>
+            <a
+              href={`#${chapter.slug}`}
+              data-ride-station
+              data-chapter={index}
+              aria-label={chapter.text}
+              title={chapter.text}
+            >
+              <span class="metro-ride-dot" data-ride-dot aria-hidden="true"></span>
+              <span class="metro-ride-title">{chapter.text}</span>
+              <span class="metro-ride-current visually-hidden">{COPY.usted}</span>
+            </a>
+          </li>
+        ))}
+        <li class="metro-ride-car-wrap" aria-hidden="true">
+          <span class="metro-ride-car" data-ride-train></span>
+        </li>
+      </ol>
+      <p class="metro-ride-current-title" data-ride-current-title aria-live="polite"></p>
+    </nav>
+
+    <div class="anden-post-body">
+      <div class="prose anden-post-prose">
+        <Content />
+      </div>
+
+      <section class="anden-post-end" aria-labelledby="anden-finish">
+        <h2 id="anden-finish">{COPY.finRecorrido}</h2>
+        <h3>{COPY.proxima}</h3>
+        {route.nextStop ? (
+          <p class="anden-next-stop">
+            {route.nextStop.slug ? (
+              <a href={`/exp/anden/${route.nextStop.slug}/`}>{route.nextStop.title}</a>
+            ) : (
+              <span class="anden-planned-title">{route.nextStop.title}</span>
+            )}
+            {!route.nextStop.slug && <span class="anden-planned-tag">{COPY.enConstruccion}</span>}
+          </p>
+        ) : (
+          <p class="anden-next-stop">{COPY.finLinea}</p>
+        )}
+        {route.transfers.length > 0 && (
+          <ul class="anden-transfers anden-end-transfers" aria-label={COPY.transbordo}>
+            {route.transfers.map((other) => (
+              <li>
+                <a
+                  class="anden-transfer"
+                  href={`/exp/anden/#linea-${other.num}`}
+                  style={`--transfer-colour:${other.colour.anden}`}
+                >
+                  <span class="anden-transfer-dot" aria-hidden="true"></span>
+                  <span>{COPY.transbordo}: {COPY.linea} {other.num}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+        <a class="anden-back-to-map" href="/exp/anden/">{COPY.volverAlAnden}</a>
+      </section>
+    </div>
+  </article>
+
+  <div class="anden-footer wrap" slot="footer">
+    <Interchange size={40} direction="anden" />
+    <span class="anden-footer-scale">{COPY.planoNoAEscala}</span>
+    <a href="/">{COPY.versionActual}</a>
+    <a href="/rss.xml">{COPY.rss}</a>
+  </div>
+</Metro>
+
+<script>
+  import { initMetroRide } from '../../../scripts/metro-ride';
+  initMetroRide();
+</script>

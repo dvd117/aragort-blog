@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { advanceHighWater, chapterProgress, currentChapterIndex, markStopLit } from '../src/scripts/metro-ride';
+import { advanceHighWater, chapterProgress, currentChapterIndex, markStopLit, rideAxis } from '../src/scripts/metro-ride';
 
 describe('metro ride', () => {
+  it('keeps a requested horizontal strip horizontal at desktop widths without changing direction A defaults', () => {
+    expect(rideAxis('horizontal', false)).toBe('x');
+    expect(rideAxis(undefined, false)).toBe('y');
+    expect(rideAxis(undefined, true)).toBe('x');
+  });
+
   it('keeps the furthest chapter progress reached, bounded to the strip', () => {
     expect(advanceHighWater(0.72, 0.31)).toBe(0.72);
     expect(advanceHighWater(0.31, 0.72)).toBe(0.72);
