@@ -32,7 +32,7 @@ const numberInk = ratio(GROUNDS.pol.bg, line.colour.pol) >= ratio(GROUNDS.pol.in
   ? GROUNDS.pol.bg
   : GROUNDS.pol.ink;
 const rideColour = `--line-colour:${line.colour.pol};--number-ink:${numberInk}`;
-const hueStyle = `--hue:${line.text.pol};--hue-ui:${line.colour.pol};--hue-band:${line.colour.pol}26`;
+const hueStyle = `--hue:${line.text.pol};--hue-ui:${line.colour.pol};--hue-band:${line.colour.pol}26;--line-colour:${line.colour.pol}`;
 ---
 
 <Metro direction="pol" title={`${post.title} · ${COPY.autor}`}>

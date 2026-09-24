@@ -73,7 +73,7 @@ const numeralColour = (lineColour: string) =>
                 const post = station.slug ? postBySlug.get(station.slug) : undefined;
                 const otherLines = LINES.filter(({ id }) => id !== line.id && ROUTES[id].stops.includes(station.id));
                 return (
-                  <li class="pol-stop" data-stop={station.id} data-line={line.id}>
+                  <li class="pol-stop" data-stop={station.id}>
                     <span class="pol-stop-marker" data-stop-marker aria-hidden="true"></span>
                     <div class="pol-stop-copy">
                       <div class="pol-stop-title">
