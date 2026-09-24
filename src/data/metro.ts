@@ -74,12 +74,22 @@ export const ROUTES: Record<LineId, MetroRoute> = {
 };
 
 export const COPY = {
+  autor: 'David Aragort',
+  sobreMi: 'Sobre mí',
+  tituloPlano: 'Cada escrito es una estación.',
+  lede: 'Esta serie crece línea por línea; ya puedes leer dos estaciones y las demás llegarán próximamente.',
   planoNoAEscala: 'Plano no a escala',
+  desliza: 'Desliza para ver el plano completo',
+  lineas: 'Líneas',
+  estaciones: 'Estaciones',
+  versionActual: 'Versión actual del sitio',
+  rss: 'RSS',
   enConstruccion: 'En construcción',
   proximamente: 'Próximamente',
   transbordo: 'Transbordo',
   linea: 'Línea',
   estacion: 'Estación',
+  minLectura: 'min de lectura',
   informacion: 'Información al usuario',
   usted: 'Usted está aquí',
   proxima: 'Próxima estación',

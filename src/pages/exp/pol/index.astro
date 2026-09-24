@@ -1,8 +1,126 @@
 ---
-import Metro from '../../../layouts/Metro.astro';
+import { ratio } from '../../../lib/contrast';
+import { getPosts, type Post } from '../../../lib/collection';
+import { formatDateEs } from '../../../lib/posts';
+import Interchange from '../../../components/metro/Interchange.astro';
 import MetroMap from '../../../components/metro/MetroMap.astro';
+import Metro from '../../../layouts/Metro.astro';
+import { COPY, GROUNDS, LINES, ROUTES } from '../../../data/metro';
+import { stopsOf } from '../../../lib/metro-map';
+import '../../../styles/metro-pol.css';
+
+const posts = await getPosts();
+const postBySlug = new Map<string, Post>(posts.map((post) => [post.slug, post]));
+
+const numeralColour = (lineColour: string) =>
+  ratio(GROUNDS.pol.bg, lineColour) >= ratio(GROUNDS.pol.ink, lineColour)
+    ? GROUNDS.pol.bg
+    : GROUNDS.pol.ink;
 ---
 
-<Metro direction="pol">
-  <MetroMap direction="pol" />
+<Metro direction="pol" title={`${COPY.tituloPlano} · ${COPY.autor}`}>
+  <div class="pol-header wrap" slot="header">
+    <a class="pol-home" href="/exp/pol/">
+      <Interchange size={40} direction="pol" />
+      <span>{COPY.autor}</span>
+    </a>
+    <a class="pol-about" href="/sobre-mi/">{COPY.sobreMi}</a>
+  </div>
+
+  <div class="metro-pol">
+    <section class="pol-hero wrap" aria-labelledby="pol-title">
+      <h1 id="pol-title">{COPY.tituloPlano}</h1>
+      <p class="pol-lede">{COPY.lede}</p>
+      <MetroMap direction="pol" class="pol-map" />
+      <p class="pol-map-caption">
+        <span>{COPY.planoNoAEscala}</span>
+        <span class="pol-swipe-hint">{COPY.desliza}</span>
+      </p>
+    </section>
+
+    <nav class="pol-legend wrap" aria-label={COPY.lineas}>
+      <ul>
+        {LINES.map((line) => (
+          <li>
+            <a href={`#linea-${line.num}`} aria-label={`${COPY.linea} ${line.num}: ${line.name}`}>
+              <span
+                class="pol-line-number"
+                aria-hidden="true"
+                style={`--line-colour:${line.colour.pol};--number-ink:${numeralColour(line.colour.pol)}`}
+              >
+                {line.num}
+              </span>
+              <span>{line.name}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <section class="pol-service" aria-labelledby="pol-service-title">
+      <h2 class="pol-service-bar" id="pol-service-title">{COPY.informacion}</h2>
+      <div class="pol-lines wrap">
+        {LINES.map((line) => (
+          <section id={`linea-${line.num}`} class="pol-line-section" style={`--line-colour:${line.colour.pol}`}>
+            <h3>
+              <span class="pol-line-number" aria-hidden="true" style={`--line-colour:${line.colour.pol};--number-ink:${numeralColour(line.colour.pol)}`}>
+                {line.num}
+              </span>
+              <span>{line.name}</span>
+            </h3>
+            <ol class="pol-stops">
+              {stopsOf(line.id).map((station) => {
+                const post = station.slug ? postBySlug.get(station.slug) : undefined;
+                const otherLines = LINES.filter(({ id }) => id !== line.id && ROUTES[id].stops.includes(station.id));
+                return (
+                  <li class="pol-stop" data-stop={station.id} data-line={line.id}>
+                    <span class="pol-stop-marker" data-stop-marker aria-hidden="true"></span>
+                    <div class="pol-stop-copy">
+                      <div class="pol-stop-title">
+                        {post ? (
+                          <a href={`/exp/pol/${post.slug}/`}>{post.title}</a>
+                        ) : (
+                          <span class="pol-planned-title">{station.title}</span>
+                        )}
+                        {!post && <span class="pol-planned-tag">{COPY.enConstruccion}</span>}
+                      </div>
+                      {post && (
+                        <>
+                          <p class="pol-stop-meta">
+                            <time datetime={post.date}>{formatDateEs(post.date)}</time>
+                            <span>{post.minutes} {COPY.minLectura}</span>
+                          </p>
+                          {post.description && <p class="pol-description">{post.description}</p>}
+                        </>
+                      )}
+                      {otherLines.length > 0 && (
+                        <p class="pol-transfer">
+                          <span>{COPY.transbordo}:</span>
+                          {otherLines.map((other) => (
+                            <a href={`#linea-${other.num}`}>{COPY.linea} {other.num}</a>
+                          ))}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        ))}
+      </div>
+    </section>
+  </div>
+
+  <div class="pol-footer wrap" slot="footer">
+    <Interchange size={40} direction="pol" />
+    <span class="pol-footer-scale">{COPY.planoNoAEscala}</span>
+    <a href="/">{COPY.versionActual}</a>
+    <a href="/rss.xml">{COPY.rss}</a>
+  </div>
 </Metro>
+
+<script>
+  import { initMetroRide } from '../../../scripts/metro-ride';
+  initMetroRide();
+</script>
