@@ -1,0 +1,72 @@
+---
+import { COPY, GROUNDS } from '../../data/metro';
+import type { AndenLineModel } from '../../lib/metro-map';
+import { ratio } from '../../lib/contrast';
+
+interface Props {
+  model: AndenLineModel;
+}
+
+const { model } = Astro.props;
+const { line, destination, stops } = model;
+const numberInk = ratio(GROUNDS.anden.bg, line.colour.anden) >= ratio(GROUNDS.anden.fg, line.colour.anden)
+  ? GROUNDS.anden.bg
+  : GROUNDS.anden.fg;
+const lineStyle = `--line-colour:${line.colour.anden};--number-ink:${numberInk}`;
+const trackStyle = `--stop-count:${stops.length};--track-inset:${50 / stops.length}%`;
+---
+
+<section id={`linea-${line.num}`} class="anden-line" aria-labelledby={`linea-${line.num}-title`} style={lineStyle}>
+  <div class="anden-line-heading wrap">
+    <div class="anden-line-ident">
+      <span class="anden-line-number" aria-hidden="true">{line.num}</span>
+      <h2 id={`linea-${line.num}-title`}>
+        <span>{COPY.linea} {line.num}</span>
+        <span class="anden-line-separator" aria-hidden="true">·</span>
+        <span>{line.name}</span>
+      </h2>
+    </div>
+    <p class="anden-direction"><span>{COPY.direccion}</span> {destination.title}</p>
+  </div>
+
+  <div class="anden-line-band" aria-hidden="true"></div>
+
+  <ol class="anden-stops wrap" style={trackStyle}>
+    {stops.map(({ station, post, transfers }) => (
+      <li class="anden-stop" data-station={station.id}>
+        <span
+          class="anden-stop-marker"
+          data-stop-marker
+          data-planned={!post ? '' : undefined}
+          aria-hidden="true"
+        ></span>
+        <div class="anden-stop-copy">
+          <div class="anden-stop-sign">
+            {post ? (
+              <a href={`/exp/anden/${post.slug}/`}>{station.title}</a>
+            ) : (
+              <span class="anden-planned-title">{station.title}</span>
+            )}
+            {!post && <span class="anden-planned-tag">{COPY.enConstruccion}</span>}
+          </div>
+          {transfers.length > 0 && (
+            <ul class="anden-transfers" aria-label={COPY.transbordo}>
+              {transfers.map((other) => (
+                <li>
+                  <a
+                    class="anden-transfer"
+                    href={`#linea-${other.num}`}
+                    style={`--transfer-colour:${other.colour.anden}`}
+                  >
+                    <span class="anden-transfer-dot" aria-hidden="true"></span>
+                    <span>{COPY.transbordo}: {COPY.linea} {other.num}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>

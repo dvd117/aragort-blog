@@ -101,4 +101,7 @@ export const COPY = {
   proxima: 'Próxima estación',
   finLinea: 'Fin de línea',
   volverAlPlano: 'Volver al plano',
+  direccion: 'Dirección',
+  volverAnden: '← Andén',
+  volverAlAnden: 'Volver al andén',
 };

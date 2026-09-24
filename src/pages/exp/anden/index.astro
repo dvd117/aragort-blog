@@ -1,0 +1,89 @@
+---
+import { ratio } from '../../../lib/contrast';
+import { getPosts } from '../../../lib/collection';
+import { formatDateEs } from '../../../lib/posts';
+import AndenLine from '../../../components/metro/AndenLine.astro';
+import Interchange from '../../../components/metro/Interchange.astro';
+import Metro from '../../../layouts/Metro.astro';
+import { COPY, GROUNDS } from '../../../data/metro';
+import { buildAndenLines } from '../../../lib/metro-map';
+import '../../../styles/metro-anden.css';
+
+const lines = buildAndenLines(await getPosts());
+const firstLine = lines[0]!;
+const featuredStop = firstLine.stops[0]!;
+const featuredPost = featuredStop.post;
+
+if (!featuredPost) throw new Error('Línea 1 must start with its live chatbots station.');
+
+const numeralInk = (lineColour: string) =>
+  ratio(GROUNDS.anden.bg, lineColour) >= ratio(GROUNDS.anden.fg, lineColour)
+    ? GROUNDS.anden.bg
+    : GROUNDS.anden.fg;
+
+const bulletStyle = (line: (typeof lines)[number]['line']) =>
+  `--line-colour:${line.colour.anden};--number-ink:${numeralInk(line.colour.anden)}`;
+---
+
+<Metro direction="anden" title={`Andén · ${COPY.autor}`}>
+  <div class="anden-header wrap" slot="header">
+    <a class="anden-home" href="/exp/anden/">
+      <Interchange size={40} direction="anden" />
+      <span>{COPY.autor}</span>
+    </a>
+    <a class="anden-about" href="/sobre-mi/">{COPY.sobreMi}</a>
+  </div>
+
+  <div class="anden-page">
+    <section class="anden-hero" aria-labelledby="anden-title">
+      <div class="anden-featured wrap">
+        <p class="anden-kicker">
+          {COPY.linea} {firstLine.line.num}
+          <span aria-hidden="true"> · </span>
+          {firstLine.line.name}
+          <span aria-hidden="true"> · </span>
+          {COPY.direccion} {firstLine.destination.title}
+        </p>
+        <p class="anden-next-label">{COPY.proxima}</p>
+        <h1 id="anden-title">
+          <a href={`/exp/anden/${featuredPost.slug}/`}>{featuredPost.title}</a>
+        </h1>
+        {featuredPost.description && <p class="anden-description">{featuredPost.description}</p>}
+        <p class="anden-featured-meta">
+          <time datetime={featuredPost.date}>{formatDateEs(featuredPost.date)}</time>
+          <span>{featuredPost.minutes} {COPY.minLectura}</span>
+        </p>
+      </div>
+
+      <AndenLine model={firstLine} />
+    </section>
+
+    <nav class="anden-line-index wrap" aria-label={COPY.lineas}>
+      <ul>
+        {lines.map(({ line }) => (
+          <li>
+            <a href={`#linea-${line.num}`} aria-label={`${COPY.linea} ${line.num}: ${line.name}`} title={line.name}>
+              <span class="anden-index-number" aria-hidden="true" style={bulletStyle(line)}>{line.num}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="anden-other-lines">
+      {lines.slice(1).map((model) => <AndenLine model={model} />)}
+    </div>
+  </div>
+
+  <div class="anden-footer wrap" slot="footer">
+    <Interchange size={40} direction="anden" />
+    <span class="anden-footer-scale">{COPY.planoNoAEscala}</span>
+    <a href="/">{COPY.versionActual}</a>
+    <a href="/rss.xml">{COPY.rss}</a>
+  </div>
+</Metro>
+
+<script>
+  import { initMetroRide } from '../../../scripts/metro-ride';
+  initMetroRide();
+</script>

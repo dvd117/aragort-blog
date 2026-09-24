@@ -113,6 +113,47 @@ export function lineOf(slug: string): MetroLine | undefined {
   return station && LINES.find((line) => line.id === station.home);
 }
 
+export interface MetroPostSummary {
+  slug: string;
+  title: string;
+  date: string;
+  description?: string;
+  minutes: number;
+}
+
+export interface AndenStopModel {
+  station: MetroStation;
+  post: MetroPostSummary | undefined;
+  transfers: MetroLine[];
+}
+
+export interface AndenLineModel {
+  line: MetroLine;
+  destination: MetroStation;
+  stops: AndenStopModel[];
+}
+
+function transfersAt(stationId: MetroStation['id'], currentLine: LineId): MetroLine[] {
+  return LINES.filter(({ id }) => id !== currentLine && ROUTES[id].stops.includes(stationId));
+}
+
+/** Static service-strip content in route order, including its destination, posts and interchanges. */
+export function buildAndenLines(posts: readonly MetroPostSummary[]): AndenLineModel[] {
+  const postBySlug = new Map(posts.map((post) => [post.slug, post]));
+  return LINES.map((line) => {
+    const stations = stopsOf(line.id);
+    return {
+      line,
+      destination: stations[stations.length - 1]!,
+      stops: stations.map((station) => ({
+        station,
+        post: station.slug ? postBySlug.get(station.slug) : undefined,
+        transfers: transfersAt(station.id, line.id),
+      })),
+    };
+  });
+}
+
 export function buildMap(direction: Direction, opts: { unit?: number } = {}): MetroMapModel {
   const unit = opts.unit ?? DEFAULT_UNIT;
   const rawTracks = LINES.map((line) => ({
