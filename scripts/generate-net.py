@@ -5,7 +5,7 @@ Run once, commit the output, never at build time:
 
     python3 scripts/generate-net.py
 
-Writes src/assets/net/geometry.ts and public/favicon.svg. Standard library only.
+Writes src/assets/net/geometry.ts. Standard library only.
 The rail has its own shape.
 Python's `random` is reproducible for a given seed, so these seeds reproduce the
 net approved in mockups/round-2/d-vanguardia.html exactly. Changing a seed
@@ -72,20 +72,6 @@ def net(w, h, cols, rows, seed, r, axis, lit, pad):
     }
 
 
-def favicon(g):
-    lines = ''.join(
-        f'<line x1="{g["nodes"][a][0]}" y1="{g["nodes"][a][1]}" x2="{g["nodes"][b][0]}" y2="{g["nodes"][b][1]}"/>'
-        for a, b in g['edges'])
-    dots = ''.join(
-        f'<circle cx="{x}" cy="{y}" r="2.6"{" class=\"on\"" if n in g["lit"] else ""}/>'
-        for n, (x, y) in enumerate(g['nodes']))
-    return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {g["w"]} {g["h"]}">'
-        '<style>line{stroke:#15171a;stroke-width:1.6}circle{fill:#15171a}.on{fill:#b8801b}'
-        '@media (prefers-color-scheme:dark){line{stroke:#ece9e1}circle{fill:#ece9e1}.on{fill:#e2a638}}</style>'
-        f'{lines}{dots}</svg>\n')
-
-
 def main():
     data = {name: net(*spec) for name, spec in NETS.items()}
     out = ROOT / 'src/assets/net/geometry.ts'
@@ -95,7 +81,6 @@ def main():
         'export interface NetGeometry { readonly w: number; readonly h: number; readonly r: number; readonly nodes: readonly (readonly [number, number])[]; readonly edges: readonly (readonly [number, number])[]; readonly lit: readonly number[]; }\n'
         f'export const nets = {json.dumps(data, separators=(",", ":"))} as const satisfies Record<string, NetGeometry>;\n'
         'export type NetName = keyof typeof nets;\n')
-    (ROOT / 'public/favicon.svg').write_text(favicon(data['mark']))
     for name, g in data.items():
         print(f'{name}: {len(g["nodes"])} nodes, {len(g["edges"])} wires')
 

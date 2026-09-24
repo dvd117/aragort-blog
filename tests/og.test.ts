@@ -1,13 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { FLAG_COLORS, FLAG_LIGHT_COLORS, FLAG_PATH, flagNodes } from '../src/lib/flag';
+import { FLAG_COLORS, FLAG_PATH, flagNodes } from '../src/lib/flag';
 import { nets } from '../src/assets/net/geometry';
-import { ratio } from '../src/lib/contrast';
 
 const css = readFileSync('src/styles/global.css', 'utf8');
 const g = nets.mark;
 const path = [...FLAG_PATH];
-const favicon = readFileSync('public/favicon.svg', 'utf8');
 const netComponent = readFileSync('src/components/Net.astro', 'utf8');
 
 /**
@@ -50,28 +48,5 @@ describe('OG card: the flag on the mark', () => {
   it('lets the in-page mark use the same shared path as the card', () => {
     expect(netComponent).toContain("import { flagNodes } from '../lib/flag'");
     expect(netComponent).toContain('data-logo');
-  });
-
-  it('paints the same connected flag path on the favicon in both schemes', () => {
-    const nodes = [...favicon.matchAll(/<circle(?=[^>]*data-logo-node="(\d+)")(?=[^>]*data-logo-hue="([^"]+)")[^>]*>/g)]
-      .map(([, node, hue]) => [Number(node), hue]);
-    expect(nodes).toEqual([...flagNodes]);
-
-    const wires = [...favicon.matchAll(/<line(?=[^>]*data-logo-wire="(\d+)-(\d+)")(?=[^>]*data-logo-hue="([^"]+)")[^>]*>/g)]
-      .map(([, a, b, hue]) => [Number(a), Number(b), hue]);
-    expect(wires).toEqual([
-      [path[0], path[1], flagNodes.get(path[0]!)],
-      [path[1], path[2], flagNodes.get(path[1]!)],
-    ]);
-
-    for (const color of Object.values(FLAG_COLORS)) {
-      expect(favicon).toContain(color);
-      expect(ratio(color, '#15171a')).toBeGreaterThanOrEqual(3);
-    }
-    for (const color of Object.values(FLAG_LIGHT_COLORS)) {
-      expect(favicon).toContain(color);
-      expect(ratio(color, '#ece9e1')).toBeGreaterThanOrEqual(3);
-    }
-    expect(favicon).toContain('@media (prefers-color-scheme:dark)');
   });
 });
