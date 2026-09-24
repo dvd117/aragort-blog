@@ -12,7 +12,7 @@ export default defineConfig({
   cacheDir: process.env.ARAGORT_POSTS_DIR ? './node_modules/.astro-fixtures' : './node_modules/.astro',
   trailingSlash: 'ignore',
   build: { format: 'directory' },
-  integrations: [sitemap({ filter: (page) => !page.includes('/lector') })],
+  integrations: [sitemap({ filter: (page) => !page.includes('/lector') && !page.includes('/exp/') })],
   markdown: {
     // unified (remark/rehype) instead of the default Sätteri pipeline, for the
     // standard rehype plugin API: footnotes become margin notes.
