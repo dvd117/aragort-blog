@@ -106,6 +106,18 @@
 .teaser li:nth-child(3)::marker { color: var(--hu-rojo); }
 .more { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; margin-top: .8rem; font: 600 1rem/1 var(--ui); color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .22em; }
 .more:hover { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
+/* "Leer" is where you leave the thread: a ring and a short wire before the words. At rest
+   they are the net; on hover, on focus, or while the entry is current (netnav.ts) the wire
+   draws in its hue and the ring fills. Local to the link, so it never crosses the text. */
+.more .branch { flex: none; width: 1.875rem; height: .625rem; margin-right: .5rem; overflow: visible; }
+.more .branch :is(circle, line) { vector-effect: non-scaling-stroke; }
+.more .branch circle { fill: var(--bg); stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; transition: fill var(--dur-draw) var(--ease), stroke var(--dur-draw) var(--ease), stroke-opacity var(--dur-draw) var(--ease); }
+.more .branch .b-rest { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
+.more .branch .b-lit { stroke: var(--hue-ui); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
+.more:hover .branch .b-lit, .more:focus-visible .branch .b-lit, .entry.is-current .more .branch .b-lit { stroke-dashoffset: 0; }
+.more:hover .branch circle, .more:focus-visible .branch circle, .entry.is-current .more .branch circle { fill: var(--hue-ui); stroke: var(--hue-ui); stroke-opacity: 1; }
+.entry.is-current .more { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
+.more:focus-visible .branch :is(circle, .b-lit) { transition: none; }
 /* Quién escribe on the landing: the thread runs past it, down to the footer mark. The
    block itself is shared with the post (Signature.astro, styled in global.css). */
 .index:has(.who) .entries::before { bottom: 0; }
