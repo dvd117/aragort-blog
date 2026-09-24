@@ -96,6 +96,7 @@ function initChapterStrip(): void {
     const y = horizontal ? startY : startY + (lastY - firstY) * furthest;
     train.style.setProperty('--ride-x', `${x}px`);
     train.style.setProperty('--ride-y', `${y}px`);
+    train.dataset.moving = String(furthest > 0);
     strip.dataset.rideReady = 'true';
   };
 

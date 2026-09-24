@@ -171,6 +171,9 @@ html[data-metro="pol"] body {
 }
 
 .pol-stop-marker[data-lit="true"] { background: var(--line-colour); }
+/* Planned stops are under construction: dashed at rest, a solid ring once passed, never filled. */
+.pol-stop-marker[data-planned] { border-style: dashed; }
+.pol-stop-marker[data-planned][data-lit="true"] { border-style: solid; background: var(--bg); }
 .pol-stop-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: .45rem .75rem; }
 .pol-stop-title a { color: var(--fg); font-family: var(--display); font-size: 1.25rem; font-weight: 700; letter-spacing: -.025em; line-height: 1.2; overflow-wrap: anywhere; text-underline-offset: .18em; }
 .pol-planned-title { color: var(--fg-2); font-family: var(--display); font-size: 1.25rem; font-weight: 620; letter-spacing: -.025em; line-height: 1.2; }
@@ -250,6 +253,7 @@ html[data-metro="pol"] body {
   margin: 0 -16px .5rem;
   padding: .25rem 16px;
   background: var(--bg);
+  border-bottom: 1px solid var(--rule);
 }
 
 .metro-ride-stations {
@@ -317,6 +321,8 @@ html[data-metro="pol"] body {
 }
 
 .metro-chapter-rail[data-ride-ready="true"] .metro-ride-car { display: block; }
+/* The train arrives once reading reaches the first chapter; before that it would sit on the ring. */
+.metro-ride-car[data-moving="false"] { opacity: 0; }
 
 .metro-post-prose { grid-column: 1; max-width: var(--measure); min-width: 0; }
 .metro-post-prose h2 { scroll-margin-top: 90px; }
@@ -367,7 +373,7 @@ html[data-metro="pol"] body {
   .pol-post-head { padding-top: 2rem; padding-bottom: 3rem; }
   .pol-post-head h1 { font-size: clamp(4rem, 8vw, 6.5rem); }
   .metro-post { grid-template-columns: 180px minmax(0, 1fr); column-gap: 3.5rem; padding-top: 2rem; }
-  .metro-chapter-rail { position: sticky; top: 8vh; align-self: start; grid-column: 1; grid-row: 1 / span 2; margin: 0; padding: 0; background: transparent; }
+  .metro-chapter-rail { position: sticky; top: 8vh; align-self: start; grid-column: 1; grid-row: 1 / span 2; margin: 0; padding: 0; background: transparent; border-bottom: 0; }
   .metro-ride-stations { display: flex; flex-direction: column; align-items: stretch; gap: .6rem; }
   .metro-ride-stations::before { left: var(--ride-track-x, 6px); top: var(--ride-track-y, 6px); width: 1px; height: var(--ride-track-height, 0px); }
   .metro-ride-stations > li:not(.metro-ride-car-wrap) { flex: none; }

@@ -74,7 +74,7 @@ const numeralColour = (lineColour: string) =>
                 const otherLines = LINES.filter(({ id }) => id !== line.id && ROUTES[id].stops.includes(station.id));
                 return (
                   <li class="pol-stop" data-stop={station.id}>
-                    <span class="pol-stop-marker" data-stop-marker aria-hidden="true"></span>
+                    <span class="pol-stop-marker" data-stop-marker data-planned={post ? undefined : ''} aria-hidden="true"></span>
                     <div class="pol-stop-copy">
                       <div class="pol-stop-title">
                         {post ? (
