@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { nets } from '../src/assets/net/geometry';
 import { ratio } from '../src/lib/contrast';
-import { FLAG_COLORS, FLAG_LIGHT_COLORS, FLAG_PATH, flagNodes } from '../src/lib/flag';
+import { FLAG_COLORS, FLAG_PATH, flagNodes } from '../src/lib/flag';
 import { faviconSvg, touchIconPng } from '../src/lib/favicon';
 
 const svg = faviconSvg();
@@ -66,16 +66,13 @@ describe('favicon', () => {
     expect(width).toBeGreaterThan(0);
   });
 
-  it('uses the flag palettes with accessible contrast on both card schemes', () => {
+  it('sits on the dark card in every scheme, in the bright flag hues', () => {
+    expect(svg).toContain('fill="#15171a"');
     for (const color of Object.values(FLAG_COLORS)) {
       expect(svg).toContain(color);
       expect(ratio(color, '#15171a')).toBeGreaterThanOrEqual(3);
     }
-    for (const color of Object.values(FLAG_LIGHT_COLORS)) {
-      expect(svg).toContain(color);
-      expect(ratio(color, '#ece9e1')).toBeGreaterThanOrEqual(3);
-    }
-    expect(svg).toContain('@media (prefers-color-scheme:dark)');
+    expect(svg).not.toContain('prefers-color-scheme');
   });
 
   it('renders the Apple touch icon as a 180 by 180 PNG', () => {
