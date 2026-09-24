@@ -21,6 +21,7 @@ export interface RenderStation {
   y: number;
   id: MetroStation['id'];
   title: string;
+  home: LineId;
   labelLines: string[];
   live: boolean;
   href: string | null;
@@ -143,6 +144,7 @@ export function buildMap(direction: Direction, opts: { unit?: number } = {}): Me
       y,
       id: station.id,
       title: station.title,
+      home: station.home,
       labelLines: station.label.split('\n'),
       live: Boolean(station.slug),
       href: station.slug ? `/exp/${direction}/${station.slug}/` : null,

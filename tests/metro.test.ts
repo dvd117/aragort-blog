@@ -159,9 +159,9 @@ describe('metro render model', () => {
     const byId = (id: string) => pol.stations.find((station) => station.id === id)!;
     expect(byId('chatbots')).toMatchObject({
       id: 'chatbots', title: 'Por qué dejé los chatbots', labelLines: ['Por qué dejé', 'los chatbots'],
-      live: true, href: '/exp/pol/por-que-deje-los-chatbots/', lines: ['l1', 'l5'], transfer: true,
+      home: 'l1', live: true, href: '/exp/pol/por-que-deje-los-chatbots/', lines: ['l1', 'l5'], transfer: true,
     });
-    expect(byId('terminal')).toMatchObject({ live: false, href: null, lines: ['l1', 'l2'], transfer: true });
+    expect(byId('terminal')).toMatchObject({ home: 'l2', live: false, href: null, lines: ['l1', 'l2'], transfer: true });
     expect(byId('instrucciones')).toMatchObject({ live: false, href: null, lines: ['l2'], transfer: false });
     expect(buildMap('anden').stations.find(({ id }) => id === 'cuba')).toMatchObject({ href: '/exp/anden/acceso-a-internet-y-movilizacion-social-en-cuba/' });
   });

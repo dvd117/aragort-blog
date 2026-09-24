@@ -1,0 +1,94 @@
+---
+import { COPY, GROUNDS, LINES, type Direction } from '../../data/metro';
+import { buildMap } from '../../lib/metro-map';
+
+interface Props {
+  direction: Direction;
+  class?: string;
+}
+
+const { direction, class: className } = Astro.props;
+const map = buildMap(direction);
+const ground = GROUNDS[direction];
+const ink = direction === 'pol' ? ground.ink : ground.fg;
+const ink2 = direction === 'pol' ? ground.ink2 : ground.fg2;
+const palette = {
+  ...Object.fromEntries(LINES.map(({ id, colour }) => [`--${id}`, colour[direction]])),
+  '--ground': ground.bg,
+  '--ink': ink,
+  '--ink2': ink2,
+};
+const svgStyle = Object.entries(palette).map(([name, value]) => `${name}:${value}`).join(';');
+const figureClass = ['metro-map-figure', className].filter(Boolean).join(' ');
+---
+
+<figure class={figureClass}>
+  <svg class="metro-map" viewBox={map.viewBox} style={svgStyle} xmlns="http://www.w3.org/2000/svg">
+    <g class="tracks" aria-hidden="true">
+      {map.tracks.map((track) => (
+        <path data-line={track.id} d={track.d} stroke={`var(--${track.id})`} />
+      ))}
+    </g>
+    {map.stations.map((station) => (
+      <g data-station={station.id}>
+        {station.transfer && (
+          <circle class="transfer-ring" cx={station.x} cy={station.y} r="13" />
+        )}
+        {station.live && station.href ? (
+          <a href={station.href} aria-label={station.title}>
+            <title>{station.title}</title>
+            <circle class="station-marker live" cx={station.x} cy={station.y} r="6.5" fill={`var(--${station.home})`} />
+          </a>
+        ) : (
+          <circle
+            class="station-marker planned"
+            cx={station.x}
+            cy={station.y}
+            r="6.5"
+            fill="var(--ground)"
+            stroke={`var(--${station.home})`}
+            stroke-dasharray="4 3"
+          />
+        )}
+      </g>
+    ))}
+    <g class="station-labels">
+      {map.labels.map((label) => {
+        const station = map.stations.find(({ id }) => id === label.stationId)!;
+        return (
+          <text
+            class:list={['station-label', { planned: !station.live }]}
+            data-station-label={label.stationId}
+            x={label.x}
+            y={label.y}
+            text-anchor={label.textAnchor}
+            fill={station.live ? 'var(--ink)' : 'var(--ink2)'}
+          >
+            {label.lines.map((line, index) => (
+              <tspan x={label.x} dy={index === 0 ? 0 : 18}>{line}</tspan>
+            ))}
+          </text>
+        );
+      })}
+    </g>
+  </svg>
+  <figcaption class="visually-hidden">5 líneas, 11 estaciones, 2 abiertas</figcaption>
+  <p class="scale-note">{COPY.planoNoAEscala}</p>
+</figure>
+
+<style>
+  .metro-map-figure { width: 100%; margin: 0; }
+  .metro-map { display: block; width: 100%; height: auto; overflow: visible; }
+  .tracks path { fill: none; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+  .transfer-ring { fill: var(--ground); stroke: var(--ink); stroke-width: 3; }
+  .station-marker { stroke-width: 2; }
+  .station-marker.live { stroke: var(--ground); }
+  .station-marker.planned { stroke-width: 2; }
+  a:focus-visible .station-marker { stroke: var(--ink); stroke-width: 4; }
+  .station-label { font-family: inherit; font-size: 15px; line-height: 18px; }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .scale-note { margin: .6rem 0 0; font-size: .8rem; line-height: 1.4; }
+</style>

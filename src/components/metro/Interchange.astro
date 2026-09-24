@@ -1,0 +1,36 @@
+---
+import { GROUNDS, LINES, type Direction } from '../../data/metro';
+
+interface Props {
+  size?: number;
+  direction: Direction;
+}
+
+const { size = 40, direction } = Astro.props;
+const ground = GROUNDS[direction];
+const palette = {
+  ...Object.fromEntries(LINES.map(({ id, colour }) => [`--${id}`, colour[direction]])),
+  '--ground': ground.bg,
+  '--ink': direction === 'pol' ? ground.ink : ground.fg,
+};
+const svgStyle = Object.entries(palette).map(([name, value]) => `${name}:${value}`).join(';');
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 40 40"
+  style={svgStyle}
+  aria-hidden="true"
+  focusable="false"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <g fill="none" stroke-linecap="round" stroke-width="2.5">
+    <path d="M 13.2 20 H 3" stroke="var(--l1)" />
+    <path d="M 26.8 20 H 37" stroke="var(--l1)" />
+    <path d="M 20 13.2 V 3" stroke="var(--l2)" />
+    <path d="M 20 26.8 V 37" stroke="var(--l3)" />
+    <path d="M 24.8 15.2 L 37 3" stroke="var(--l4)" />
+  </g>
+  <circle cx="20" cy="20" r="6.8" fill="var(--ground)" stroke="var(--ink)" stroke-width="2.5" />
+</svg>
