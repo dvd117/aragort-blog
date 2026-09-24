@@ -139,9 +139,6 @@
 
 /* The mark as progress: its nodes take their band's colour as you read (global.css). */
 .net .p { transition: stroke var(--dur-ui) var(--ease), fill var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); }
-/* The end: every net completes with one short pulse, once. */
-@keyframes net-pulse { 50% { transform: scale(1.08); } }
-.net.pulse { animation: net-pulse var(--dur-page) var(--ease) 1; transform-origin: 50% 50%; }
 
 
 /* End card: quiet, after the signature. Visible without JS; fades in at the end with it. */

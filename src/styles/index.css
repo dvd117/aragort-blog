@@ -43,6 +43,9 @@
 .entry[hidden] { display: none; }
 /* The node sits on the thread, centred on its date line. */
 .node { position: absolute; left: calc(-1.75rem + 5.5px - 6px); top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; background: var(--hue-ui); box-shadow: 0 0 0 3px var(--bg); }
+/* Passing a node: one short pulse, never from nothing. */
+@keyframes node-pass { 50% { transform: scale(1.15); } }
+.entry .node.pulse { animation: node-pass var(--dur-draw) var(--ease) 1; }
 .entry .d { position: relative; font-size: .875rem; color: var(--fg-2); margin: 0; line-height: 1.4; }
 .entry .t { font-family: var(--display); font-weight: var(--title-weight); font-size: clamp(1.6rem, 6.4vw, 2.6rem); line-height: var(--title-leading); letter-spacing: var(--title-tracking); text-decoration: none; }
 .entry .t:hover { text-decoration: underline; text-decoration-color: var(--hue-ui); text-decoration-thickness: 2px; text-underline-offset: .12em; }
