@@ -195,6 +195,196 @@ html[data-metro="pol"] body {
 .pol-footer-scale { margin-right: auto; font: 500 .75rem/1.4 var(--mono); }
 .pol-footer a { color: var(--fg); text-underline-offset: .2em; }
 
+.pol-post-head {
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.pol-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--fg-2);
+  text-underline-offset: .2em;
+}
+
+.pol-post-line {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin: .8rem 0 0;
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.pol-post-line .pol-line-number { width: 2rem; height: 2rem; font-size: 1rem; }
+.pol-post-station { margin: .8rem 0 0; color: var(--fg-2); font-size: .875rem; }
+.pol-post-meta { display: flex; flex-wrap: wrap; gap: .3rem 1rem; margin: .45rem 0 0; color: var(--fg-2); font-size: .875rem; }
+
+.pol-post-head h1 {
+  max-width: 14ch;
+  margin: 1.25rem 0 0;
+  color: var(--fg);
+  font-family: var(--display);
+  font-size: clamp(2.8rem, 8vw, 6.5rem);
+  font-weight: 800;
+  line-height: .92;
+  letter-spacing: -.05em;
+  overflow-wrap: anywhere;
+}
+
+.metro-post {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 var(--gutter) 3.5rem;
+}
+
+.metro-chapter-rail {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  grid-column: 1;
+  margin: 0 -16px .5rem;
+  padding: .25rem 16px;
+  background: var(--bg);
+}
+
+.metro-ride-stations {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.metro-ride-stations::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: var(--ride-track-x, 0px);
+  top: var(--ride-track-y, 22px);
+  width: var(--ride-track-width, 0px);
+  height: 1px;
+  background: var(--line-colour);
+}
+
+.metro-ride-stations > li:not(.metro-ride-car-wrap) { flex: 1; min-width: 0; }
+.metro-ride-stations a {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--hue);
+  text-decoration: none;
+}
+
+.metro-ride-dot {
+  display: block;
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--line-colour);
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+.metro-ride-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.metro-ride-current { display: none; }
+.metro-ride-stations a[aria-current="location"] .metro-ride-dot { outline: 2px solid var(--fg); outline-offset: 4px; }
+.metro-ride-stations a[aria-current="location"] .metro-ride-current { display: inline; }
+
+.metro-ride-car-wrap { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.metro-ride-car {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 9px;
+  border: 1px solid var(--fg);
+  border-radius: 3px;
+  background: var(--line-colour);
+  transform: translate(var(--ride-x, 0px), var(--ride-y, 0px));
+  transition: transform 180ms var(--ease);
+}
+
+.metro-chapter-rail[data-ride-ready="true"] .metro-ride-car { display: block; }
+
+.metro-post-prose { grid-column: 1; max-width: var(--measure); min-width: 0; }
+.metro-post-prose h2 { scroll-margin-top: 90px; }
+
+.metro-post .net-hr {
+  position: relative;
+  display: block;
+  width: 72px;
+  height: 12px;
+  margin: 2.2em auto;
+}
+
+.metro-post .net-hr svg { display: none; }
+.metro-post .net-hr::before { content: ""; position: absolute; left: 6px; top: 5px; width: 56px; height: 1px; background: var(--hue-ui); }
+.metro-post .net-hr::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 2px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--hue-ui);
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: 56px 0 0 -1px var(--bg), 56px 0 0 0 var(--hue-ui);
+}
+
+.metro-post-end {
+  grid-column: 1;
+  max-width: var(--measure);
+  margin-top: 3rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid var(--rule);
+}
+
+.metro-post-end h2,
+.metro-post-end h3 { font-family: var(--display); font-weight: 700; letter-spacing: -.035em; }
+.metro-post-end h2 { margin: 0 0 2rem; font-size: 1.6rem; }
+.metro-post-end h3 { margin: 0 0 .55rem; font-size: 1rem; }
+.metro-next-stop { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem .75rem; margin: 0; font-size: 1.2rem; font-weight: 600; }
+.metro-next-stop a { color: var(--hue); text-underline-offset: .18em; }
+.metro-next-stop > span:first-child { color: var(--fg-2); }
+.metro-post-end .metro-transfer { display: flex; flex-wrap: wrap; gap: .4rem .7rem; margin: 1.2rem 0 0; color: var(--fg-2); font-size: .875rem; }
+.metro-post-end .metro-transfer a { color: var(--hue); text-underline-offset: .2em; }
+.metro-back-to-map { display: inline-flex; align-items: center; min-height: 44px; margin-top: 1.5rem; color: var(--fg); text-underline-offset: .2em; }
+
+@media (min-width: 1000px) {
+  .pol-post-head { padding-top: 2rem; padding-bottom: 3rem; }
+  .pol-post-head h1 { font-size: clamp(4rem, 8vw, 6.5rem); }
+  .metro-post { grid-template-columns: 180px minmax(0, 1fr); column-gap: 3.5rem; padding-top: 2rem; }
+  .metro-chapter-rail { position: sticky; top: 8vh; align-self: start; grid-column: 1; grid-row: 1 / span 2; margin: 0; padding: 0; background: transparent; }
+  .metro-ride-stations { display: flex; flex-direction: column; align-items: stretch; gap: .6rem; }
+  .metro-ride-stations::before { left: var(--ride-track-x, 6px); top: var(--ride-track-y, 6px); width: 1px; height: var(--ride-track-height, 0px); }
+  .metro-ride-stations > li:not(.metro-ride-car-wrap) { flex: none; }
+  .metro-ride-stations a { justify-content: flex-start; gap: .7rem; min-height: 44px; padding: .3rem 0; }
+  .metro-ride-title { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; font-size: .875rem; line-height: 1.3; }
+  .metro-post-prose { grid-column: 2; }
+  .metro-post-end { grid-column: 2; }
+}
+
+@media (max-width: 999px) {
+  .metro-ride-stations[data-ride-axis="x"]::before { left: var(--ride-track-x, 0px); top: var(--ride-track-y, 22px); width: var(--ride-track-width, 0px); height: 1px; }
+  .metro-ride-stations[data-ride-axis="y"]::before { left: 0; right: 0; top: 22px; width: auto; height: 1px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .metro-ride-car { transition: none; } }
+:root[data-motion="reduce"] .metro-ride-car { transition: none; }
+
 .metro-pol:has(.pol-legend a[href="#linea-1"]:is(:hover, :focus-visible)) .pol-map [data-line]:not([data-line="l1"]),
 .metro-pol:has(.pol-legend a[href="#linea-1"]:is(:hover, :focus-visible)) .pol-map [data-station]:not([data-station="chatbots"]):not([data-station="terminal"]):not([data-station="markdown"]):not([data-station="carrera"]),
 .metro-pol:has(.pol-legend a[href="#linea-1"]:is(:hover, :focus-visible)) .pol-map [data-station-label]:not([data-station-label="chatbots"]):not([data-station-label="terminal"]):not([data-station-label="markdown"]):not([data-station-label="carrera"]),

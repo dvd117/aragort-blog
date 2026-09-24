@@ -7,11 +7,11 @@ import { buildMap, lineOf, stopsOf, transfers } from '../src/lib/metro-map';
 describe('metro source data', () => {
   it('defines the five ordered lines with both direction colours', () => {
     expect(LINES).toEqual([
-      { id: 'l1', num: 1, name: 'El punto de quiebre', colour: { pol: '#d4501a', anden: '#f2792b' } },
-      { id: 'l2', num: 2, name: 'Las herramientas del practicante', colour: { pol: '#a67c00', anden: '#f3c12e' } },
-      { id: 'l3', num: 3, name: 'La infraestructura propia', colour: { pol: '#1c5fae', anden: '#4e93e6' } },
-      { id: 'l4', num: 4, name: 'El contexto del sector', colour: { pol: '#1b7f45', anden: '#35b168' } },
-      { id: 'l5', num: 5, name: 'Otros escritos', colour: { pol: '#566170', anden: '#8f98a3' } },
+      { id: 'l1', num: 1, name: 'El punto de quiebre', colour: { pol: '#d4501a', anden: '#f2792b' }, text: { pol: '#9f3c14', anden: '#ff832e' } },
+      { id: 'l2', num: 2, name: 'Las herramientas del practicante', colour: { pol: '#a67c00', anden: '#f3c12e' }, text: { pol: '#7d5d00', anden: '#ffd032' } },
+      { id: 'l3', num: 3, name: 'La infraestructura propia', colour: { pol: '#1c5fae', anden: '#4e93e6' }, text: { pol: '#154783', anden: '#549ff8' } },
+      { id: 'l4', num: 4, name: 'El contexto del sector', colour: { pol: '#1b7f45', anden: '#35b168' }, text: { pol: '#145f34', anden: '#39bf70' } },
+      { id: 'l5', num: 5, name: 'Otros escritos', colour: { pol: '#566170', anden: '#8f98a3' }, text: { pol: '#414954', anden: '#9aa4b0' } },
     ]);
   });
 
@@ -64,6 +64,15 @@ describe('metro source data', () => {
     expect(ratio(GROUNDS.pol.ink2, GROUNDS.pol.bg)).toBeGreaterThanOrEqual(4.5);
     expect(ratio(GROUNDS.anden.fg, GROUNDS.anden.bg)).toBeGreaterThanOrEqual(4.5);
     expect(ratio(GROUNDS.anden.fg2, GROUNDS.anden.bg)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('gives both direction text colours at least 4.5:1 against their grounds', () => {
+    expect(LINES.map(({ text }) => ratio(text.pol, GROUNDS.pol.bg))).toEqual([5.64, 5.14, 7.81, 6.5, 7.66]);
+    expect(LINES.map(({ text }) => ratio(text.anden, GROUNDS.anden.bg))).toEqual([7.96, 13.34, 7.17, 8.26, 7.74]);
+    for (const line of LINES) {
+      expect(ratio(line.text.pol, GROUNDS.pol.bg)).toBeGreaterThanOrEqual(4.5);
+      expect(ratio(line.text.anden, GROUNDS.anden.bg)).toBeGreaterThanOrEqual(4.5);
+    }
   });
 
   it('keeps em and en dashes out of the data strings', () => {

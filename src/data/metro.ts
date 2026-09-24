@@ -21,6 +21,8 @@ export interface MetroLine {
   num: number;
   name: string;
   colour: Record<Direction, string>;
+  /** Same line hue for text, adjusted to reach AA on each direction's ground. */
+  text: Record<Direction, string>;
 }
 
 export interface MetroStation {
@@ -39,11 +41,11 @@ export interface MetroRoute {
 }
 
 export const LINES: MetroLine[] = [
-  { id: 'l1', num: 1, name: 'El punto de quiebre', colour: { pol: '#d4501a', anden: '#f2792b' } },
-  { id: 'l2', num: 2, name: 'Las herramientas del practicante', colour: { pol: '#a67c00', anden: '#f3c12e' } },
-  { id: 'l3', num: 3, name: 'La infraestructura propia', colour: { pol: '#1c5fae', anden: '#4e93e6' } },
-  { id: 'l4', num: 4, name: 'El contexto del sector', colour: { pol: '#1b7f45', anden: '#35b168' } },
-  { id: 'l5', num: 5, name: 'Otros escritos', colour: { pol: '#566170', anden: '#8f98a3' } },
+  { id: 'l1', num: 1, name: 'El punto de quiebre', colour: { pol: '#d4501a', anden: '#f2792b' }, text: { pol: '#9f3c14', anden: '#ff832e' } },
+  { id: 'l2', num: 2, name: 'Las herramientas del practicante', colour: { pol: '#a67c00', anden: '#f3c12e' }, text: { pol: '#7d5d00', anden: '#ffd032' } },
+  { id: 'l3', num: 3, name: 'La infraestructura propia', colour: { pol: '#1c5fae', anden: '#4e93e6' }, text: { pol: '#154783', anden: '#549ff8' } },
+  { id: 'l4', num: 4, name: 'El contexto del sector', colour: { pol: '#1b7f45', anden: '#35b168' }, text: { pol: '#145f34', anden: '#39bf70' } },
+  { id: 'l5', num: 5, name: 'Otros escritos', colour: { pol: '#566170', anden: '#8f98a3' }, text: { pol: '#414954', anden: '#9aa4b0' } },
 ];
 
 export const GROUNDS = {
@@ -89,8 +91,14 @@ export const COPY = {
   transbordo: 'Transbordo',
   linea: 'Línea',
   estacion: 'Estación',
+  de: 'de',
   minLectura: 'min de lectura',
   informacion: 'Información al usuario',
   usted: 'Usted está aquí',
+  capitulos: 'Capítulos',
+  volverPlano: '← Plano',
+  finRecorrido: 'Fin del recorrido',
   proxima: 'Próxima estación',
+  finLinea: 'Fin de línea',
+  volverAlPlano: 'Volver al plano',
 };

@@ -1,0 +1,113 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Interchange from '../../../components/metro/Interchange.astro';
+import Metro from '../../../layouts/Metro.astro';
+import { COPY, GROUNDS, LINES, ROUTES, STATIONS } from '../../../data/metro';
+import { ratio } from '../../../lib/contrast';
+import { getPosts, type Post } from '../../../lib/collection';
+import { lineOf, stopsOf } from '../../../lib/metro-map';
+import { formatDateEs } from '../../../lib/posts';
+import '../../../styles/post.css';
+import '../../../styles/metro-pol.css';
+
+export const getStaticPaths = (async () => {
+  const liveSlugs = new Set(STATIONS.flatMap((station) => station.slug ? [station.slug] : []));
+  return (await getPosts())
+    .filter((post) => liveSlugs.has(post.slug))
+    .map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}) satisfies GetStaticPaths;
+
+interface Props { post: Post; }
+const { post } = Astro.props;
+const { Content, headings } = await render(post.entry);
+const chapters = headings.filter((heading) => heading.depth === 2);
+const station = STATIONS.find((candidate) => candidate.slug === post.slug)!;
+const line = lineOf(post.slug)!;
+const lineStops = stopsOf(line.id);
+const stationNumber = lineStops.findIndex((candidate) => candidate.id === station.id) + 1;
+const nextStop = lineStops[stationNumber];
+const interchangeLines = LINES.filter(({ id }) => id !== line.id && ROUTES[id].stops.includes(station.id));
+const numberInk = ratio(GROUNDS.pol.bg, line.colour.pol) >= ratio(GROUNDS.pol.ink, line.colour.pol)
+  ? GROUNDS.pol.bg
+  : GROUNDS.pol.ink;
+const rideColour = `--line-colour:${line.colour.pol};--number-ink:${numberInk}`;
+const hueStyle = `--hue:${line.text.pol};--hue-ui:${line.colour.pol};--hue-band:${line.colour.pol}26`;
+---
+
+<Metro direction="pol" title={`${post.title} · ${COPY.autor}`}>
+  <div class="pol-post-head wrap" slot="header" style={hueStyle}>
+    <a class="pol-back" href="/exp/pol/">{COPY.volverPlano}</a>
+    <p class="pol-post-line">
+      <span class="pol-line-number" aria-hidden="true" style={rideColour}>{line.num}</span>
+      <span>{COPY.linea} {line.num} <span aria-hidden="true">·</span> {line.name}</span>
+    </p>
+    <p class="pol-post-station">{COPY.estacion} {stationNumber} {COPY.de} {lineStops.length}</p>
+    <p class="pol-post-meta">
+      <time datetime={post.date}>{formatDateEs(post.date)}</time>
+      <span>{post.minutes} {COPY.minLectura}</span>
+    </p>
+    <h1>{post.title}</h1>
+  </div>
+
+  <article class="metro-post" data-chapter-ride style={hueStyle}>
+    <nav class="metro-chapter-rail" data-ride-strip aria-label={COPY.capitulos}>
+      <ol class="metro-ride-stations" data-ride-stations data-ride-axis="y">
+        {chapters.map((chapter, index) => (
+          <li>
+            <a href={`#${chapter.slug}`} data-ride-station data-chapter={index}>
+              <span class="metro-ride-dot" data-ride-dot aria-hidden="true"></span>
+              <span class="metro-ride-title">{chapter.text}</span>
+              <span class="metro-ride-current visually-hidden">{COPY.usted}</span>
+            </a>
+          </li>
+        ))}
+        <li class="metro-ride-car-wrap" aria-hidden="true">
+          <span class="metro-ride-car" data-ride-train></span>
+        </li>
+      </ol>
+    </nav>
+
+    <div class="prose metro-post-prose">
+      <Content />
+    </div>
+
+    <section class="metro-post-end" aria-labelledby="metro-finish">
+      <h2 id="metro-finish">{COPY.finRecorrido}</h2>
+      <h3>{COPY.proxima}</h3>
+      {nextStop ? (
+        <p class="metro-next-stop">
+          {nextStop.slug ? (
+            <a href={`/exp/pol/${nextStop.slug}/`}>{nextStop.title}</a>
+          ) : (
+            <span>{nextStop.title}</span>
+          )}
+          {!nextStop.slug && <span class="pol-planned-tag">{COPY.enConstruccion}</span>}
+        </p>
+      ) : (
+        <p class="metro-next-stop">{COPY.finLinea}</p>
+      )}
+      {interchangeLines.length > 0 && (
+        <p class="metro-transfer">
+          <span>{COPY.transbordo}:</span>
+          {interchangeLines.map((interchange) => (
+            <a href="/exp/pol/">{COPY.linea} {interchange.num} · {interchange.name}</a>
+          ))}
+        </p>
+      )}
+      <a class="metro-back-to-map" href="/exp/pol/">{COPY.volverAlPlano}</a>
+    </section>
+  </article>
+
+  <div class="pol-footer wrap" slot="footer">
+    <Interchange size={40} direction="pol" />
+    <span class="pol-footer-scale">{COPY.planoNoAEscala}</span>
+    <a href="/">{COPY.versionActual}</a>
+    <a href="/rss.xml">{COPY.rss}</a>
+  </div>
+</Metro>
+
+<script>
+  import { initMetroRide } from '../../../scripts/metro-ride';
+  initMetroRide();
+</script>
