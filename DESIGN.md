@@ -210,13 +210,13 @@ decoration that means nothing.
   and wire in the band its midpoint falls in. The small marks do not: three bands in 48px
   would be mush, so they keep the ruling hue. Anything lit still goes to the ruling hue, so
   the trail reads on top of the bands instead of dissolving into them.
-- **One hue rules the page at a time.** The hue lives on `<html>`, so everything on the
-  page shares it -- links, dots, rules, and every net on the page: header mark, hero,
-  rail, portrait, footer mark. No page ever shows two hues, and no mark keeps a colour of
-  its own. On a post it is the post's. On the landing it follows the entry under the
-  cursor, so a post's colour is hidden until you reach for it and then takes the whole
-  page. On the landing and Sobre mí before any hover it is the hue of the last post read
-  on this device, so leaving a post does not lose its colour.
+- **One hue rules the chrome at a time.** The hue lives on `<html>`, so the chrome
+  shares it -- links, dots, rules, and the small marks (header mark, rail, footer mark). No
+  mark keeps a colour of its own. On a post it is the post's. On the landing and Sobre mí
+  it is the hue of the last post read on this device, so leaving a post does not lose its
+  colour. Two things show all three hues, and both are the flag rather than decoration:
+  the big nets' bands, and the travelled thread on the landing, where each section belongs
+  to its post.
 - **The order never shuffles.** Down the list the hues run amarillo -> azul -> rojo ->
   amarillo, by position: the newest post is amarillo, the one under it azul, then rojo, and
   round again. Nothing is hashed and nothing is rolled -- the flag's order is the point, so
@@ -267,7 +267,7 @@ decoration that means nothing.
 - **Landing, desktop (≥900px):** two columns, the title and lede on the left (as wide as
   they need) and the net taking the rest of the width on the right, at fuller strength.
 - **Every post is expanded on the landing:** date, near-display title, description, its
-  the three ideas as a teaser, "Leer · N min". After the posts, a "quién escribe" strip (the mark
+  the three ideas as a teaser, "Leer · N min", which branches off the thread: a ring and a short wire before the words, drawn in the hue on hover, on focus and while the entry is current. After the posts, a "quién escribe" strip (the mark
   beside one sentence and a link to Sobre mí). The thread runs past it to the footer
   mark: net, wire, posts, strip and footer are one line.
 - **Post:** a single column on a phone, with a progress hairline and a closed "En este
@@ -328,13 +328,19 @@ or Ajustes' "Reducir movimiento".
   net against its motion and it settles. Posts get half amplitude and hold still while
   scrolling. The node under the cursor glows in the ruling hue and fades (~600ms); the
   first page of a session opens with one pulse of light from the net's lit node.
-- **Landing:** hovering or focusing an entry lights its own **region** of the net — its
-  route (the net's lit node → the post's node → exit) plus the nodes one wire away from its own
-  node — along with the wire and the thread. A wire lights once both of its nodes are lit,
-  so separate regions knit together and the net visibly fills as the archive grows: one
-  post lights about a quarter of it, six about four fifths. **The net only ever gains
-  light.** Nothing is ever unlit; the trail simply recolours to the current entry's hue.
-  On a phone, the entry at mid-screen does.
+- **Landing:** moving down the page travels the thread. The reading line (65% of the
+  viewport, as on a post) is "here", shown as a hollow ring in the current entry's hue.
+  The thread fills down to the furthest point reached this visit and never recedes, each
+  section in the hue of the entry it leads to, so the flag comes in as you go; the tail
+  past the last entry is in the text colour. Passing an entry's node pulses it once and
+  lights its **region** of the net: its route (the net's lit node → the post's node →
+  exit) plus the nodes one wire away from its own node. A wire lights once both of its
+  nodes are lit, so separate regions knit together and the net visibly fills as the
+  archive grows: one post lights about a quarter of it, six about four fifths. **The net
+  only ever gains light.** Reaching the footer mark pulses it once; a page too short to
+  scroll that far counts as reached at its bottom. On desktop, hovering or focusing an
+  entry previews its trail (half strength below what you have reached) and lights its
+  region, but only scrolling travels.
 - **Post:** the rail and the header mark light node by node as you read, as a **high-water
   mark** — the light holds at the furthest you have read and never recedes, so jumping
   back with the chapter dock does not unread the text. The chapter dot and the time left

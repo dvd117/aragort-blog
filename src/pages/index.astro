@@ -38,7 +38,7 @@ const regions = new Map(regionsFor(nets.hero, oldest.map((p) => p.slug)).map((r,
                 <a class="t" href={`/escritos/${p.slug}/`}>{p.title}</a>
                 {p.description && <p class="ex">{p.description}</p>}
                 {p.resumen && <ul class="teaser">{p.resumen.map((r) => <li>{r}</li>)}</ul>}
-                <a class="more" href={`/escritos/${p.slug}/`}>Leer · {p.minutes} min</a>
+                <a class="more" href={`/escritos/${p.slug}/`}><svg class="branch" viewBox="0 0 30 10" aria-hidden="true" focusable="false"><line class="b-rest" x1="8.5" y1="5" x2="30" y2="5" /><line class="b-lit" x1="8.5" y1="5" x2="30" y2="5" pathLength="1" /><circle cx="4.5" cy="5" r="3.5" /></svg>Leer · {p.minutes} min</a>
                 {p.draft && <span class="tag">borrador</span>}
               </li>
           ))}

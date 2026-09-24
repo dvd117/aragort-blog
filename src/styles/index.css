@@ -43,6 +43,9 @@
 .entry[hidden] { display: none; }
 /* The node sits on the thread, centred on its date line. */
 .node { position: absolute; left: calc(-1.75rem + 5.5px - 6px); top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; background: var(--hue-ui); box-shadow: 0 0 0 3px var(--bg); }
+/* Passing a node: one short pulse, never from nothing. */
+@keyframes node-pass { 50% { transform: scale(1.15); } }
+.entry .node.pulse { animation: node-pass var(--dur-draw) var(--ease) 1; }
 .entry .d { position: relative; font-size: .875rem; color: var(--fg-2); margin: 0; line-height: 1.4; }
 .entry .t { font-family: var(--display); font-weight: var(--title-weight); font-size: clamp(1.6rem, 6.4vw, 2.6rem); line-height: var(--title-leading); letter-spacing: var(--title-tracking); text-decoration: none; }
 .entry .t:hover { text-decoration: underline; text-decoration-color: var(--hue-ui); text-decoration-thickness: 2px; text-underline-offset: .12em; }
@@ -53,13 +56,19 @@
 
 /* Lit: the net's own bands gain power where the route reaches them (colours in
    global.css); here they only get the order they arrive in -- one node after another,
-   30ms apart, so the light reads as travelling rather than switching on.
-   The wire and the thread segment are the one line that belongs to a single entry, so
-   they are drawn in that entry's hue (--trail, set by netnav.ts). */
+   30ms apart, so the light reads as travelling rather than switching on. The wire, fill
+   and marker are drawn by travel.ts. */
 .net-wrap .net .path { stroke-opacity: 1; transition: stroke var(--dur-ui) var(--ease), fill var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); transition-delay: calc(var(--i, 0) * 30ms); }
 .wire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
 .wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
-.wire .lit { fill: none; stroke: var(--trail, var(--hue-ui)); stroke-width: 2; stroke-linecap: round; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
+/* Travel (travel.ts): the fill runs down the thread in each post's hue, the tail in the
+   text colour; the ring is "here". Both sit under the entry nodes, which paint later. */
+.wire .fill path { fill: none; stroke: var(--sec); stroke-width: 2; stroke-linecap: round; }
+.wire .lit { fill: none; stroke: var(--trail, var(--hue-ui)); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
+/* A preview below reach is a look ahead, not travel. */
+.wire .lit.ahead { opacity: .5; }
+.wire .here .halo { fill: none; stroke: var(--bg); stroke-width: 6; }
+.wire .here .ring { fill: var(--bg); stroke: var(--here); stroke-width: 1.5; }
 
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */
@@ -97,6 +106,18 @@
 .teaser li:nth-child(3)::marker { color: var(--hu-rojo); }
 .more { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; margin-top: .8rem; font: 600 1rem/1 var(--ui); color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .22em; }
 .more:hover { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
+/* "Leer" is where you leave the thread: a ring and a short wire before the words. At rest
+   they are the net; on hover, on focus, or while the entry is current (netnav.ts) the wire
+   draws in its hue and the ring fills. Local to the link, so it never crosses the text. */
+.more .branch { flex: none; width: 1.875rem; height: .625rem; margin-right: .5rem; overflow: visible; }
+.more .branch :is(circle, line) { vector-effect: non-scaling-stroke; }
+.more .branch circle { fill: var(--bg); stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; transition: fill var(--dur-draw) var(--ease), stroke var(--dur-draw) var(--ease), stroke-opacity var(--dur-draw) var(--ease); }
+.more .branch .b-rest { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
+.more .branch .b-lit { stroke: var(--hue-ui); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
+.more:hover .branch .b-lit, .more:focus-visible .branch .b-lit, .entry.is-current .more .branch .b-lit { stroke-dashoffset: 0; }
+.more:hover .branch circle, .more:focus-visible .branch circle, .entry.is-current .more .branch circle { fill: var(--hue-ui); stroke: var(--hue-ui); stroke-opacity: 1; }
+.entry.is-current .more { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
+.more:focus-visible .branch :is(circle, .b-lit) { transition: none; }
 /* Quién escribe on the landing: the thread runs past it, down to the footer mark. The
    block itself is shared with the post (Signature.astro, styled in global.css). */
 .index:has(.who) .entries::before { bottom: 0; }

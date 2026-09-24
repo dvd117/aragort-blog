@@ -3,6 +3,7 @@
  * description, "Las tres ideas" lines and the date, accent- and case-insensitive, so "deje"
  * finds "dejé" and "septiembre" finds the date. It searches what the landing already
  * shows, not the body of the posts -- no index is shipped.
+ * Every change is announced on the list as "thread:filter", so the thread can re-measure.
  *
  * The box only appears with JS (it is built here), so the list is never left unfiltered
  * behind a control that does nothing. Hiding an entry hides its node on the thread with
@@ -61,6 +62,8 @@ export function initFilter(): void {
       : shown === 0
         ? 'Ningún escrito coincide'
         : `${shown} de ${entries.length} escritos`;
+    // The thread (netnav.ts) re-measures: hidden entries leave it, and their sections with them.
+    list.dispatchEvent(new CustomEvent('thread:filter'));
   };
 
   box.addEventListener('input', apply);

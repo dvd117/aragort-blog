@@ -1,130 +1,145 @@
 /**
- * Net as navigation (index). The hero net, a wire from its bottom-left node and
- * the thread down the list are one line. Choosing an entry lights, in one hue: the
- * entry's own region of the net (its route from the net's lit node through its own node to
- * the exit, plus the nodes one wire away from it, data-region), the wire, and the thread
- * down to the entry's node. The net only ever gains light: regions already lit stay lit,
- * wires fill in as their nodes light, and the whole page takes the hue of the entry under
- * the cursor -- one colour at a time, never a carnival. Desktop: hover or keyboard focus.
- * Phone: the entry at mid-screen, as you scroll (a tap lights it on the way out).
- * Drawn in 220ms; instant under reduced motion.
+ * Net as navigation (landing). The hero net, a wire from its exit node and the thread down
+ * the list are one line, and moving down the page travels along it (travel.ts draws it).
+ * On every width:
+ * - the reading line (65% of the viewport, as on a post) is "here"; the lowest point it
+ *   has reached this visit is reach, and the thread stays lit down to it;
+ * - passing an entry's node pulses it once and lights the entry's region of the net: its
+ *   route through its own node to the exit, plus the nodes one wire away (data-region).
+ *   The net only ever gains light, and a wire lights once both of its nodes are lit;
+ * - the last entry at or above the reading line is current: it carries .is-current (its
+ *   "Leer" draws its branch) and its hue colours the here-ring;
+ * - reaching the footer mark pulses it once. A page too short to scroll that far counts
+ *   as reached at its bottom, or its last nodes could never light.
+ * Desktop hover or keyboard focus previews an entry's trail and lights its region, but
+ * never moves reach: only travel does.
  */
 import { reduced } from './motion';
+import { currentIndex, mountTravel, type TravelGeometry } from './travel';
 
-export function initNetNav(): void {
+const LINE = 0.65;
+
+export function mountNetNav(): () => void {
   const root = document.querySelector<HTMLElement>('[data-netnav-root]');
   const wrap = document.querySelector<HTMLElement>('[data-netnav]');
   const net = wrap?.querySelector('svg');
   const list = document.querySelector<HTMLElement>('[data-thread]');
   const entries = [...document.querySelectorAll<HTMLElement>('.entry')];
-  if (!root || !wrap || !net || !list || entries.length === 0) return;
+  if (!root || !wrap || !net || !list || entries.length === 0) return () => {};
 
   const exit = (wrap.dataset.exit ?? '').split(',').filter(Boolean).map(Number);
   const circles = [...net.querySelectorAll<SVGCircleElement>('circle')];
   const lines = [...net.querySelectorAll<SVGLineElement>('line')];
   const exitCircle = circles[exit.at(-1) ?? 0];
-  if (!exitCircle) return;
+  if (!exitCircle) return () => {};
+  const foot = document.querySelector<SVGSVGElement>('.site-foot .net');
+  const travel = mountTravel(root, list, exitCircle, foot);
 
-  // The wire: a base line always there, and the lit path on top.
-  const ns = 'http://www.w3.org/2000/svg';
-  const wire = document.createElementNS(ns, 'svg');
-  wire.setAttribute('class', 'wire');
-  wire.setAttribute('aria-hidden', 'true');
-  const base = document.createElementNS(ns, 'path');
-  base.setAttribute('class', 'base');
-  const lit = document.createElementNS(ns, 'path');
-  lit.setAttribute('class', 'lit');
-  wire.append(base, lit);
-  root.prepend(wire);
-
-  let g = { ex: 0, ey: 0, tx: 0, ty: 0 };
-  let current: HTMLElement | null = null;
-
-  const layout = () => {
-    const r = root.getBoundingClientRect();
-    const c = exitCircle.getBoundingClientRect();
-    const l = list.getBoundingClientRect();
-    g = { ex: c.left + c.width / 2 - r.left, ey: c.top + c.height / 2 - r.top, tx: l.left + 5.5 - r.left, ty: l.top - r.top };
-    base.setAttribute('d', `M${g.ex.toFixed(1)} ${g.ey.toFixed(1)}L${g.tx.toFixed(1)} ${g.ty.toFixed(1)}`);
-    if (current) draw(current, false);
-  };
-
-  const draw = (entry: HTMLElement, animate: boolean) => {
-    const r = root.getBoundingClientRect();
-    const node = entry.querySelector('.node')!.getBoundingClientRect();
-    const ny = node.top + node.height / 2 - r.top;
-    lit.setAttribute('d', `M${g.ex.toFixed(1)} ${g.ey.toFixed(1)}L${g.tx.toFixed(1)} ${g.ty.toFixed(1)}L${g.tx.toFixed(1)} ${ny.toFixed(1)}`);
-    const len = Math.ceil(lit.getTotalLength());
-    lit.style.strokeDasharray = `${len}`;
-    if (animate && !reduced()) {
-      lit.style.transition = 'none';
-      lit.style.strokeDashoffset = `${len}`;
-      void lit.getBoundingClientRect();
-      lit.style.transition = '';
-    }
-    lit.style.strokeDashoffset = '0';
+  const offs: Array<() => void> = [];
+  const on = (target: EventTarget, type: string, fn: EventListener, options?: AddEventListenerOptions) => {
+    target.addEventListener(type, fn, options);
+    offs.push(() => target.removeEventListener(type, fn, options));
   };
 
   // Cumulative: every node any entry has lit so far. Nothing is ever unlit.
-  const on = new Set<number>();
-
-  const light = (entry: HTMLElement | null) => {
-    if (entry === current) return;
-    current = entry;
-    // Leaving the list keeps the trail (and its hue); only the thread segment lets go.
-    if (!entry) { lit.removeAttribute('d'); return; }
-    // The trail recolours at once; only the nodes new to this entry draw in, one by one.
+  const lit = new Set<number>();
+  const lightRegion = (entry: HTMLElement) => {
+    // Only the nodes new to this entry draw in, one by one; the rest are already lit.
     for (const el of [...circles, ...lines]) el.style.removeProperty('--i');
-    // Hovering no longer repaints the page in the entry's hue. The flag's bands keep
-    // their own three colours; what an entry does is send power along its route, and each
-    // band turns its own colour up where the light arrives (--hl-* in global.css). Only
-    // the trail itself -- the wire and the thread segment -- is drawn in the entry's hue,
-    // because it is the one line that belongs to that entry alone.
-    wire.style.setProperty('--trail', `var(--hl-${entry.dataset.postHue ?? 'amarillo'})`);
     const region = (entry.dataset.region ?? '').split(',').filter(Boolean).map(Number);
     (region.length ? region : exit).forEach((n, i) => {
-      if (!on.has(n)) { on.add(n); circles[n]?.style.setProperty('--i', String(i)); }
+      if (!lit.has(n)) { lit.add(n); circles[n]?.style.setProperty('--i', String(i)); }
       circles[n]?.classList.add('path');
     });
-    // A wire lights once both of its nodes are lit, so separate regions knit together
-    // as the trail grows.
+    // A wire lights once both of its nodes are lit, so separate regions knit together.
     for (const wireEl of lines) {
       const a = Number(wireEl.dataset.a), b = Number(wireEl.dataset.b);
-      if (!on.has(a) || !on.has(b) || wireEl.classList.contains('path')) continue;
+      if (!lit.has(a) || !lit.has(b) || wireEl.classList.contains('path')) continue;
       wireEl.style.setProperty('--i', String(Math.max(region.indexOf(a), region.indexOf(b), 0)));
       wireEl.classList.add('path');
     }
-    draw(entry, true);
   };
 
+  const pulse = (el: Element | null | undefined) => {
+    if (!el || reduced()) return;
+    el.classList.remove('pulse');
+    void el.getBoundingClientRect(); // restart it
+    el.classList.add('pulse');
+    el.addEventListener('animationend', () => el.classList.remove('pulse'), { once: true });
+  };
+
+  let geo: TravelGeometry;
+  const passed = new Set<HTMLElement>();
+  let current: HTMLElement | null = null;
+  let ended = false;
+
+  const setCurrent = (entry: HTMLElement | null) => {
+    if (entry === current) return;
+    current?.classList.remove('is-current');
+    current = entry;
+    entry?.classList.add('is-current');
+  };
+
+  const tick = () => {
+    const line = scrollY + innerHeight * LINE - geo.top;
+    const bottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
+    const y = Math.min(Math.max(line, geo.start), geo.end);
+    const reach = bottom ? geo.end : y;
+    travel.reach(reach);
+    for (const n of geo.nodes) {
+      if (n.y > reach || passed.has(n.entry)) continue;
+      passed.add(n.entry);
+      lightRegion(n.entry);
+      pulse(n.entry.querySelector('.node'));
+    }
+    if (reach >= geo.end && !ended) { ended = true; pulse(foot); }
+    const cur = geo.nodes[currentIndex(geo.nodes.map((n) => n.y), bottom ? Infinity : line)]?.entry ?? null;
+    setCurrent(cur);
+    travel.here(y, cur?.dataset.postHue ?? 'amarillo');
+  };
+
+  // Layout resets reach; put it back at the furthest node already passed, so a resize or
+  // a filter never unlights anything, then let the reading line take it from there.
+  const relayout = () => {
+    geo = travel.layout();
+    travel.reach(Math.max(geo.start, ...geo.nodes.filter((n) => passed.has(n.entry)).map((n) => n.y)));
+    tick();
+  };
+
+  const show = (entry: HTMLElement) => { lightRegion(entry); travel.preview(entry); };
   for (const entry of entries) {
-    entry.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') light(entry); });
-    entry.addEventListener('focusin', () => light(entry));
-    entry.addEventListener('pointerdown', () => light(entry));
+    on(entry, 'pointerenter', (e) => { if ((e as PointerEvent).pointerType === 'mouse') show(entry); });
+    on(entry, 'focusin', () => show(entry));
+    on(entry, 'pointerdown', () => lightRegion(entry));
   }
-  list.addEventListener('pointerleave', (e) => {
-    if (e.pointerType === 'mouse' && !document.activeElement?.closest('.entry')) light(null);
+  on(list, 'pointerleave', (e) => {
+    if ((e as PointerEvent).pointerType === 'mouse' && !document.activeElement?.closest('.entry')) travel.preview(null);
+  });
+  on(list, 'focusout', (e) => {
+    if (!list.contains((e as FocusEvent).relatedTarget as Node | null)) travel.preview(null);
   });
 
-  // Phone: the entry nearest the middle of the screen is current.
-  const phone = matchMedia('(max-width: 899px), (hover: none) and (pointer: coarse)');
   let queued = false;
-  const follow = () => {
-    queued = false;
-    if (!phone.matches) return;
-    const mid = innerHeight / 2;
-    let best: HTMLElement | null = null;
-    let bestDist = Infinity;
-    for (const entry of entries) {
-      const r = entry.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > innerHeight) continue;
-      const d = Math.abs(r.top + r.height / 2 - mid);
-      if (d < bestDist) { bestDist = d; best = entry; }
-    }
-    light(best);
+  on(window, 'scroll', () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; tick(); });
+  }, { passive: true });
+  on(window, 'resize', relayout);
+  on(list, 'thread:filter', relayout);
+  let disposed = false;
+  document.fonts?.ready.then(() => { if (!disposed) relayout(); });
+  relayout();
+
+  return () => {
+    disposed = true;
+    for (const off of offs.splice(0)) off();
+    setCurrent(null);
+    travel.destroy();
   };
-  addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(follow); } }, { passive: true });
-  addEventListener('resize', layout);
-  document.fonts?.ready.then(layout);
-  requestAnimationFrame(() => { layout(); follow(); });
+}
+
+/** The landing: one mount once the first frame has laid out, never disposed. */
+export function initNetNav(): void {
+  requestAnimationFrame(() => { mountNetNav(); });
 }
