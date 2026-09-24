@@ -32,7 +32,7 @@ const hueStyle = [
 ].join(';');
 ---
 
-<Metro direction="anden" title={`${post.title} · ${COPY.autor}`}>
+<Metro direction="anden" title={`${post.title} · ${COPY.autor}`} description={post.description}>
   <div class="anden-post-head wrap" slot="header" style={hueStyle}>
     <a class="anden-back" href="/exp/anden/">{COPY.volverAnden}</a>
     <p class="anden-post-kicker">

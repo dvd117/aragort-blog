@@ -72,45 +72,46 @@ function initChapterStrip(): void {
   let furthest = 0;
   let frame = 0;
   const update = () => {
+    // Every read first, then every write: interleaving them forced a full layout of the
+    // essay per read (1.4s of style and layout on a throttled phone in Lighthouse).
     const requestedOrientation = strip.dataset.rideOrientation;
     const orientation = requestedOrientation === 'horizontal' || requestedOrientation === 'vertical'
       ? requestedOrientation
       : undefined;
     const axis = rideAxis(orientation, window.matchMedia('(max-width: 999px)').matches);
     const horizontal = axis === 'x';
-    list.dataset.rideAxis = axis;
     const listRect = list.getBoundingClientRect();
     const dotRects = stations.map((station) => station.querySelector<HTMLElement>('[data-ride-dot]')!.getBoundingClientRect());
+    const headingPositions = headings.map((heading) => heading.getBoundingClientRect().top + window.scrollY);
+    const readingLine = window.scrollY + window.innerHeight * .65;
+    const carWidth = train.offsetWidth || 26;
+    const carHeight = train.offsetHeight || 9;
+
     const first = dotRects[0]!;
     const last = dotRects[dotRects.length - 1]!;
     const firstX = first.left + first.width / 2 - listRect.left;
     const firstY = first.top + first.height / 2 - listRect.top;
     const lastX = last.left + last.width / 2 - listRect.left;
     const lastY = last.top + last.height / 2 - listRect.top;
-    list.style.setProperty('--ride-track-x', `${firstX}px`);
-    list.style.setProperty('--ride-track-y', `${firstY}px`);
-    list.style.setProperty('--ride-track-width', `${lastX - firstX}px`);
-    list.style.setProperty('--ride-track-height', `${lastY - firstY}px`);
-
-    const headingPositions = headings.map((heading) => heading.getBoundingClientRect().top + window.scrollY);
-    const readingLine = window.scrollY + window.innerHeight * .65;
     const active = currentChapterIndex(headingPositions, readingLine);
-    stations.forEach((station, index) => {
-      if (index === active) station.setAttribute('aria-current', 'location');
-      else station.removeAttribute('aria-current');
-    });
-
-    const currentTitle = strip.querySelector<HTMLElement>('[data-ride-current-title]');
-    const activeTitle = stations[active]?.querySelector<HTMLElement>('.metro-ride-title')?.textContent?.trim() ?? '';
-    if (currentTitle && currentTitle.textContent !== activeTitle) currentTitle.textContent = activeTitle;
-
     furthest = advanceHighWater(furthest, chapterProgress(headingPositions, readingLine));
-    const carWidth = train.getBoundingClientRect().width || 26;
-    const carHeight = train.getBoundingClientRect().height || 9;
     const startX = firstX - carWidth / 2;
     const startY = firstY - carHeight / 2;
     const x = horizontal ? startX + (lastX - firstX) * furthest : startX;
     const y = horizontal ? startY : startY + (lastY - firstY) * furthest;
+
+    list.dataset.rideAxis = axis;
+    list.style.setProperty('--ride-track-x', `${firstX}px`);
+    list.style.setProperty('--ride-track-y', `${firstY}px`);
+    list.style.setProperty('--ride-track-width', `${lastX - firstX}px`);
+    list.style.setProperty('--ride-track-height', `${lastY - firstY}px`);
+    stations.forEach((station, index) => {
+      if (index === active) station.setAttribute('aria-current', 'location');
+      else station.removeAttribute('aria-current');
+    });
+    const currentTitle = strip.querySelector<HTMLElement>('[data-ride-current-title]');
+    const activeTitle = stations[active]?.querySelector<HTMLElement>('.metro-ride-title')?.textContent?.trim() ?? '';
+    if (currentTitle && currentTitle.textContent !== activeTitle) currentTitle.textContent = activeTitle;
     train.style.setProperty('--ride-x', `${x}px`);
     train.style.setProperty('--ride-y', `${y}px`);
     train.dataset.moving = String(furthest > 0);

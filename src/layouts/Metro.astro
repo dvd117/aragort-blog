@@ -1,14 +1,21 @@
 ---
 import globalCss from '../styles/global.css?url';
 import { headScript } from '../lib/settings';
-import type { Direction } from '../data/metro';
+import { COPY, GROUNDS, LINES, type Direction } from '../data/metro';
 
 interface Props {
   direction: Direction;
   title?: string;
+  description?: string;
 }
 
-const { direction, title = 'Metro · David Aragort' } = Astro.props;
+const { direction, title = 'Metro · David Aragort', description = COPY.lede } = Astro.props;
+// The interchange mark as the tab icon, inline, so /exp/ never asks for /favicon.ico (a 404
+// that Lighthouse reports as a console error) and never shows the net's flag thread.
+const c = (id: string) => LINES.find((l) => l.id === id)!.colour[direction];
+const ink = direction === 'pol' ? GROUNDS.pol.ink : GROUNDS.anden.fg;
+const icon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" rx="8" fill="${GROUNDS[direction].bg}"/><g fill="none" stroke-width="3.5" stroke-linecap="round"><path d="M13 20H4M27 20h9" stroke="${c('l1')}"/><path d="M20 13V4" stroke="${c('l2')}"/><path d="M20 27v9" stroke="${c('l3')}"/><path d="M25 15l10-10" stroke="${c('l4')}"/></g><circle cx="20" cy="20" r="7" fill="${GROUNDS[direction].bg}" stroke="${ink}" stroke-width="3.5"/></svg>`;
+const iconHref = `data:image/svg+xml,${encodeURIComponent(icon)}`;
 ---
 
 <!doctype html>
@@ -16,14 +23,13 @@ const { direction, title = 'Metro · David Aragort' } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex, nofollow" />
     <title>{title}</title>
-    {direction === 'anden' && (
-      <>
-        <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin />
-        <link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin />
-      </>
-    )}
+    <meta name="description" content={description} />
+    <link rel="icon" href={iconHref} type="image/svg+xml" />
+    <!-- Geist before first paint in both directions: a late swap reflowed the map under the
+         Plano title (CLS 0.032) and the Andén reading measure. -->
+    <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href={globalCss} />
     <!-- Reading settings before first paint: no flash. Generated from src/lib/settings.ts. -->
     <script is:inline set:html={headScript()} />

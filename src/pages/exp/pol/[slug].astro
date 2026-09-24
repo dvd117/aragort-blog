@@ -35,7 +35,7 @@ const rideColour = `--line-colour:${line.colour.pol};--number-ink:${numberInk}`;
 const hueStyle = `--hue:${line.text.pol};--hue-ui:${line.colour.pol};--hue-band:${line.colour.pol}26;--line-colour:${line.colour.pol}`;
 ---
 
-<Metro direction="pol" title={`${post.title} · ${COPY.autor}`}>
+<Metro direction="pol" title={`${post.title} · ${COPY.autor}`} description={post.description}>
   <div class="pol-post-head wrap" slot="header" style={hueStyle}>
     <a class="pol-back" href="/exp/pol/">{COPY.volverPlano}</a>
     <p class="pol-post-line">
