@@ -285,6 +285,8 @@ html[data-metro="anden"] body {
 .anden-footer :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 
 @media (min-width: 700px) {
+  /* Badges sit under their own station, centred like its sign. */
+  .anden-transfers { justify-content: center; }
   .anden-line { padding-bottom: 2.8rem; }
   .anden-stops {
     display: grid;
