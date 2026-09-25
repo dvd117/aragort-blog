@@ -261,9 +261,11 @@ decoration that means nothing.
   as a transit diagram: every segment horizontal, vertical or 45°, every bend one radius
   (16px; 24px from 900px), and no horizontal run shorter than four radii. Each date hangs from it on a 14px station (18px from 900px): a
   page-colour disc, neutral ring and persistent dot in the post's hue, centered on the date
-  line. The static rail and stations remain without JS. The track ends at the last visible
-  station; its horizontal terminal bar sits under the disc and shows on either side of the
-  ring. The bar rests in the low-alpha net colour and turns to full `--fg` when reached.
+  line. The static rail and stations remain without JS. The track runs past the last
+  visible post and ends at a station on the "quién escribe" rule; its horizontal terminal
+  bar sits under that disc and shows on either side of the ring. The bar rests in the
+  low-alpha net colour and turns to full `--fg` when reached. The terminal station's centre
+  is the site's amarillo, not a post hue.
 - **Buscar:** only when there are at least eight published posts, one box sits between the
   hero and the list, hard against its right edge and below the net's reach on every width,
   so it never sits on a node or a wire; on phones its inline-start is inset to clear the
@@ -283,8 +285,8 @@ decoration that means nothing.
   first teaser line, with a 1px 45% hue underline that becomes full hue and 2px on hover or
   focus. It has no spur. After the posts, a "quién escribe" strip carries the name, one
   sentence and a link to Sobre mí without another mark; the footer keeps its independent
-  mark. The track ends at the oldest visible station and does not run through the strip or
-  into the footer.
+  mark. The track ends on the strip's rule, the thread's last stop, and never runs into the
+  footer.
 - **Post:** a single column on a phone, with a progress hairline and a closed "En este
   texto". From 1000px, a 150px sticky rail. At rest the chapter numbers sit beside their nodes,
   the current one in the hue with a dot beside its node; hovering or focusing the rail opens
@@ -305,9 +307,11 @@ decoration that means nothing.
   Escape, the focus trap and the backdrop are the browser's; Back closes it too. Without JS
   the header's link goes to /sobre-mi/, which is still a real page for direct links,
   sharing and search.
-- **Quién escribe:** the landing strip carries David's sentence and the way through to
-  "Sobre mí" without another mark; the footer keeps the landing's mark. Post pages retain
-  the mark beside the same signature block.
+- **Quién escribe:** one block ends the landing and every post: a hairline `--rule` as wide
+  as the sentence's measure, a small mono "Quién escribe" label, the name in display type,
+  then the sentence and the way through to "Sobre mí". No mark on either page: the header
+  and footer carry it. On posts it sits flush with the text column; on the landing it
+  lines up with the post titles and carries the thread's terminal station on its rule.
 - **Footer:** the mark, "David Aragort" and three icon links, all on one centre line (the
   mark sits in a box the height of an icon link and pinned to the top of the row) —
   GitHub (the source of this site), CC BY-SA (the licence, as the three canonical glyphs)
@@ -346,13 +350,15 @@ or Ajustes' "Reducir movimiento".
 - **Landing:** moving down the page travels the rounded route by arc length. It leaves the
   net as a 1px wire and tapers through the connector into the 4px gutter track (6px from
   900px), which rests in `--net` at `--track-alpha`. Its fill is one `--fg` colour in every
-  theme and holds at the furthest point reached; nothing runs past the center of the last
-  visible station. A horizontal bar, twice the station diameter and beneath its disc, is the
-  terminus: it rests with the track and turns to full `--fg` when reached. A page too short
+  theme and holds at the furthest point reached; it runs through every visible station and
+  stops at the center of the "quién escribe" station, never past it. A horizontal bar,
+  twice the station diameter and beneath that disc, is the terminus: it rests with the
+  track and turns to full `--fg` when reached. A page too short
   to scroll there counts as reached at its bottom. Passing a station pulses it once and
   turns its ring to the post's hue; its centre dot keeps that hue visible at rest. Reaching
-  the terminal pulses that last station once, not a second time, and keeps the bar in `--fg`;
-  resize and Buscar remeasure the last visible station without unlighting what was reached.
+  the terminal pulses the "quién escribe" station once, not a second time, turns its ring
+  amarillo and keeps the bar in `--fg`; resize and Buscar remeasure without unlighting what
+  was reached.
   The reading line (65% of the viewport, as on a post) moves the fill; it has no separate
   marker. On desktop, hovering or focusing an entry previews the trail in `--fg` (the look
   ahead is half strength) and lights its region, but only scrolling travels. Passing an

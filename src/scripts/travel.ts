@@ -171,7 +171,9 @@ function outline(path: TravelPath, trackW: number): string {
   return [...left, ...right].map(fmt).join('') + 'Z';
 }
 
-export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircleElement): Travel {
+/** `terminal`, when given, is where the route ends (the landing's "Quién escribe" station);
+ *  without it the route ends at the last visible station. */
+export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircleElement, terminal?: Element | null): Travel {
   const svg = make('svg', 'wire');
   svg.setAttribute('aria-hidden', 'true');
   const defs = make('defs');
@@ -234,7 +236,7 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
       const node = entry.querySelector('.node');
       return node ? [{ entry, y: centre(node, r).y }] : [];
     });
-    const endY = nodes.at(-1)?.y ?? l.bottom - r.top;
+    const endY = terminal ? centre(terminal, r).y : nodes.at(-1)?.y ?? l.bottom - r.top;
     const corners = route(e, topX, topY, endY, radius);
     path = sampleRoute(corners, radius);
     clipShape.setAttribute('d', outline(path, trackW));

@@ -1,25 +1,26 @@
 ---
 /*
- * Who writes this. The same block ends the landing and every post: the wordmark -- the
- * mark beside David's name, the lockup the site signs with -- and under it the sentence
- * and the way through to "Sobre mí".
+ * Who writes this. The same block ends the landing and every post: a rule, the label
+ * "Quién escribe", David's name, and under it the sentence and the way through to
+ * "Sobre mí". No mark: the header and the footer already carry it.
  *
- * The name is in the lockup now, so the sentence no longer opens with "Soy David Aragort,
- * caraqueño": it would be saying it twice, once in display type and once in prose.
+ * The name is in display type, so the sentence does not open with "Soy David Aragort,
+ * caraqueño": it would be saying it twice.
  *
- * The footer already carries the mark on the landing, so its copy of this block leaves it
- * out. Post pages keep the default mark beside the name.
+ * On the landing the block is the thread's last stop: a station sits on the rule, where
+ * the track ends (netnav.ts). Posts have no thread, so they leave it off.
  */
-import Net from './Net.astro';
 import { WHO } from '../lib/site';
 
 interface Props {
-  /** Whether the mark appears beside the name. */
-  mark?: boolean;
+  /** The landing's copy carries the thread's terminal station on its rule. */
+  stop?: boolean;
 }
-const { mark = true } = Astro.props;
+const { stop = false } = Astro.props;
 ---
-<aside class="who" aria-label="Quién escribe">
-  <p class="who-name">{mark && <Net name="mark" logo />}<span>David Aragort</span></p>
+<aside class="who" aria-labelledby="who-k">
+  {stop && <span class="node" aria-hidden="true"><span class="hue-dot"></span></span>}
+  <p class="who-k" id="who-k">Quién escribe</p>
+  <p class="who-name">David Aragort</p>
   <p class="who-text">{WHO} <a href="/sobre-mi/">Sobre mí</a></p>
 </aside>

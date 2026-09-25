@@ -7,8 +7,10 @@
  * - passing an entry's node pulses it once and lights the entry's region of the net: its
  *   route through its own node to the exit, plus the nodes one wire away (data-region).
  *   The net only ever gains light, and a wire lights once both of its nodes are lit;
- * - the last visible station is the terminal. A page too short to scroll to it counts as
- *   reached at the bottom, or its last nodes could never light.
+ * - the terminal is the station on "Quién escribe" after the list (the last visible
+ *   station if there is none). Reaching it pulses that station once and lights the
+ *   terminal bar. A page too short to scroll to it counts as reached at the bottom, or
+ *   its last nodes could never light.
  * Desktop hover or keyboard focus previews an entry's trail and lights its region, but
  * never moves reach: only travel does.
  */
@@ -30,7 +32,8 @@ export function mountNetNav(): () => void {
   const lines = [...net.querySelectorAll<SVGLineElement>('line')];
   const exitCircle = circles[exit.at(-1) ?? 0];
   if (!exitCircle) return () => {};
-  const travel = mountTravel(root, list, exitCircle);
+  const stop = root.querySelector<HTMLElement>('.who .node');
+  const travel = mountTravel(root, list, exitCircle, stop);
 
   const offs: Array<() => void> = [];
   const on = (target: EventTarget, type: string, fn: EventListener, options?: AddEventListenerOptions) => {
@@ -82,7 +85,10 @@ export function mountNetNav(): () => void {
       lightRegion(n.entry);
       pulse(n.entry.querySelector('.node'));
     }
-    if (reach >= geo.end) ended = true;
+    if (reach >= geo.end && !ended) {
+      ended = true;
+      if (stop) { stop.closest('.who')?.classList.add('is-reached'); pulse(stop); }
+    }
   };
 
   // Layout resets reach; put it back at the furthest node already passed (or the end, once

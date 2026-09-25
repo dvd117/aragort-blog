@@ -44,14 +44,10 @@
 /* A filtered list closes the gaps the hidden entries leave. */
 .entries.is-filtered .entry { --entry-pt: .6rem; padding-top: .6rem; }
 
-/* Entry segments meet edge to edge. The final visible entry ends its segment at the
-   station centre and draws the transverse terminal under the station disc. */
+/* Entry segments meet edge to edge, and the last one carries on to "Quién escribe". */
 .entries { --list-indent: 1.75rem; position: relative; list-style: none; margin: 0; padding: 0 0 0 var(--list-indent); }
 .entry { --entry-pt: .85rem; position: relative; display: grid; gap: .2rem; padding: .85rem 0 1.25rem; }
 .entry::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--track-w) / 2); top: 0; bottom: 0; width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
-.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::before { bottom: auto; height: calc(var(--entry-pt) + .7em); font-size: .875rem; }
-.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::after { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--station-d)); top: calc(var(--entry-pt) + .7em - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); font-size: .875rem; background: var(--net); opacity: var(--track-alpha); }
-.entry.is-reached:not([hidden]):not(:has(~ .entry:not([hidden])))::after { background: var(--fg); opacity: 1; }
 /* Buscar hides an entry with [hidden]; .entry sets display, so say it again louder. */
 .entry[hidden] { display: none; }
 /* A station: neutral ring on the track, with its post hue always visible at the centre. */
@@ -60,7 +56,18 @@
 .entry.is-reached .node { border-color: var(--hue-ui); }
 /* Passing a node: one short pulse, never from nothing. */
 @keyframes node-pass { 50% { transform: scale(1.15); } }
-.entry .node.pulse { animation: node-pass var(--dur-draw) var(--ease) 1; }
+.entry .node.pulse, .who .node.pulse { animation: node-pass var(--dur-draw) var(--ease) 1; }
+/* Quién escribe is the thread's last stop. The track crosses the gap above it and ends in
+   a station on its rule, with the transverse terminal bar under the station disc. Both
+   rest in the net colour and turn to full --fg when reached (netnav.ts). The station's
+   centre is the site's amarillo, not a post hue: it belongs to no post. */
+.index .who { --who-indent: 1.75rem; }
+.index .who::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--track-w) / 2); bottom: 100%; height: calc(2.5rem + 1px); width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
+.index .who::after { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--station-d)); top: calc(-.5px - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
+.index .who.is-reached::after { background: var(--fg); opacity: 1; }
+.who .node { left: calc(6px - var(--station-d) / 2); top: calc(-.5px - var(--station-d) / 2); width: var(--station-d); height: var(--station-d); }
+.who .node .hue-dot { background: var(--hu-amarillo); }
+.who.is-reached .node { border-color: var(--hu-amarillo); }
 .entry .d { position: relative; font-size: .875rem; color: var(--fg-2); margin: 0; line-height: 1.4; }
 .entry .t { font-family: var(--display); font-weight: var(--title-weight); font-size: clamp(1.6rem, 6.4vw, 2.6rem); line-height: var(--title-leading); letter-spacing: var(--title-tracking); text-decoration: none; }
 .entry .t:hover { text-decoration: underline; text-decoration-color: var(--hue-ui); text-decoration-thickness: 2px; text-underline-offset: .12em; }
@@ -130,7 +137,7 @@
   .entry.feature .more { grid-column: 2; justify-self: end; margin-top: .9rem; }
 }
 @media (min-width: 900px) {
-  .who { padding-left: 2.25rem; }
+  .index .who { --who-indent: 2.25rem; }
 }
 
 /* Short landscape (a phone on its side): a compact two-column composition. The net stays

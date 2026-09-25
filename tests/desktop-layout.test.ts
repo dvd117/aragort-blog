@@ -12,7 +12,7 @@ it('places desktop dates and titles in the text column and Leer beside the bulle
 
 it('keeps the desktop station gutter and aligns Quién escribe with the text column', () => {
   expect(css).toMatch(/\.entries\s*\{[^}]*--list-indent:\s*2\.25rem;\s*padding-left:\s*var\(--list-indent\)/);
-  expect(css).toMatch(/\.who\s*\{\s*padding-left:\s*2\.25rem;/);
+  expect(css).toMatch(/\.index \.who\s*\{\s*--who-indent:\s*2\.25rem;/);
 });
 
 it('leaves no later rule sending the bullets or Leer to the old date-column grid', () => {

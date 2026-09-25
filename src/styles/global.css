@@ -176,11 +176,12 @@ a { color: inherit; }
 
 /* The net, after Gego's Reticulárea: thin wires and hollow nodes. The large nets carry the
    flag's three bands by height; the small mark carries its connected flag path instead. */
-/* Quién escribe: the same block ends the landing and every post -- the wordmark (the mark
-   beside David's name) over the sentence and the way through to "Sobre mí" (Signature.astro). */
-.who { position: relative; margin: 2.5rem 0 0; padding: 2rem 0 0 1.75rem; color: var(--fg-2); font-size: 1rem; line-height: 1.5; }
-.who-name { display: flex; align-items: center; gap: .75rem; margin: 0 0 .75rem; color: var(--fg); font-family: var(--display); font-weight: var(--display-weight); font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem); line-height: 1; letter-spacing: -.035em; }
-.who-name .net { flex: none; width: 52px; height: 39px; }
+/* Quién escribe: the same block ends the landing and every post (Signature.astro) -- a
+   rule, a small label, the name and the way through to "Sobre mí". The rule runs to the
+   end of the sentence's measure; --who-indent is the landing's gutter for the thread. */
+.who { position: relative; max-width: calc(var(--who-indent, 0px) + 44rem); margin: 2.5rem 0 0; padding: 1.5rem 0 0 var(--who-indent, 0px); border-top: 1px solid var(--rule); color: var(--fg-2); font-size: 1rem; line-height: 1.5; }
+.who-k { margin: 0 0 .9rem; font: 600 .75rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--fg-2); }
+.who-name { margin: 0 0 .75rem; color: var(--fg); font-family: var(--display); font-weight: var(--display-weight); font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem); line-height: 1; letter-spacing: -.035em; }
 .who p.who-text { margin: 0; max-width: 44rem; }
 .who a { color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
 .who a:hover { text-decoration-thickness: 2px; text-decoration-color: var(--hue); }

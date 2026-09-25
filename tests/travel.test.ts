@@ -111,7 +111,7 @@ describe('rounded route samples', () => {
 
 const pCenter = (arc: Array<{ arcCenter?: { x: number; y: number } }>) => arc[0]?.arcCenter;
 
-function build(hideSecond = false) {
+function build(hideSecond = false, terminalY?: number) {
   vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
   vi.stubGlobal('scrollY', 0);
   document.body.innerHTML = `
@@ -130,7 +130,13 @@ function build(hideSecond = false) {
   box(document.getElementById('exit')!, 20, 95, 10, 10); // centre (25, 100)
   box(list, 0, 200, 800, 900); // thread at x 6, from y 200
   document.querySelectorAll('.node').forEach((n, i) => box(n, 0, 300 * (i + 1) - 6, 12, 12)); // 300, 600, 900
-  const travel = mountTravel(root, list, document.getElementById('exit') as unknown as SVGCircleElement);
+  let terminal: HTMLElement | undefined;
+  if (terminalY !== undefined) {
+    terminal = document.createElement('span');
+    root.append(terminal);
+    box(terminal, 0, terminalY - 6, 12, 12);
+  }
+  const travel = mountTravel(root, list, document.getElementById('exit') as unknown as SVGCircleElement, terminal);
   const fills = () => [...root.querySelectorAll('svg.wire .fill path')];
   return { root, travel, fills, entries: [...document.querySelectorAll<HTMLElement>('.entry')] };
 }
@@ -152,6 +158,13 @@ describe('mountTravel', () => {
     expect(g.end).toBe(900);
     expect(g.nodes.map((n) => n.y)).toEqual([300, 600, 900]);
     expect(g.nodes[0]!.entry).toBe(entries[0]);
+  });
+
+  it('ends the route at a terminal below the list when one is given', () => {
+    const { travel } = build(false, 1050);
+    const g = travel.layout();
+    expect(g.end).toBe(1050);
+    expect(g.nodes.map((n) => n.y)).toEqual([300, 600, 900]);
   });
 
   it('clips the constant-width layers with exactly one user-space variable-width outline', () => {

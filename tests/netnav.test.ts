@@ -8,7 +8,7 @@ const box = (e: Element, x: number, y: number, w: number, h: number) =>
   Object.defineProperty(e, 'getBoundingClientRect', { configurable: true, value: () => rect(x, y, w, h) });
 
 /** Hero net: circle 0 is the exit; entries' regions are nodes 1, 2, 3 (each wired to 0). */
-function build({ scroll = 0, height = 3000 } = {}) {
+function build({ scroll = 0, height = 3000, stop = false } = {}) {
   vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
   vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => { cb(0); return 0; });
   vi.stubGlobal('innerHeight', 800); // reading line at 520 + scrollY
@@ -25,6 +25,7 @@ function build({ scroll = 0, height = 3000 } = {}) {
         <li class="entry" data-region="0,2"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
         <li class="entry" data-region="0,3"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
       </ol>
+      ${stop ? '<aside class="who"><span class="node"></span></aside>' : ''}
     </div>`;
   // Rects are viewport-relative: at mount they are shifted up by the scroll, so the root
   // always sits at document y 0 and every root-relative y below holds whatever the scroll.
@@ -32,7 +33,8 @@ function build({ scroll = 0, height = 3000 } = {}) {
   box(document.querySelector('.index')!, 0, o, 1000, 1100);
   box(document.querySelector('[data-netnav] circle')!, 300, o + 95, 10, 10);
   box(document.querySelector('[data-thread]')!, 0, o + 200, 800, 900);
-  document.querySelectorAll('.node').forEach((n, i) => box(n, 0, o + 300 * (i + 1) - 6, 12, 12));
+  document.querySelectorAll('.entry .node').forEach((n, i) => box(n, 0, o + 300 * (i + 1) - 6, 12, 12));
+  if (stop) box(document.querySelector('.who .node')!, 0, o + 1000 - 6, 12, 12);
   const entries = [...document.querySelectorAll<HTMLElement>('.entry')];
   const circles = [...document.querySelectorAll<SVGCircleElement>('[data-netnav] circle')];
   const scrollTo = (y: number) => { vi.stubGlobal('scrollY', y); window.dispatchEvent(new Event('scroll')); };
@@ -120,6 +122,33 @@ it('moves the terminal up when Buscar hides the last station, keeping what was a
   expect(circles[2]!.classList.contains('path')).toBe(true);
   expect(entries.slice(0, 2).every((entry) => entry.classList.contains('is-reached'))).toBe(true);
   expect(fills()[0]).toMatch(/L6\.0 600\.0$/);
+});
+
+it('carries on past the last post to the Quién escribe station and pulses it once', () => {
+  const { entries, scrollTo } = build({ stop: true });
+  const who = document.querySelector('.who')!;
+  const station = who.querySelector('.node')!;
+  const add = vi.spyOn(station.classList, 'add');
+  scrollTo(400); // line 920: past the last post, short of the stop
+  expect(entries.every((entry) => entry.classList.contains('is-reached'))).toBe(true);
+  expect(who.classList.contains('is-reached')).toBe(false);
+  expect(fills().at(-1)).toMatch(/L6\.0 920\.0$/);
+  scrollTo(500); // line 1020
+  expect(fills().at(-1)).toMatch(/L6\.0 1000\.0$/);
+  expect(who.classList.contains('is-reached')).toBe(true);
+  scrollTo(700);
+  window.dispatchEvent(new Event('resize'));
+  expect(who.classList.contains('is-reached')).toBe(true);
+  expect(add.mock.calls.filter((args) => args.includes('pulse'))).toHaveLength(1);
+});
+
+it('counts the page bottom as reaching the Quién escribe station', () => {
+  build({ height: 900, stop: true });
+  window.dispatchEvent(new Event('scroll'));
+  vi.stubGlobal('scrollY', 100);
+  window.dispatchEvent(new Event('scroll'));
+  expect(fills().at(-1)).toMatch(/L6\.0 1000\.0$/);
+  expect(document.querySelector('.who')!.classList.contains('is-reached')).toBe(true);
 });
 
 it('cleans up on dispose', () => {
