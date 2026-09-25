@@ -254,22 +254,29 @@ decoration that means nothing.
 - **Header:** 58px with a 42px mark on desktop, 56px with a 38px mark on a phone. Reading a
   post on a phone: mark · title and time left · Sobre mí · Aa. The nav is one short pill
   now, so it stays while reading -- it is the only way to "Sobre mí" from a post.
-- **Landing, phone:** the net bleeds off the right edge behind the title; a wire leaves
-  its exit node and becomes the thread down the left gutter; each entry hangs on the
-  thread by its hue node.
+- **Landing, phone:** the net bleeds off the right edge behind the title; a 1px wire leaves
+  its exit node and tapers through rounded bends into the 4px track (6px from 900px) down
+  the left gutter. Each date hangs from it on a 14px station (18px from 900px): a
+  page-colour disc, neutral ring and persistent dot in the post's hue. The static rail and
+  stations remain without JS.
 - **Buscar:** one box between the hero and the list, hard against its right edge and below
-  the net's reach on every width, so it never sits on a node or a wire. Filled rather than
-  outlined, so it reads as a control and not as one more hairline. It narrows the list as
+  the net's reach on every width, so it never sits on a node or a wire; on phones its
+  inline-start is inset to clear the diagonal connector. Filled rather than outlined, so it
+  reads as a control and not as one more hairline. It narrows the list as
   you type over what the landing already shows -- title, description, the three ideas and the
   date -- accent- and case-insensitive, so "deje" finds "dejé". Built by
   `src/scripts/filter.ts`, so it is never there without the JS to drive it; Escape clears
   it. No search index is shipped; post bodies are not searched.
 - **Landing, desktop (≥900px):** two columns, the title and lede on the left (as wide as
   they need) and the net taking the rest of the width on the right, at fuller strength.
-- **Every post is expanded on the landing:** date, near-display title, description, its
-  the three ideas as a teaser, "Leer · N min", which branches off the thread: a ring and a short wire before the words, drawn in the hue on hover, on focus and while the entry is current. After the posts, a "quién escribe" strip (the mark
-  beside one sentence and a link to Sobre mí). The thread runs past it to the footer
-  mark: net, wire, posts, strip and footer are one line.
+- **Every post is expanded on the landing:** date, near-display title, description, the
+  three ideas as a teaser, "Leer · N min", which branches off the thread: a small
+  page-colour ring and a 2.5px wire in the resting track colour, before the words. On hover,
+  focus and while current, the wire draws in the post's hue and the ring takes that hue.
+  After the posts, a "quién escribe" strip (the mark beside one sentence and a link to Sobre
+  mí). The thread runs past it to the footer mark: net, wire, posts, strip and footer are one
+  line, ending at a bar centred 12px above the mark's top-left node and a 1px net wire to
+  the node.
 - **Post:** a single column on a phone, with a progress hairline and a closed "En este
   texto". From 1000px, a 150px sticky rail. At rest the chapter numbers sit beside their nodes,
   the current one in the hue with a dot beside its node; hovering or focusing the rail opens
@@ -295,8 +302,9 @@ decoration that means nothing.
   gone; the two pages end the same way.
 - **Footer:** the mark, "David Aragort" and three icon links, all on one centre line (the
   mark sits in a box the height of an icon link and pinned to the top of the row, so the
-  landing's thread always meets its top-left node in the same place) — GitHub (the source of this
-  site), CC BY-SA (the licence, as the three canonical glyphs) and RSS. The icons are
+  landing's terminus bar and 12px thin tail meet its top-left node in the same place) —
+  GitHub (the source of this site), CC BY-SA (the licence, as the three canonical glyphs)
+  and RSS. The icons are
   drawn in the net's hand: hairlines in `currentColor`, hollow rings, 44px tap targets,
   each carrying its words for screen readers and as a tooltip. They take the ruling hue on
   hover. The writing is CC BY-SA 4.0; every served `.md` closes with its licence line.
@@ -328,19 +336,22 @@ or Ajustes' "Reducir movimiento".
   net against its motion and it settles. Posts get half amplitude and hold still while
   scrolling. The node under the cursor glows in the ruling hue and fades (~600ms); the
   first page of a session opens with one pulse of light from the net's lit node.
-- **Landing:** moving down the page travels the thread. The reading line (65% of the
-  viewport, as on a post) is "here", shown as a hollow ring in the current entry's hue.
-  The thread fills down to the furthest point reached this visit and never recedes, each
-  section in the hue of the entry it leads to, so the flag comes in as you go; the tail
-  past the last entry is in the text colour. Passing an entry's node pulses it once and
-  lights its **region** of the net: its route (the net's lit node → the post's node →
-  exit) plus the nodes one wire away from its own node. A wire lights once both of its
-  nodes are lit, so separate regions knit together and the net visibly fills as the
-  archive grows: one post lights about a quarter of it, six about four fifths. **The net
-  only ever gains light.** Reaching the footer mark pulses it once; a page too short to
-  scroll that far counts as reached at its bottom. On desktop, hovering or focusing an
-  entry previews its trail (half strength below what you have reached) and lights its
-  region, but only scrolling travels.
+- **Landing:** moving down the page travels the rounded thread by arc length. It leaves the
+  net as a 1px wire and tapers through the diagonal connector into the 4px gutter track
+  (6px from 900px). At the terminus bar, it narrows to a 1px net wire for the final 12px to
+  the footer node. The reading line (65% of the viewport, as on a post) is "here", shown as a
+  hollow ring in the current entry's hue. The track fills down to the furthest point reached
+  this visit and never recedes, each section in the hue of the entry it leads to, so the flag
+  comes in as you go; the tail past the last entry is in the text colour. Passing a station
+  pulses it once and turns its ring to the post's hue; its centre dot keeps that hue visible
+  at rest. Passing an entry also lights its **region** of the net: its route (the net's lit
+  node → the post's node → exit) plus the nodes one wire away from its own node. A wire lights
+  once both of its nodes are lit, so separate regions knit together and the net visibly fills
+  as the archive grows: one post lights about a quarter of it, six about four fifths. **The
+  net only ever gains light.** Reaching the footer mark pulses it once and turns the
+  terminus bar to the text colour; a page too short to scroll that far counts as reached at
+  its bottom. On desktop, hovering or focusing an entry previews its trail (half strength
+  below what you have reached) and lights its region, but only scrolling travels.
 - **Post:** the rail and the header mark light node by node as you read, as a **high-water
   mark** — the light holds at the furthest you have read and never recedes, so jumping
   back with the chapter dock does not unread the text. The chapter dot and the time left
