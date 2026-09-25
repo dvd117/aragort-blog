@@ -199,6 +199,7 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
   let nodes: Array<{ entry: HTMLElement; y: number }> = [];
   let reachS = 0;
   let trackW = 4;
+  let pillW = 12;
 
   const centre = (el: Element, r: DOMRect): Pt => {
     const b = el.getBoundingClientRect();
@@ -229,16 +230,18 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     const topY = l.top - r.top;
     const style = getComputedStyle(root);
     trackW = Number.parseFloat(style.getPropertyValue('--track-w')) || 4;
+    pillW = Number.parseFloat(style.getPropertyValue('--pill-w')) || 12;
     const radius = Number.parseFloat(style.getPropertyValue('--track-r')) || 16;
     nodes = [...list.querySelectorAll<HTMLElement>('.entry:not([hidden])')].flatMap((entry) => {
       const node = entry.querySelector('.node');
       return node ? [{ entry, y: centre(node, r).y }] : [];
     });
     const endY = nodes.at(-1)?.y ?? l.bottom - r.top;
-    const corners = route(e, topX, topY, endY, radius);
+    const pillTop = nodes[0] ? nodes[0].y - pillW / 2 : topY;
+    const corners = route(e, topX, pillTop, endY, radius);
     path = sampleRoute(corners, radius);
     clipShape.setAttribute('d', outline(path, trackW));
-    base.setAttribute('d', slice(path.points, 0, yToS(path, topY))); // down to the CSS line
+    base.setAttribute('d', slice(path.points, 0, yToS(path, pillTop)));
     svg.style.setProperty('--wire-w', `${trackW}px`);
     reachS = 0;
     lit.removeAttribute('d');

@@ -29,8 +29,9 @@ it('keeps each date station neutral around a persistent, hue-bearing view-transi
 
 it('sizes the landing track per breakpoint and uses the quiet resting-strength token', () => {
   expect(css).toMatch(/:root\s*\{[^}]*--track-w:\s*4px[^}]*--track-r:\s*16px/);
-  expect(css).toMatch(/@media\s*\(min-width:\s*900px\)\s*\{\s*:root\s*\{[^}]*--track-w:\s*6px[^}]*--track-r:\s*24px/s);
-  expect(css).toMatch(/\.entry::before\s*\{[^}]*left:\s*calc\(6px - var\(--list-indent\) - var\(--track-w\) \/ 2\)[^}]*width:\s*var\(--track-w\)[^}]*opacity:\s*var\(--track-alpha\)/);
+  expect(css).toMatch(/:root\s*\{[^}]*--pill-w:\s*12px/);
+  expect(css).toMatch(/@media\s*\(min-width:\s*900px\)\s*\{\s*:root\s*\{[^}]*--track-w:\s*6px[^}]*--track-r:\s*24px[^}]*--pill-w:\s*16px/s);
+  expect(css).toMatch(/\.entry::before\s*\{[^}]*left:\s*calc\(6px - var\(--list-indent\) - var\(--pill-w\) \/ 2\)[^}]*width:\s*var\(--pill-w\)[^}]*background:\s*var\(--panel\)[^}]*border-inline:\s*1px solid var\(--rule\)/);
   expect(globalCss).not.toContain('.who-thread::before');
 });
 

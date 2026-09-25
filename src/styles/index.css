@@ -2,7 +2,7 @@
    the net bleeds off the right edge behind the title (quiet enough that the title
    stays AA over it), a wire leaves its bottom-left node and becomes the thread
    down the left gutter, and every entry hangs on the thread by its hue node. */
-:root { --track-w: 4px; --track-r: 16px; --station-d: 14px; }
+:root { --track-w: 4px; --track-r: 16px; --station-d: 14px; --pill-w: 12px; }
 .index { position: relative; overflow-x: clip; padding-top: 1rem; }
 /* Phone only: the net here is absolutely positioned and 96vw wide, so it is 64vw tall and
    stands outside the flow. The hero is given that height so nothing below it ever lands on
@@ -44,12 +44,14 @@
 /* A filtered list closes the gaps the hidden entries leave. */
 .entries.is-filtered .entry { --entry-pt: .6rem; padding-top: .6rem; }
 
-/* Entry segments meet edge to edge. The final visible entry ends its segment at the
-   station centre and draws the transverse terminal under the station disc. */
+/* The static pill is present without JS. Per-entry segments meet edge to edge; its caps
+   follow the first and last visible station, while the hero wire meets its top cap. */
 .entries { --list-indent: 1.75rem; position: relative; list-style: none; margin: 0; padding: 0 0 0 var(--list-indent); }
 .entry { --entry-pt: .85rem; position: relative; display: grid; gap: .2rem; padding: .85rem 0 1.25rem; }
-.entry::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--track-w) / 2); top: 0; bottom: 0; width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
-.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::before { bottom: auto; height: calc(var(--entry-pt) + .7em); font-size: .875rem; }
+.entry::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--pill-w) / 2); top: 0; bottom: 0; box-sizing: border-box; width: var(--pill-w); background: var(--panel); border-inline: 1px solid var(--rule); }
+.entry:first-child::before, .entry[data-track-first]::before { top: calc(var(--entry-pt) + .7em - var(--pill-w) / 2); border-top: 1px solid var(--rule); border-radius: 999px 999px 0 0; }
+.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::before, .entry[data-track-last]::before { bottom: calc(100% - var(--entry-pt) - .7em); border-bottom: 1px solid var(--rule); border-radius: 0 0 999px 999px; }
+.entry:first-child:last-child::before, .entry[data-track-first][data-track-last]::before { border-radius: 999px; }
 .entry:not([hidden]):not(:has(~ .entry:not([hidden])))::after { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--station-d)); top: calc(var(--entry-pt) + .7em - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); font-size: .875rem; background: var(--net); opacity: var(--track-alpha); }
 .entry.is-reached:not([hidden]):not(:has(~ .entry:not([hidden])))::after { background: var(--fg); opacity: 1; }
 /* Buscar hides an entry with [hidden]; .entry sets display, so say it again louder. */
@@ -86,7 +88,7 @@
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */
 @media (min-width: 900px) {
-  :root { --track-w: 6px; --track-r: 24px; --station-d: 18px; }
+  :root { --track-w: 6px; --track-r: 24px; --station-d: 18px; --pill-w: 16px; }
   .index { padding-top: 4rem; overflow-x: visible; }
   /* The title column is as wide as the title; the net takes the rest. */
   .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 7.5rem; min-height: 0; }

@@ -138,10 +138,10 @@ function build(hideSecond = false) {
 afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ''; });
 
 describe('mountTravel', () => {
-  it('draws the resting connector down to the top of the list, where the CSS line begins', () => {
+  it('draws the resting connector down to the pill cap above the first station', () => {
     const { root, travel } = build();
     travel.layout();
-    expect(root.querySelector('.base')!.getAttribute('d')).toMatch(/L6\.0 200\.0$/);
+    expect(root.querySelector('.base')!.getAttribute('d')).toMatch(/L6\.0 294\.0$/);
   });
 
   it('keeps the geometry shape and measures nodes from the exit to the last station', () => {
