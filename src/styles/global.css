@@ -170,24 +170,20 @@ a { color: inherit; }
 :root[data-motion="reduce"] *, :root[data-motion="reduce"] *::before, :root[data-motion="reduce"] *::after {
   transition: none !important; animation: none !important; scroll-behavior: auto !important;
 }
-/* The end: a net completes with one short pulse, once -- a post's at its last line, the landing's footer mark when the thread reaches it. */
+/* The end: a net completes with one short pulse, once -- a post's at its last line, the landing's terminal station when the route reaches it. */
 @keyframes net-pulse { 50% { transform: scale(1.08); } }
 .net.pulse { animation: net-pulse var(--dur-page) var(--ease) 1; transform-origin: 50% 50%; }
 
 /* The net, after Gego's Reticulárea: thin wires and hollow nodes. The large nets carry the
    flag's three bands by height; the small mark carries its connected flag path instead. */
 /* Quién escribe: the same block ends the landing and every post -- the wordmark (the mark
-   beside David's name) over the sentence and the way through to "Sobre mí"
-   (Signature.astro). Only the landing's copy carries the thread down its left edge. */
+   beside David's name) over the sentence and the way through to "Sobre mí" (Signature.astro). */
 .who { position: relative; margin: 2.5rem 0 0; padding: 2rem 0 0 1.75rem; color: var(--fg-2); font-size: 1rem; line-height: 1.5; }
 .who-name { display: flex; align-items: center; gap: .75rem; margin: 0 0 .75rem; color: var(--fg); font-family: var(--display); font-weight: var(--display-weight); font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem); line-height: 1; letter-spacing: -.035em; }
 .who-name .net { flex: none; width: 52px; height: 39px; }
 .who p.who-text { margin: 0; max-width: 44rem; }
 .who a { color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
 .who a:hover { text-decoration-thickness: 2px; text-decoration-color: var(--hue); }
-.who-thread { margin-top: 0; }
-.who-thread::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--track-w) / 2); top: 0; bottom: 0; width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
-
 .net { display: block; overflow: visible; }
 .net line { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .net circle { fill: var(--bg); stroke: var(--net); stroke-width: 1; vector-effect: non-scaling-stroke; }

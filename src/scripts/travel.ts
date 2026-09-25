@@ -143,26 +143,14 @@ const make = <K extends keyof SVGElementTagNameMap>(tag: K, cls?: string): SVGEl
 };
 let clipSequence = 0;
 
-function withPointAt(points: CurvePoint[], s: number): CurvePoint[] {
-  if (points.some((p) => Math.abs(p.s - s) < 1e-8)) return points;
-  const p = pointAtS(points, s);
-  const at = points.findIndex((point) => point.s > s);
-  return at < 0 ? [...points, { ...p, s }] : [...points.slice(0, at), { ...p, s }, ...points.slice(at)];
-}
-
-function outline(path: TravelPath, trackW: number, barS: number): string {
-  const centerline = withPointAt(path.points, barS);
-  const sections: Array<{ p: Pt; w: number; i: number }> = [];
+function outline(path: TravelPath, trackW: number): string {
+  const centerline = path.points;
   const smooth = (t: number) => t * t * (3 - 2 * t);
   const widthAt = (s: number) => {
     if (path.connectorS <= 0 || s >= path.connectorS) return trackW;
     return 1 + (trackW - 1) * smooth(s / path.connectorS);
   };
-  for (let i = 0; i < centerline.length; i++) {
-    const p = centerline[i]!;
-    if (Math.abs(p.s - barS) < 1e-8) sections.push({ p, w: trackW, i }, { p, w: 1, i });
-    else sections.push({ p, w: p.s > barS ? 1 : widthAt(p.s), i });
-  }
+  const edges = centerline.map((p, i) => ({ p, w: widthAt(p.s), i }));
   const normalAt = (i: number) => {
     const p = centerline[i]!;
     let before = i - 1, after = i + 1;
@@ -172,18 +160,18 @@ function outline(path: TravelPath, trackW: number, barS: number): string {
     const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
     return { x: -dy / len, y: dx / len };
   };
-  const left = sections.map(({ p, w, i }) => {
+  const left = edges.map(({ p, w, i }) => {
     const n = normalAt(i);
     return { x: p.x + n.x * w / 2, y: p.y + n.y * w / 2 };
   });
-  const right = sections.map(({ p, w, i }) => {
+  const right = edges.map(({ p, w, i }) => {
     const n = normalAt(i);
     return { x: p.x - n.x * w / 2, y: p.y - n.y * w / 2 };
   }).reverse();
   return [...left, ...right].map(fmt).join('') + 'Z';
 }
 
-export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircleElement, foot: SVGSVGElement | null): Travel {
+export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircleElement): Travel {
   const svg = make('svg', 'wire');
   svg.setAttribute('aria-hidden', 'true');
   const defs = make('defs');
@@ -216,15 +204,6 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     const b = el.getBoundingClientRect();
     return { x: b.left + b.width / 2 - r.left, y: b.top + b.height / 2 - r.top };
   };
-  // The landing track ends at the footer mark's top-left node.
-  const footNode = () => {
-    const circles = [...(foot?.querySelectorAll('circle') ?? [])];
-    return circles.sort((a, b) => {
-      const p = a.getBoundingClientRect(), q = b.getBoundingClientRect();
-      return p.left + p.top - (q.left + q.top);
-    })[0] ?? null;
-  };
-
   const render = () => {
     const d = slice(path.points, 0, reachS);
     if (!d) fillPath.removeAttribute('d');
@@ -251,19 +230,16 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     const style = getComputedStyle(root);
     trackW = Number.parseFloat(style.getPropertyValue('--track-w')) || 4;
     const radius = Number.parseFloat(style.getPropertyValue('--track-r')) || 16;
-    const end = footNode();
-    const endY = end ? centre(end, r).y : l.bottom - r.top;
-    const corners = route(e, topX, topY, endY, radius);
-    path = sampleRoute(corners, radius);
-    const barY = endY - 12;
-    const barS = yToS(path, barY);
-    clipShape.setAttribute('d', outline(path, trackW, barS));
-    base.setAttribute('d', slice(path.points, 0, yToS(path, topY))); // down to the CSS line
-    svg.style.setProperty('--wire-w', `${trackW}px`);
     nodes = [...list.querySelectorAll<HTMLElement>('.entry:not([hidden])')].flatMap((entry) => {
       const node = entry.querySelector('.node');
       return node ? [{ entry, y: centre(node, r).y }] : [];
     });
+    const endY = nodes.at(-1)?.y ?? l.bottom - r.top;
+    const corners = route(e, topX, topY, endY, radius);
+    path = sampleRoute(corners, radius);
+    clipShape.setAttribute('d', outline(path, trackW));
+    base.setAttribute('d', slice(path.points, 0, yToS(path, topY))); // down to the CSS line
+    svg.style.setProperty('--wire-w', `${trackW}px`);
     reachS = 0;
     lit.removeAttribute('d');
     ahead.removeAttribute('d');

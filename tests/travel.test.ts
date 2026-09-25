@@ -123,16 +123,14 @@ function build(hideSecond = false) {
         <li class="entry"><p class="d"><span class="node"></span></p></li>
       </ol>
     </div>
-    <footer class="site-foot"><svg class="net"><circle id="f1"></circle><circle id="f2"></circle></svg></footer>`;
+  `;
   const root = document.querySelector<HTMLElement>('.index')!;
   const list = document.querySelector<HTMLElement>('[data-thread]')!;
   box(root, 0, 0, 1000, 1100);
   box(document.getElementById('exit')!, 20, 95, 10, 10); // centre (25, 100)
   box(list, 0, 200, 800, 900); // thread at x 6, from y 200
   document.querySelectorAll('.node').forEach((n, i) => box(n, 0, 300 * (i + 1) - 6, 12, 12)); // 300, 600, 900
-  box(document.getElementById('f1')!, 0, 1198, 4, 4); // top-left node: centre y 1200
-  box(document.getElementById('f2')!, 20, 1210, 4, 4);
-  const travel = mountTravel(root, list, document.getElementById('exit') as unknown as SVGCircleElement, document.querySelector('.site-foot .net'));
+  const travel = mountTravel(root, list, document.getElementById('exit') as unknown as SVGCircleElement);
   const fills = () => [...root.querySelectorAll('svg.wire .fill path')];
   return { root, travel, fills, entries: [...document.querySelectorAll<HTMLElement>('.entry')] };
 }
@@ -146,12 +144,12 @@ describe('mountTravel', () => {
     expect(root.querySelector('.base')!.getAttribute('d')).toMatch(/L6\.0 200\.0$/);
   });
 
-  it('keeps the geometry shape and measures nodes from the exit to the footer mark', () => {
+  it('keeps the geometry shape and measures nodes from the exit to the last station', () => {
     const { travel, entries } = build();
     const g = travel.layout();
     expect(Object.keys(g)).toEqual(['top', 'start', 'end', 'nodes']);
     expect(g.start).toBe(100);
-    expect(g.end).toBe(1200);
+    expect(g.end).toBe(900);
     expect(g.nodes.map((n) => n.y)).toEqual([300, 600, 900]);
     expect(g.nodes[0]!.entry).toBe(entries[0]);
   });

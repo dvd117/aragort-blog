@@ -7,8 +7,8 @@
  * - passing an entry's node pulses it once and lights the entry's region of the net: its
  *   route through its own node to the exit, plus the nodes one wire away (data-region).
  *   The net only ever gains light, and a wire lights once both of its nodes are lit;
- * - reaching the footer mark pulses it once. A page too short to scroll that far counts
- *   as reached at its bottom, or its last nodes could never light.
+ * - the last visible station is the terminal. A page too short to scroll to it counts as
+ *   reached at the bottom, or its last nodes could never light.
  * Desktop hover or keyboard focus previews an entry's trail and lights its region, but
  * never moves reach: only travel does.
  */
@@ -30,8 +30,7 @@ export function mountNetNav(): () => void {
   const lines = [...net.querySelectorAll<SVGLineElement>('line')];
   const exitCircle = circles[exit.at(-1) ?? 0];
   if (!exitCircle) return () => {};
-  const foot = document.querySelector<SVGSVGElement>('.site-foot .net');
-  const travel = mountTravel(root, list, exitCircle, foot);
+  const travel = mountTravel(root, list, exitCircle);
 
   const offs: Array<() => void> = [];
   const on = (target: EventTarget, type: string, fn: EventListener, options?: AddEventListenerOptions) => {
@@ -83,11 +82,11 @@ export function mountNetNav(): () => void {
       lightRegion(n.entry);
       pulse(n.entry.querySelector('.node'));
     }
-    if (reach >= geo.end && !ended) { ended = true; foot?.closest('.site-foot')?.classList.add('is-reached'); pulse(foot); }
+    if (reach >= geo.end) ended = true;
   };
 
   // Layout resets reach; put it back at the furthest node already passed (or the end, once
-  // the terminus is lit), so a resize or a filter never unlights anything, then let the
+  // the terminal is lit), so a resize or a filter never unlights anything, then let the
   // reading line take it from there.
   const relayout = () => {
     geo = travel.layout();

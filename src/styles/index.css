@@ -42,12 +42,16 @@
    arrives, or the list jumps down by its height (CLS). Without JS nothing is held. */
 @media (scripting: enabled) { .index:has(.entries):not(:has(.filter)) .hero { margin-bottom: calc(var(--filter-h) + var(--filter-gap)); } }
 /* A filtered list closes the gaps the hidden entries leave. */
-.entries.is-filtered .entry { padding-top: .6rem; }
+.entries.is-filtered .entry { --entry-pt: .6rem; padding-top: .6rem; }
 
-/* The thread: one line in the gutter; the wire from the net joins it (drawn by netnav). */
-.entries { position: relative; list-style: none; margin: 0; padding: 0 0 0 1.75rem; }
-.entries::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--track-w) / 2); top: 0; bottom: 1.2rem; width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
-.entry { position: relative; display: grid; gap: .2rem; padding: .85rem 0 1.25rem; }
+/* Entry segments meet edge to edge. The final visible entry ends its segment at the
+   station centre and draws the transverse terminal under the station disc. */
+.entries { --list-indent: 1.75rem; position: relative; list-style: none; margin: 0; padding: 0 0 0 var(--list-indent); }
+.entry { --entry-pt: .85rem; position: relative; display: grid; gap: .2rem; padding: .85rem 0 1.25rem; }
+.entry::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--track-w) / 2); top: 0; bottom: 0; width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
+.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::before { bottom: auto; height: calc(var(--entry-pt) + .7em); font-size: .875rem; }
+.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::after { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--station-d)); top: calc(var(--entry-pt) + .7em - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); font-size: .875rem; background: var(--net); opacity: var(--track-alpha); }
+.entry.is-reached:not([hidden]):not(:has(~ .entry:not([hidden])))::after { background: var(--fg); opacity: 1; }
 /* Buscar hides an entry with [hidden]; .entry sets display, so say it again louder. */
 .entry[hidden] { display: none; }
 /* A station: neutral ring on the track, with its post hue always visible at the centre. */
@@ -72,9 +76,8 @@
 .net-wrap .net .path { stroke-opacity: 1; transition: stroke var(--dur-ui) var(--ease), fill var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); transition-delay: calc(var(--i, 0) * 30ms); }
 .wire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
 .wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--track-alpha); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: butt; stroke-linejoin: round; } /* butt: a round cap would overlap the CSS line below and double its strength */
-/* The resting lines (.entries::before, .who-thread::before, .site-foot::before) sit below
-   this layer, leaving the progress colour unobscured. The fill and hover preview use one
-   text-colour line, beneath entry nodes, which paint later. */
+/* The resting entry segments sit below this layer, leaving the progress colour unobscured.
+   The fill and hover preview use one text-colour line, beneath entry nodes, which paint later. */
 .wire .fill path { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; }
 .wire .lit { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
 /* A preview below reach is a look ahead, not travel. */
@@ -91,7 +94,7 @@
   .lede { font-size: 1.3125rem; max-width: 28ch; margin-top: 1.5rem; }
   .net-wrap { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .5; }
   .net-wrap .net circle { stroke-opacity: 1; }
-  .entries { padding-left: 2.25rem; max-width: 60rem; }
+  .entries { --list-indent: 2.25rem; padding-left: var(--list-indent); max-width: 60rem; }
   /* Flush with the net's right edge above it; the list below is narrower, so aligning
      the box to the list instead would leave a gap between it and everything else. */
   .index { --filter-gap: 1.5rem; }
@@ -100,13 +103,13 @@
   /* Date | text | "Leer". The third track is only as wide as "Leer * N min", so the text
      keeps the room it had and the link fills the band that used to sit empty beside the
      bullets. */
-  .entry { grid-template-columns: 13rem minmax(0, 1fr) auto; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
+  .entry { --entry-pt: 1rem; grid-template-columns: 13rem minmax(0, 1fr) auto; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
   .entry .t, .entry .ex, .entry .tag { grid-column: 2 / -1; }
   .entry .t { font-size: clamp(1.9rem, 3.2vw, 2.9rem); }
 }
 
 /* Every post gets the room: near-display title, description, the three ideas and "Leer". */
-.entry.feature { padding: 1rem 0 2rem; }
+.entry.feature { --entry-pt: 1rem; padding: 1rem 0 2rem; }
 .entry.feature .t { font-weight: var(--display-weight); font-size: clamp(2.4rem, 9vw, 4.6rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); max-width: 14ch; }
 .entry.feature .ex { font-size: 1.25rem; color: var(--fg); max-width: 40ch; }
 .teaser { margin: .9rem 0 0; padding: 0 0 0 1.1rem; font: 500 1.0625rem/1.45 var(--ui); color: var(--fg-2); max-width: 44ch; }
@@ -118,16 +121,6 @@
 .teaser li:nth-child(3)::marker { color: var(--hu-rojo); }
 .more { justify-self: start; display: inline-block; min-height: 44px; margin-top: .8rem; font: 600 1rem/1 var(--ui); color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
 .more:hover, .more:focus-visible { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
-/* Quién escribe on the landing: the thread runs past it, down to the footer mark. The
-   block itself is shared with the post (Signature.astro, styled in global.css). */
-.index:has(.who) .entries::before { bottom: 0; }
-/* The track stops at a transverse terminus 12px above the footer node; a 1px net wire
-   carries the centre of the bar down to the mark. Both stay visible with JavaScript off. */
-body:has(.index .who) .site-foot { position: relative; }
-body:has(.index .who) .site-foot::before { content: ""; position: absolute; z-index: -1; left: calc(var(--gutter) + 6px - var(--track-w) / 2); top: 0; height: calc(4rem + (var(--foot-row) - 29px) / 2 + 2.4px); width: var(--track-w); background: linear-gradient(var(--net), var(--net)) center top / var(--track-w) calc(100% - 12px) no-repeat, linear-gradient(var(--net), var(--net)) center bottom / 1px 12px no-repeat; opacity: var(--track-alpha); }
-body:has(.index .who) .site-foot::after { content: ""; position: absolute; left: calc(var(--gutter) + 6px - var(--station-d) / 2); top: calc(4rem + (var(--foot-row) - 29px) / 2 + 2.4px - 12px - var(--track-w) / 2); width: var(--station-d); height: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
-body:has(.index .who) .site-foot.is-reached::after { background: var(--fg); opacity: 1; }
-body:has(.index .who) .site-foot .net { margin-left: 3.6px; }
 /* Wide enough for two: the bullets keep their measure and "Leer" sits out at the right,
    on the first bullet's baseline, instead of stacking under a half-empty row. Below this
    there is no room for a second column and it goes back under the list. */
