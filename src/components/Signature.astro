@@ -7,19 +7,19 @@
  * The name is in the lockup now, so the sentence no longer opens with "Soy David Aragort,
  * caraqueño": it would be saying it twice, once in display type and once in prose.
  *
- * On the landing the thread runs down its left edge and on to the footer mark; on a post
- * there is no thread to carry, so the rule is left off.
+ * The footer already carries the mark on the landing, so its copy of this block leaves it
+ * out. Post pages keep the default mark beside the name.
  */
 import Net from './Net.astro';
 import { WHO } from '../lib/site';
 
 interface Props {
-  /** The landing's copy of the block carries the thread down its left edge. */
-  thread?: boolean;
+  /** Whether the mark appears beside the name. */
+  mark?: boolean;
 }
-const { thread = false } = Astro.props;
+const { mark = true } = Astro.props;
 ---
-<aside class:list={['who', { 'who-thread': thread }]} aria-label="Quién escribe">
-  <p class="who-name"><Net name="mark" logo /><span>David Aragort</span></p>
+<aside class="who" aria-label="Quién escribe">
+  <p class="who-name">{mark && <Net name="mark" logo />}<span>David Aragort</span></p>
   <p class="who-text">{WHO} <a href="/sobre-mi/">Sobre mí</a></p>
 </aside>
