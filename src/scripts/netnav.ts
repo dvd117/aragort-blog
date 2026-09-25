@@ -89,10 +89,11 @@ export function mountNetNav(): () => void {
     for (const n of geo.nodes) {
       if (n.y > reach || passed.has(n.entry)) continue;
       passed.add(n.entry);
+      n.entry.classList.add('is-reached');
       lightRegion(n.entry);
       pulse(n.entry.querySelector('.node'));
     }
-    if (reach >= geo.end && !ended) { ended = true; pulse(foot); }
+    if (reach >= geo.end && !ended) { ended = true; foot?.closest('.site-foot')?.classList.add('is-reached'); pulse(foot); }
     const cur = geo.nodes[currentIndex(geo.nodes.map((n) => n.y), bottom ? Infinity : line)]?.entry ?? null;
     setCurrent(cur);
     travel.here(y, cur?.dataset.postHue ?? 'amarillo');

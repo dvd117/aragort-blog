@@ -50,6 +50,7 @@ it('passes the first node at the top of the page and makes it current', () => {
   const { entries, circles } = build();
   expect(current()).toEqual([entries[0]]);
   expect(entries[0]!.querySelector('.node')!.classList.contains('pulse')).toBe(true);
+  expect(entries[0]!.classList.contains('is-reached')).toBe(true);
   expect(circles[1]!.classList.contains('path')).toBe(true);
   expect(circles[2]!.classList.contains('path')).toBe(false);
 });
@@ -68,6 +69,17 @@ it('holds the fill when scrolling back up, but current follows', () => {
   scrollTo(0);
   expect(current()).toEqual([entries[0]]);
   expect(fills()[2]).toBe('M5.5 600.0L5.5 720.0');
+});
+
+it('keeps reached station rings lit and marks the footer terminus once reached', () => {
+  const { entries, scrollTo } = build();
+  scrollTo(200);
+  expect(entries.slice(0, 2).every((entry) => entry.classList.contains('is-reached'))).toBe(true);
+  scrollTo(0);
+  expect(entries.slice(0, 2).every((entry) => entry.classList.contains('is-reached'))).toBe(true);
+  expect(entries[2]!.classList.contains('is-reached')).toBe(false);
+  scrollTo(2300);
+  expect(document.querySelector('.site-foot')!.classList.contains('is-reached')).toBe(true);
 });
 
 it('opens mid-page with everything above the reading line already passed', () => {

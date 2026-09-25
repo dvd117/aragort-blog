@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { ratio } from '../src/lib/contrast';
+import { composite, ratio } from '../src/lib/contrast';
 
 const css = readFileSync('src/styles/global.css', 'utf8');
 // Per theme: page, panel, and the hues as text (4.5:1) and as UI marks (3:1).
@@ -26,5 +26,24 @@ describe('contrast (WCAG 2.2)', () => {
   }
   it('the table matches global.css', () => {
     for (const t of Object.values(THEMES)) for (const c of [t.bg, t.panel, ...t.text, ...t.ui]) expect(css.toLowerCase()).toContain(c);
+  });
+
+  it('sets a quiet resting track near 2:1 against every theme background', () => {
+    const themes = [
+      { name: 'dark', selector: /:root\s*\{([^}]*)\}/, bg: '#000000', net: '#ece9e1', fg: '#ece9e1' },
+      { name: 'light', selector: /:root\[data-theme="light"\]\s*\{([^}]*)\}/, bg: '#f7f6f2', net: '#15171a', fg: '#15171a' },
+      { name: 'sepia', selector: /:root\[data-theme="sepia"\]\s*\{([^}]*)\}/, bg: '#f3ead6', net: '#33291d', fg: '#33291d' },
+      { name: 'contrast', selector: /:root\[data-theme="contrast"\]\s*\{([^}]*)\}/, bg: '#000000', net: '#ffffff', fg: '#ffffff' },
+      { name: 'system light', selector: /@media\s*\(prefers-color-scheme:\s*light\)\s*\{\s*:root:not\(\[data-theme\]\)\s*\{([^}]*)\}/, bg: '#f7f6f2', net: '#15171a', fg: '#15171a' },
+    ];
+    for (const theme of themes) {
+      const block = css.match(theme.selector)?.[1] ?? '';
+      const alpha = Number.parseFloat(block.match(/--track-alpha:\s*([\d.]+)/)?.[1] ?? 'NaN');
+      expect(Number.isFinite(alpha), theme.name).toBe(true);
+      const contrast = ratio(composite(theme.net, alpha, theme.bg), theme.bg);
+      expect(contrast, theme.name).toBeGreaterThanOrEqual(1.8);
+      expect(contrast, theme.name).toBeLessThanOrEqual(2.2);
+      expect(contrast, theme.name).toBeLessThan(ratio(theme.fg, theme.bg));
+    }
   });
 });

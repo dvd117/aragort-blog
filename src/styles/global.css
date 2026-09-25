@@ -25,6 +25,7 @@
   --rule: #24272c;
   --net: #ece9e1;
   --net-alpha: .5;
+  --track-alpha: .269;
   --focus: #e2a638;               /* the focus ring, the one mark that never changes hue */
   --link: #e2a638;                /* the amarillo accent as text */
   --mark: rgba(226, 166, 56, .28);
@@ -51,14 +52,14 @@
 /* Light ("Claro", or nothing saved on a light OS): bright off-white, graphite net. */
 :root[data-theme="light"] {
   --bg: #f7f6f2; --panel: #eeece6; --fg: #15171a; --fg-read: #15171a; --fg-2: #5a5f66; --rule: #dcdad3;
-  --net: #15171a; --net-alpha: .55; --focus: #b8801b; --link: #8b6114;
+  --net: #15171a; --net-alpha: .55; --track-alpha: .312; --focus: #b8801b; --link: #8b6114;
   --mark: rgba(226, 166, 56, .38); --mark-hover: rgba(226, 166, 56, .6);
   color-scheme: light;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
     --bg: #f7f6f2; --panel: #eeece6; --fg: #15171a; --fg-read: #15171a; --fg-2: #5a5f66; --rule: #dcdad3;
-    --net: #15171a; --net-alpha: .55; --focus: #b8801b; --link: #8b6114;
+    --net: #15171a; --net-alpha: .55; --track-alpha: .312; --focus: #b8801b; --link: #8b6114;
     --mark: rgba(226, 166, 56, .38); --mark-hover: rgba(226, 166, 56, .6);
     color-scheme: light;
   }
@@ -66,14 +67,14 @@
 /* Sepia: warm paper, brown ink. */
 :root[data-theme="sepia"] {
   --bg: #f3ead6; --panel: #e9dec5; --fg: #33291d; --fg-read: #33291d; --fg-2: #6a5943; --rule: #d6c8a8;
-  --net: #33291d; --net-alpha: .55; --focus: #af7a19; --link: #805a13;
+  --net: #33291d; --net-alpha: .55; --track-alpha: .349; --focus: #af7a19; --link: #805a13;
   --mark: rgba(226, 166, 56, .34); --mark-hover: rgba(226, 166, 56, .55);
   color-scheme: light;
 }
 /* Alto contraste: black and white, AAA body text, solid 2px link underlines, no highlight band. */
 :root[data-theme="contrast"] {
   --bg: #000000; --panel: #141414; --fg: #ffffff; --fg-read: #ffffff; --fg-2: #d0d0d0; --rule: #9a9a9a;
-  --net: #ffffff; --net-alpha: .85; --focus: #ffc233; --link: #ffd166;
+  --net: #ffffff; --net-alpha: .85; --track-alpha: .245; --focus: #ffc233; --link: #ffd166;
   --mark: transparent; --mark-hover: rgba(255, 209, 102, .28); --underline: 2px;
   color-scheme: dark;
 }
@@ -185,7 +186,7 @@ a { color: inherit; }
 .who a { color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
 .who a:hover { text-decoration-thickness: 2px; text-decoration-color: var(--hue); }
 .who-thread { margin-top: 0; }
-.who-thread::before { content: ""; position: absolute; left: 5px; top: 0; bottom: 0; width: 1px; background: var(--net); opacity: var(--net-alpha); }
+.who-thread::before { content: ""; position: absolute; left: calc(5.5px - var(--track-w) / 2); top: 0; bottom: 0; width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
 
 .net { display: block; overflow: visible; }
 .net line { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; vector-effect: non-scaling-stroke; }
