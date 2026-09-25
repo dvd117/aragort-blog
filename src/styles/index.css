@@ -2,7 +2,7 @@
    the net bleeds off the right edge behind the title (quiet enough that the title
    stays AA over it), a wire leaves its bottom-left node and becomes the thread
    down the left gutter, and every entry hangs on the thread by its hue node. */
-:root { --track-w: 4px; --track-r: 16px; --station-d: 14px; --pill-w: 12px; }
+:root { --track-w: 4px; --track-r: 16px; --pill-w: 12px; }
 .index { position: relative; overflow-x: clip; padding-top: 1rem; }
 /* Phone only: the net here is absolutely positioned and 96vw wide, so it is 64vw tall and
    stands outside the flow. The hero is given that height so nothing below it ever lands on
@@ -52,14 +52,12 @@
 .entry:first-child::before, .entry[data-track-first]::before { top: calc(var(--entry-pt) + .7em - var(--pill-w) / 2); border-top: 1px solid var(--rule); border-radius: 999px 999px 0 0; }
 .entry:not([hidden]):not(:has(~ .entry:not([hidden])))::before, .entry[data-track-last]::before { bottom: calc(100% - var(--entry-pt) - .7em); border-bottom: 1px solid var(--rule); border-radius: 0 0 999px 999px; }
 .entry:first-child:last-child::before, .entry[data-track-first][data-track-last]::before { border-radius: 999px; }
-.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::after { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--station-d)); top: calc(var(--entry-pt) + .7em - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); font-size: .875rem; background: var(--net); opacity: var(--track-alpha); }
-.entry.is-reached:not([hidden]):not(:has(~ .entry:not([hidden])))::after { background: var(--fg); opacity: 1; }
 /* Buscar hides an entry with [hidden]; .entry sets display, so say it again louder. */
 .entry[hidden] { display: none; }
-/* A station: neutral ring on the track, with its post hue always visible at the centre. */
-.node { position: absolute; left: calc(-1.75rem + 6px - 7px); top: calc(50% - 7px); display: grid; place-items: center; box-sizing: border-box; width: 14px; height: 14px; border: 2.5px solid var(--fg); border-radius: 50%; background: var(--bg); transition: border-color var(--dur-ui) var(--ease); }
-.node .hue-dot { display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--hue-ui); }
-.entry.is-reached .node { border-color: var(--hue-ui); }
+/* Stops keep their named view-transition dot. A filled stop cuts through to the page bg. */
+.node { position: absolute; z-index: 1; left: calc(-1.75rem + 6px - 3px); top: calc(50% - 3px); display: grid; place-items: center; box-sizing: border-box; width: 6px; height: 6px; background: transparent; }
+.node .hue-dot { display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--fg-2); opacity: .45; }
+.entry.is-slider-covered .node .hue-dot { background: var(--bg); opacity: 1; }
 /* Passing a node: one short pulse, never from nothing. */
 @keyframes node-pass { 50% { transform: scale(1.15); } }
 .entry .node.pulse { animation: node-pass var(--dur-draw) var(--ease) 1; }
@@ -88,7 +86,7 @@
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */
 @media (min-width: 900px) {
-  :root { --track-w: 6px; --track-r: 24px; --station-d: 18px; --pill-w: 16px; }
+  :root { --track-w: 6px; --track-r: 24px; --pill-w: 16px; }
   .index { padding-top: 4rem; overflow-x: visible; }
   /* The title column is as wide as the title; the net takes the rest. */
   .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 7.5rem; min-height: 0; }
@@ -100,8 +98,6 @@
   /* Flush with the net's right edge above it; the list below is narrower, so aligning
      the box to the list instead would leave a gap between it and everything else. */
   .index[data-search] { --filter-gap: 1.5rem; }
-  .node { left: calc(-2.25rem + 6px - 9px); top: calc(50% - 9px); width: 18px; height: 18px; border-width: 3px; }
-  .node .hue-dot { width: 6px; height: 6px; }
   /* The date and title begin together after the station; Leer uses the second column
      beside the first bullet rather than leaving a date-width gap after the thread. */
   .entry { --entry-pt: 1rem; grid-template-columns: minmax(0, 1fr) auto; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }

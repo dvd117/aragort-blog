@@ -17,14 +17,14 @@ it('uses the post hue and the same subtle underline as the signature link', () =
   expect(globalCss).toMatch(/\.who a\s*\{[^}]*text-decoration:\s*underline 1px color-mix\(in srgb, var\(--hue\) 45%, transparent\)[^}]*text-underline-offset:\s*\.2em/);
 });
 
-it('keeps each date station neutral around a persistent, hue-bearing view-transition dot', () => {
+it('keeps a 6px stop and its named view-transition dot in the DOM', () => {
   expect(page).toMatch(/<span class="node" aria-hidden="true"><span class="hue-dot" style=\{`view-transition-name: dot-\$\{p\.slug\}`\}><\/span><\/span>/);
   expect(page).not.toMatch(/class="node"[^>]*style=/);
-  expect(css).toMatch(/@media\s*\(min-width:\s*900px\)[\s\S]*?\.node\s*\{[^}]*width:\s*18px[^}]*height:\s*18px[^}]*border-width:\s*3px/);
-  expect(css).toMatch(/\.node\s+\.hue-dot\s*\{[^}]*width:\s*5px[^}]*height:\s*5px[^}]*background:\s*var\(--hue-ui\)/);
-  expect(css).toMatch(/@media\s*\(min-width:\s*900px\)[\s\S]*?\.node \.hue-dot\s*\{[^}]*width:\s*6px[^}]*height:\s*6px/);
-  expect(css).toMatch(/\.entry\.is-reached\s+\.node\s*\{[^}]*border-color:\s*var\(--hue-ui\)/);
-  expect(css).toMatch(/\.node\s*\{[^}]*width:\s*14px[^}]*height:\s*14px[^}]*border:\s*2\.5px solid var\(--fg\)/);
+  expect(css).toMatch(/\.node\s*\{[^}]*width:\s*6px[^}]*height:\s*6px[^}]*background:\s*transparent/);
+  expect(css).toMatch(/\.node\s+\.hue-dot\s*\{[^}]*width:\s*6px[^}]*height:\s*6px[^}]*background:\s*var\(--fg-2\)[^}]*opacity:\s*\.45/);
+  expect(css).toMatch(/\.entry\.is-slider-covered\s+\.node \.hue-dot\s*\{[^}]*background:\s*var\(--bg\)[^}]*opacity:\s*1/);
+  expect(css).not.toMatch(/\.entry\.is-reached\s+\.node\s*\{[^}]*border-color/);
+  expect(css).not.toMatch(/@media\s*\(min-width:\s*900px\)[\s\S]*?\.node\s*\{[^}]*width:\s*18px/);
 });
 
 it('sizes the landing track per breakpoint and uses the quiet resting-strength token', () => {
