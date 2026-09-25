@@ -21,9 +21,9 @@ function build({ scroll = 0, height = 3000 } = {}) {
         <line data-a="0" data-b="1"></line><line data-a="0" data-b="2"></line><line data-a="0" data-b="3"></line>
       </svg></div>
       <ol class="entries" data-thread>
-        <li class="entry" data-region="0,1"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
-        <li class="entry" data-region="0,2"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
-        <li class="entry" data-region="0,3"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
+        <li class="entry" data-hue="amarillo" data-region="0,1"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
+        <li class="entry" data-hue="azul" data-region="0,2"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
+        <li class="entry" data-hue="rojo" data-region="0,3"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
       </ol>
     </div>`;
   // Rects are viewport-relative: at mount they are shifted up by the scroll, so the root
@@ -39,7 +39,7 @@ function build({ scroll = 0, height = 3000 } = {}) {
   return { entries, circles, scrollTo, dispose: mountNetNav() };
 }
 
-const fills = () => [...document.querySelectorAll('svg.wire .fill path')].map((p) => p.getAttribute('d') ?? '');
+const fills = () => [...document.querySelectorAll('svg.wire .fill path')].flatMap((p) => p.getAttribute('d') ?? []);
 afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ''; });
 
 it('passes the first node at the top of the page', () => {
@@ -54,15 +54,14 @@ it('travels down: passes the next node and lights its region', () => {
   const { entries, circles, scrollTo } = build();
   scrollTo(200); // line 720
   expect(circles[2]!.classList.contains('path')).toBe(true);
-  expect(fills()).toHaveLength(1);
-  expect(fills()[0]).toMatch(/L6\.0 720\.0$/);
+  expect(fills()).toEqual(['M6.0 294.0L6.0 450.0', 'M6.0 450.0L6.0 720.0']);
 });
 
 it('holds the fill when scrolling back up', () => {
   const { scrollTo } = build();
   scrollTo(200);
   scrollTo(0);
-  expect(fills()[0]).toMatch(/L6\.0 720\.0$/);
+  expect(fills().at(-1)).toMatch(/L6\.0 720\.0$/);
 });
 
 it('keeps reached station rings lit and pulses the terminal station only once', () => {
@@ -107,8 +106,7 @@ it('hover lights a region and previews, but never passes a node', () => {
   expect(circles[3]!.classList.contains('path')).toBe(true);
   expect(entries[2]!.querySelector('.node')!.classList.contains('pulse')).toBe(false);
   expect(document.querySelector('.lit.ahead')!.getAttribute('d')).toBe('M6.0 520.0L6.0 900.0');
-  expect(fills()).toHaveLength(1);
-  expect(fills()[0]).toMatch(/L6\.0 520\.0$/);
+  expect(fills()).toEqual(['M6.0 294.0L6.0 450.0', 'M6.0 450.0L6.0 520.0']);
 });
 
 it('moves the terminal up when Buscar hides the last station, keeping what was already lit', () => {
@@ -116,10 +114,10 @@ it('moves the terminal up when Buscar hides the last station, keeping what was a
   scrollTo(200);
   entries[2]!.hidden = true;
   document.querySelector('[data-thread]')!.dispatchEvent(new CustomEvent('thread:filter'));
-  expect(fills()).toHaveLength(1);
+  expect(fills()).toHaveLength(2);
   expect(circles[2]!.classList.contains('path')).toBe(true);
   expect(entries.slice(0, 2).every((entry) => entry.classList.contains('is-reached'))).toBe(true);
-  expect(fills()[0]).toMatch(/L6\.0 600\.0$/);
+  expect(fills().at(-1)).toMatch(/L6\.0 600\.0$/);
 });
 
 it('cleans up on dispose', () => {

@@ -1,6 +1,5 @@
 /**
- * The travelled landing track. netnav.ts supplies the reading-line y; this module maps it
- * to distance along the rounded route and draws one progress path.
+ * The landing pill's hue fill and tapered connector. netnav.ts supplies the reading-line y.
  */
 import { reduced } from './motion';
 
@@ -183,32 +182,48 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
   clip.append(clipShape);
   defs.append(clip);
   const layers = make('g', 'layers');
-  layers.setAttribute('clip-path', `url(#${clipId})`);
+  const routeLayer = make('g', 'route');
+  routeLayer.setAttribute('clip-path', `url(#${clipId})`);
   const base = make('path', 'base');
   const fill = make('g', 'fill');
-  const fillPath = make('path');
-  fill.append(fillPath);
+  const preview = make('g', 'preview');
+  preview.setAttribute('clip-path', `url(#${clipId})`);
   const lit = make('path', 'lit');
   const ahead = make('path', 'lit ahead');
   for (const p of [lit, ahead]) p.setAttribute('pathLength', '1');
-  layers.append(base, fill, lit, ahead);
+  routeLayer.append(base);
+  preview.append(lit, ahead);
+  layers.append(routeLayer, fill, preview);
   svg.append(defs, layers);
   root.prepend(svg);
 
   let path: TravelPath = { points: [{ x: 0, y: 0, s: 0 }, { x: 0, y: 0, s: 0 }], length: 0, connectorS: 0, verticalY: 0 };
   let nodes: Array<{ entry: HTMLElement; y: number }> = [];
+  let fillPaths: SVGPathElement[] = [];
   let reachS = 0;
   let trackW = 4;
   let pillW = 12;
+  let trackX = 6;
+  let pillTop = 0;
+  let endY = 0;
+  let reachY = 0;
 
   const centre = (el: Element, r: DOMRect): Pt => {
     const b = el.getBoundingClientRect();
     return { x: b.left + b.width / 2 - r.left, y: b.top + b.height / 2 - r.top };
   };
   const render = () => {
-    const d = slice(path.points, 0, reachS);
-    if (!d) fillPath.removeAttribute('d');
-    else if (fillPath.getAttribute('d') !== d) fillPath.setAttribute('d', d);
+    for (let i = 0; i < fillPaths.length; i++) {
+      const top = i === 0 ? pillTop : (nodes[i - 1]!.y + nodes[i]!.y) / 2;
+      const bottom = i === nodes.length - 1 ? endY : (nodes[i]!.y + nodes[i + 1]!.y) / 2;
+      const to = Math.min(reachY, bottom);
+      const d = to > top
+        ? `M${trackX.toFixed(1)} ${top.toFixed(1)}L${trackX.toFixed(1)} ${to.toFixed(1)}`
+        : '';
+      const band = fillPaths[i]!;
+      if (!d) band.removeAttribute('d');
+      else if (band.getAttribute('d') !== d) band.setAttribute('d', d);
+    }
   };
 
   const draw = (p: SVGPathElement, d: string) => {
@@ -236,14 +251,23 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
       const node = entry.querySelector('.node');
       return node ? [{ entry, y: centre(node, r).y }] : [];
     });
-    const endY = nodes.at(-1)?.y ?? l.bottom - r.top;
-    const pillTop = nodes[0] ? nodes[0].y - pillW / 2 : topY;
+    trackX = topX;
+    endY = nodes.at(-1)?.y ?? l.bottom - r.top;
+    pillTop = nodes[0] ? nodes[0].y - pillW / 2 : topY;
+    fill.replaceChildren();
+    fillPaths = nodes.map(({ entry }) => {
+      const band = make('path', 'fill-band');
+      if (entry.dataset.hue) band.setAttribute('data-hue', entry.dataset.hue);
+      fill.append(band);
+      return band;
+    });
     const corners = route(e, topX, pillTop, endY, radius);
     path = sampleRoute(corners, radius);
     clipShape.setAttribute('d', outline(path, trackW));
     base.setAttribute('d', slice(path.points, 0, yToS(path, pillTop)));
     svg.style.setProperty('--wire-w', `${trackW}px`);
     reachS = 0;
+    reachY = pillTop;
     lit.removeAttribute('d');
     ahead.removeAttribute('d');
     render();
@@ -253,9 +277,10 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
   return {
     layout,
     reach(y) {
-      const next = yToS(path, y);
-      if (next <= reachS) return;
-      reachS = next;
+      const nextY = Math.min(Math.max(y, pillTop), endY);
+      if (nextY > reachY) reachY = nextY;
+      const nextS = yToS(path, y);
+      if (nextS > reachS) reachS = nextS;
       render();
     },
     preview(entry) {

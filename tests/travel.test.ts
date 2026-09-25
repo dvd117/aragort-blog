@@ -118,9 +118,9 @@ function build(hideSecond = false) {
     <div class="index">
       <svg><circle id="exit"></circle></svg>
       <ol class="entries" data-thread>
-        <li class="entry"><p class="d"><span class="node"></span></p></li>
-        <li class="entry"${hideSecond ? ' hidden' : ''}><p class="d"><span class="node"></span></p></li>
-        <li class="entry"><p class="d"><span class="node"></span></p></li>
+        <li class="entry" data-hue="amarillo"><p class="d"><span class="node"></span></p></li>
+        <li class="entry" data-hue="azul"${hideSecond ? ' hidden' : ''}><p class="d"><span class="node"></span></p></li>
+        <li class="entry" data-hue="rojo"><p class="d"><span class="node"></span></p></li>
       </ol>
     </div>
   `;
@@ -163,15 +163,20 @@ describe('mountTravel', () => {
     expect(clips[0]!.querySelector('path')!.getAttribute('d')).toContain('Z');
   });
 
-  it('fills one text-colour path to the furthest reading-line distance without pulling back', () => {
+  it('fills hue bands to the nearest-station midpoint boundaries', () => {
     const { travel, fills } = build();
     travel.layout();
     travel.reach(650);
     travel.reach(400);
     const f = fills();
-    expect(f).toHaveLength(1);
-    expect(f[0]!.getAttribute('d')).toMatch(/L6\.0 650\.0$/);
-    expect(indexCss).toMatch(/\.wire \.fill path\s*\{[^}]*stroke:\s*var\(--fg\)/);
+    expect(f).toHaveLength(3);
+    expect(f.map((p) => p.getAttribute('data-hue'))).toEqual(['amarillo', 'azul', 'rojo']);
+    expect(f.map((p) => p.getAttribute('d'))).toEqual([
+      'M6.0 294.0L6.0 450.0',
+      'M6.0 450.0L6.0 650.0',
+      null,
+    ]);
+    expect(indexCss).toMatch(/\.wire \.fill-band\s*\{[^}]*stroke:\s*var\(--hue-ui\)/);
     expect(indexCss).not.toContain('--sec');
   });
 
@@ -179,7 +184,7 @@ describe('mountTravel', () => {
     const { travel, fills } = build(true);
     const g = travel.layout();
     expect(g.nodes.map((n) => n.y)).toEqual([300, 900]);
-    expect(fills()).toHaveLength(1);
+    expect(fills()).toHaveLength(2);
   });
 
   it('resets reach on layout', () => {
@@ -198,8 +203,9 @@ describe('mountTravel', () => {
     expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')).toMatch(/L6\.0 400\.0$/);
     expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')!.match(/L/g)!.length).toBeGreaterThan(2);
     expect(root.querySelector('.lit.ahead')!.getAttribute('d')).toBe('M6.0 400.0L6.0 900.0');
-    expect(fills()).toHaveLength(1);
-    expect(fills()[0]!.getAttribute('d')).toMatch(/L6\.0 400\.0$/);
+    expect(fills()).toHaveLength(3);
+    expect(fills()[0]!.getAttribute('d')).toBe('M6.0 294.0L6.0 400.0');
+    expect(fills()[1]!.hasAttribute('d')).toBe(false);
     expect(indexCss).toMatch(/\.wire \.lit\s*\{[^}]*stroke:\s*var\(--fg\)/);
     expect(indexCss).toMatch(/\.wire \.lit\.ahead\s*\{\s*opacity:\s*\.5;?\s*\}/);
     expect(indexCss).not.toContain('--trail');
