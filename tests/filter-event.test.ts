@@ -2,13 +2,15 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { initFilter } from '../src/scripts/filter';
 
-function build() {
+function build(search = true) {
   document.body.innerHTML = `
-    <section class="hero"></section>
-    <ol class="entries" data-thread>
-      <li class="entry"><a class="t">Uno</a></li>
-      <li class="entry"><a class="t">Dos</a></li>
-    </ol>`;
+    <div class="index"${search ? ' data-search' : ''}>
+      <section class="hero"></section>
+      <ol class="entries" data-thread>
+        <li class="entry"><a class="t">Uno</a></li>
+        <li class="entry"><a class="t">Dos</a></li>
+      </ol>
+    </div>`;
   return document.querySelector<HTMLElement>('[data-thread]')!;
 }
 
@@ -36,4 +38,10 @@ it('tells the thread when Escape clears the box', () => {
   box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
   expect(heard).toHaveBeenCalledTimes(1);
   expect(box.value).toBe('');
+});
+
+it('does not build the search box without the page mark', () => {
+  build(false);
+  initFilter();
+  expect(document.querySelector('.filter')).toBeNull();
 });

@@ -35,12 +35,12 @@
 .filter-n:empty { display: none; }
 /* On phones the diagonal connector passes the left end of Buscar on its way to the gutter.
    Move the box inward as that crossing moves right; it stays against the right edge. */
-@media (max-width: 430px) { .filter { padding-inline-start: clamp(2.5rem, calc(80vw - 13.5rem), 8rem); } }
+@media (max-width: 430px) { .index[data-search] .filter { padding-inline-start: clamp(2.5rem, calc(80vw - 13.5rem), 8rem); } }
 /* Below 900px a little more drop under Buscar lets the phone connector be one 45° run. */
-.index { --filter-gap: 2rem; --filter-h: calc(1.4rem + 1.3rem + 2px); /* the input: padding, line, border */ }
+.index[data-search] { --filter-gap: 2rem; --filter-h: calc(1.4rem + 1.3rem + 2px); /* the input: padding, line, border */ }
 /* filter.ts inserts the box after first paint. Where scripts run, hold its place until it
    arrives, or the list jumps down by its height (CLS). Without JS nothing is held. */
-@media (scripting: enabled) { .index:has(.entries):not(:has(.filter)) .hero { margin-bottom: calc(var(--filter-h) + var(--filter-gap)); } }
+@media (scripting: enabled) { .index[data-search]:has(.entries):not(:has(.filter)) .hero { margin-bottom: calc(var(--filter-h) + var(--filter-gap)); } }
 /* A filtered list closes the gaps the hidden entries leave. */
 .entries.is-filtered .entry { --entry-pt: .6rem; padding-top: .6rem; }
 
@@ -97,7 +97,7 @@
   .entries { --list-indent: 2.25rem; padding-left: var(--list-indent); max-width: 60rem; }
   /* Flush with the net's right edge above it; the list below is narrower, so aligning
      the box to the list instead would leave a gap between it and everything else. */
-  .index { --filter-gap: 1.5rem; }
+  .index[data-search] { --filter-gap: 1.5rem; }
   .node { left: calc(-2.25rem + 6px - 9px); top: calc(50% - 9px); width: 18px; height: 18px; border-width: 3px; }
   .node .hue-dot { width: 6px; height: 6px; }
   /* Date | text | "Leer". The third track is only as wide as "Leer * N min", so the text

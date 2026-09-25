@@ -7,16 +7,18 @@ import { nets } from '../assets/net/geometry';
 import { exitNode, exitPath, regionsFor } from '../lib/netpath';
 import Signature from '../components/Signature.astro';
 import { LEDE } from '../lib/site';
+import { hasSearch } from '../lib/search';
 import '../styles/index.css';
 
 const posts = await getPosts();
+const searchEnabled = hasSearch(posts.length);
 const exit = exitPath(nets.hero).join(',');
 // Oldest first, so a new post never takes an older post's section of the net.
 const oldest = [...posts].reverse();
 const regions = new Map(regionsFor(nets.hero, oldest.map((p) => p.slug)).map((r, i) => [oldest[i]!.slug, r.join(',')]));
 ---
 <Base title="David Aragort" description={LEDE} current="escritos" ogImage="/og/index.png" ogAlt={`David Aragort: ${LEDE}`}>
-  <div class="index wrap" data-netnav-root>
+  <div class="index wrap" data-netnav-root data-search={searchEnabled ? '' : undefined}>
     <section class="hero">
       <div class="hero-title">
         <h1>Escritos</h1>

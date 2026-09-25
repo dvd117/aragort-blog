@@ -35,5 +35,5 @@ it('sizes the landing track per breakpoint and uses the quiet resting-strength t
 });
 
 it('insets the phone search box away from the curved connector', () => {
-  expect(css).toMatch(/@media\s*\(max-width:\s*430px\)\s*\{\s*\.filter\s*\{[^}]*padding-inline-start:\s*clamp\(2\.5rem,\s*calc\(80vw - 13\.5rem\),\s*8rem\)/);
+  expect(css).toMatch(/@media\s*\(max-width:\s*430px\)\s*\{\s*\.index\[data-search\]\s+\.filter\s*\{[^}]*padding-inline-start:\s*clamp\(2\.5rem,\s*calc\(80vw - 13\.5rem\),\s*8rem\)/);
 });
