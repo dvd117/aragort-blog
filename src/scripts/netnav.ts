@@ -2,15 +2,14 @@
  * Net as navigation (landing). The hero net, a wire from its exit node and the thread down
  * the list are one line, and moving down the page travels along it (travel.ts draws it).
  * On every width:
- * - the reading line (65% of the viewport, as on a post) sets the high-water reach; the
- *   thread stays lit down to the furthest point reached this visit;
+ * - the reading line (65% of the viewport, as on a post) moves the pill fill and knob in
+ *   both directions;
  * - passing an entry's node pulses it once and lights the entry's region of the net: its
  *   route through its own node to the exit, plus the nodes one wire away (data-region).
  *   The net only ever gains light, and a wire lights once both of its nodes are lit;
- * - the last visible station is the terminal. A page too short to scroll to it counts as
+ * - the last visible station is the end. A page too short to scroll to it counts as
  *   reached at the bottom, or its last nodes could never light.
- * Desktop hover or keyboard focus previews an entry's trail and lights its region, but
- * never moves reach: only travel does.
+ * Hover and keyboard focus can light an entry's region, but cannot move the slider.
  */
 import { reduced } from './motion';
 import { mountTravel, type TravelGeometry } from './travel';
@@ -67,7 +66,6 @@ export function mountNetNav(): () => void {
 
   let geo: TravelGeometry;
   const passed = new Set<HTMLElement>();
-  let ended = false;
 
   const tick = () => {
     const line = scrollY + innerHeight * LINE - geo.top;
@@ -82,31 +80,19 @@ export function mountNetNav(): () => void {
       lightRegion(n.entry);
       pulse(n.entry.querySelector('.node'));
     }
-    if (reach >= geo.end) ended = true;
   };
 
-  // Layout resets reach; put it back at the furthest node already passed (or the end, once
-  // the terminal is lit), so a resize or a filter never unlights anything, then let the
-  // reading line take it from there.
   const relayout = () => {
     geo = travel.layout();
-    travel.reach(ended ? geo.end : Math.max(geo.start, ...geo.nodes.filter((n) => passed.has(n.entry)).map((n) => n.y)));
     tick();
   };
 
-  const show = (entry: HTMLElement) => { lightRegion(entry); travel.preview(entry); };
+  const show = (entry: HTMLElement) => lightRegion(entry);
   for (const entry of entries) {
     on(entry, 'pointerenter', (e) => { if ((e as PointerEvent).pointerType === 'mouse') show(entry); });
     on(entry, 'focusin', () => show(entry));
     on(entry, 'pointerdown', () => lightRegion(entry));
   }
-  on(list, 'pointerleave', (e) => {
-    if ((e as PointerEvent).pointerType === 'mouse' && !document.activeElement?.closest('.entry')) travel.preview(null);
-  });
-  on(list, 'focusout', (e) => {
-    if (!list.contains((e as FocusEvent).relatedTarget as Node | null)) travel.preview(null);
-  });
-
   let queued = false;
   on(window, 'scroll', () => {
     if (queued) return;

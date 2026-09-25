@@ -148,7 +148,7 @@ describe('mountTravel', () => {
     const { travel, entries } = build();
     const g = travel.layout();
     expect(Object.keys(g)).toEqual(['top', 'start', 'end', 'nodes']);
-    expect(g.start).toBe(100);
+    expect(g.start).toBe(294);
     expect(g.end).toBe(900);
     expect(g.nodes.map((n) => n.y)).toEqual([300, 600, 900]);
     expect(g.nodes[0]!.entry).toBe(entries[0]);
@@ -172,8 +172,8 @@ describe('mountTravel', () => {
     expect(f).toHaveLength(3);
     expect(f.map((p) => p.getAttribute('data-hue'))).toEqual(['amarillo', 'azul', 'rojo']);
     expect(f.map((p) => p.getAttribute('d'))).toEqual([
-      'M6.0 294.0L6.0 450.0',
-      'M6.0 450.0L6.0 650.0',
+      'M6.0 294.0L6.0 400.0',
+      null,
       null,
     ]);
     expect(indexCss).toMatch(/\.wire \.fill-band\s*\{[^}]*stroke:\s*var\(--hue-ui\)/);
@@ -195,22 +195,22 @@ describe('mountTravel', () => {
     expect(fills().every((p) => !p.hasAttribute('d'))).toBe(true);
   });
 
-  it('previews an entry below reach at half strength without moving reach', () => {
-    const { root, travel, fills, entries } = build();
+  it('moves the knob to the current reading y', () => {
+    const { root, travel } = build();
+    travel.layout();
+    travel.reach(650);
+    travel.reach(400);
+    const knob = root.querySelector<HTMLElement>('.track-knob');
+    expect(knob).not.toBeNull();
+    expect(knob!.style.getPropertyValue('--knob-y')).toBe('400px');
+  });
+
+  it('keeps route-preview strokes out of the hue fill', () => {
+    const { root, travel, fills } = build();
     travel.layout();
     travel.reach(400);
-    travel.preview(entries[2]!);
-    expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')).toMatch(/L6\.0 400\.0$/);
-    expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')!.match(/L/g)!.length).toBeGreaterThan(2);
-    expect(root.querySelector('.lit.ahead')!.getAttribute('d')).toBe('M6.0 400.0L6.0 900.0');
-    expect(fills()).toHaveLength(3);
+    expect(root.querySelectorAll('.lit')).toHaveLength(0);
     expect(fills()[0]!.getAttribute('d')).toBe('M6.0 294.0L6.0 400.0');
-    expect(fills()[1]!.hasAttribute('d')).toBe(false);
-    expect(indexCss).toMatch(/\.wire \.lit\s*\{[^}]*stroke:\s*var\(--fg\)/);
-    expect(indexCss).toMatch(/\.wire \.lit\.ahead\s*\{\s*opacity:\s*\.5;?\s*\}/);
-    expect(indexCss).not.toContain('--trail');
-    travel.preview(null);
-    expect(root.querySelector('.lit.ahead')!.hasAttribute('d')).toBe(false);
   });
 
   it('does not add a reading-line marker to the thread', () => {

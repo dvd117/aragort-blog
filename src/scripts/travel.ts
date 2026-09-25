@@ -1,8 +1,6 @@
 /**
  * The landing pill's hue fill and tapered connector. netnav.ts supplies the reading-line y.
  */
-import { reduced } from './motion';
-
 export interface Pt { x: number; y: number }
 export interface CurvePoint extends Pt { s: number; arcCenter?: Pt }
 export interface TravelPath {
@@ -15,7 +13,6 @@ export interface TravelGeometry { top: number; start: number; end: number; nodes
 export interface Travel {
   layout(): TravelGeometry;
   reach(y: number): void;
-  preview(entry: HTMLElement | null): void;
   destroy(): void;
 }
 
@@ -186,21 +183,20 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
   routeLayer.setAttribute('clip-path', `url(#${clipId})`);
   const base = make('path', 'base');
   const fill = make('g', 'fill');
-  const preview = make('g', 'preview');
-  preview.setAttribute('clip-path', `url(#${clipId})`);
-  const lit = make('path', 'lit');
-  const ahead = make('path', 'lit ahead');
-  for (const p of [lit, ahead]) p.setAttribute('pathLength', '1');
   routeLayer.append(base);
-  preview.append(lit, ahead);
-  layers.append(routeLayer, fill, preview);
+  layers.append(routeLayer, fill);
   svg.append(defs, layers);
   root.prepend(svg);
+  const knob = document.createElement('div');
+  knob.className = 'track-knob';
+  knob.setAttribute('aria-hidden', 'true');
+  knob.hidden = true;
+  knob.append(document.createElement('span'));
+  root.append(knob);
 
   let path: TravelPath = { points: [{ x: 0, y: 0, s: 0 }, { x: 0, y: 0, s: 0 }], length: 0, connectorS: 0, verticalY: 0 };
   let nodes: Array<{ entry: HTMLElement; y: number }> = [];
   let fillPaths: SVGPathElement[] = [];
-  let reachS = 0;
   let trackW = 4;
   let pillW = 12;
   let trackX = 6;
@@ -226,17 +222,6 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     }
   };
 
-  const draw = (p: SVGPathElement, d: string) => {
-    if (!d) { p.removeAttribute('d'); return; }
-    p.setAttribute('d', d);
-    if (reduced()) { p.style.strokeDashoffset = '0'; return; }
-    p.style.transition = 'none';
-    p.style.strokeDashoffset = '1';
-    void p.getBoundingClientRect();
-    p.style.transition = '';
-    p.style.strokeDashoffset = '0';
-  };
-
   const layout = (): TravelGeometry => {
     const r = root.getBoundingClientRect();
     const l = list.getBoundingClientRect();
@@ -254,6 +239,7 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     trackX = topX;
     endY = nodes.at(-1)?.y ?? l.bottom - r.top;
     pillTop = nodes[0] ? nodes[0].y - pillW / 2 : topY;
+    root.style.setProperty('--track-axis', `${trackX}px`);
     fill.replaceChildren();
     fillPaths = nodes.map(({ entry }) => {
       const band = make('path', 'fill-band');
@@ -266,30 +252,21 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     clipShape.setAttribute('d', outline(path, trackW));
     base.setAttribute('d', slice(path.points, 0, yToS(path, pillTop)));
     svg.style.setProperty('--wire-w', `${trackW}px`);
-    reachS = 0;
     reachY = pillTop;
-    lit.removeAttribute('d');
-    ahead.removeAttribute('d');
+    knob.hidden = nodes.length === 0;
     render();
-    return { top: r.top + scrollY, start: e.y, end: endY, nodes: nodes.map(({ entry, y }) => ({ entry, y })) };
+    return { top: r.top + scrollY, start: pillTop, end: endY, nodes: nodes.map(({ entry, y }) => ({ entry, y })) };
   };
 
   return {
     layout,
     reach(y) {
-      const nextY = Math.min(Math.max(y, pillTop), endY);
-      if (nextY > reachY) reachY = nextY;
-      const nextS = yToS(path, y);
-      if (nextS > reachS) reachS = nextS;
+      reachY = Math.min(Math.max(y, pillTop), endY);
+      knob.hidden = nodes.length === 0;
+      knob.style.setProperty('--knob-y', `${reachY}px`);
+      for (const n of nodes) n.entry.classList.toggle('is-slider-covered', n.y <= reachY);
       render();
     },
-    preview(entry) {
-      const n = entry ? nodes.find((x) => x.entry === entry) : undefined;
-      if (!n) { lit.removeAttribute('d'); ahead.removeAttribute('d'); return; }
-      const to = yToS(path, n.y);
-      draw(lit, slice(path.points, 0, Math.min(to, reachS)));
-      draw(ahead, slice(path.points, Math.min(reachS, to), to));
-    },
-    destroy() { svg.remove(); },
+    destroy() { svg.remove(); knob.remove(); },
   };
 }

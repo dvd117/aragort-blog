@@ -2,7 +2,7 @@
    the net bleeds off the right edge behind the title (quiet enough that the title
    stays AA over it), a wire leaves its bottom-left node and becomes the thread
    down the left gutter, and every entry hangs on the thread by its hue node. */
-:root { --track-w: 4px; --track-r: 16px; --pill-w: 12px; }
+:root { --track-w: 4px; --track-r: 16px; --pill-w: 12px; --knob-d: 26px; }
 .index { position: relative; overflow-x: clip; padding-top: 1rem; }
 /* Phone only: the net here is absolutely positioned and 96vw wide, so it is 64vw tall and
    stands outside the flow. The hero is given that height so nothing below it ever lands on
@@ -78,14 +78,14 @@
 .wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--track-alpha); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: butt; stroke-linejoin: round; } /* butt: a round cap would overlap the CSS line below and double its strength */
 /* Each fill stretch inherits its post hue from its data-hue; the CSS pill supplies its border. */
 .wire .fill-band { fill: none; stroke: var(--hue-ui); stroke-width: calc(var(--pill-w) - 2px); stroke-linecap: butt; stroke-linejoin: round; }
-.wire .lit { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
-/* A preview below reach is a look ahead, not travel. */
-.wire .lit.ahead { opacity: .5; }
+.track-knob { position: absolute; z-index: 2; left: var(--track-axis, 6px); top: 0; display: grid; place-items: center; width: var(--knob-d); height: var(--knob-d); border-radius: 50%; background: var(--fg); pointer-events: none; transform: translate(-50%, var(--knob-y, 0px)); }
+.track-knob[hidden] { display: none; }
+.track-knob span { width: 12px; height: 12px; border-radius: 50%; background: var(--bg); }
 
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */
 @media (min-width: 900px) {
-  :root { --track-w: 6px; --track-r: 24px; --pill-w: 16px; }
+  :root { --track-w: 6px; --track-r: 24px; --pill-w: 16px; --knob-d: 34px; }
   .index { padding-top: 4rem; overflow-x: visible; }
   /* The title column is as wide as the title; the net takes the rest. */
   .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 7.5rem; min-height: 0; }

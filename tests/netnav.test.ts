@@ -29,17 +29,26 @@ function build({ scroll = 0, height = 3000 } = {}) {
   // Rects are viewport-relative: at mount they are shifted up by the scroll, so the root
   // always sits at document y 0 and every root-relative y below holds whatever the scroll.
   const o = -scroll;
-  box(document.querySelector('.index')!, 0, o, 1000, 1100);
-  box(document.querySelector('[data-netnav] circle')!, 300, o + 95, 10, 10);
-  box(document.querySelector('[data-thread]')!, 0, o + 200, 800, 900);
-  document.querySelectorAll('.node').forEach((n, i) => box(n, 0, o + 300 * (i + 1) - 6, 12, 12));
+  const root = document.querySelector('.index')!;
+  const exitCircle = document.querySelector('[data-netnav] circle')!;
+  const list = document.querySelector('[data-thread]')!;
+  const nodes = [...document.querySelectorAll('.node')];
+  const setBoxes = (scrollY: number) => {
+    const top = -scrollY;
+    box(root, 0, top, 1000, 1100);
+    box(exitCircle, 300, top + 95, 10, 10);
+    box(list, 0, top + 200, 800, 900);
+    nodes.forEach((n, i) => box(n, 0, top + 300 * (i + 1) - 6, 12, 12));
+  };
+  setBoxes(scroll);
   const entries = [...document.querySelectorAll<HTMLElement>('.entry')];
   const circles = [...document.querySelectorAll<SVGCircleElement>('[data-netnav] circle')];
-  const scrollTo = (y: number) => { vi.stubGlobal('scrollY', y); window.dispatchEvent(new Event('scroll')); };
+  const scrollTo = (y: number) => { vi.stubGlobal('scrollY', y); setBoxes(y); window.dispatchEvent(new Event('scroll')); };
   return { entries, circles, scrollTo, dispose: mountNetNav() };
 }
 
 const fills = () => [...document.querySelectorAll('svg.wire .fill path')].flatMap((p) => p.getAttribute('d') ?? []);
+const knobY = () => document.querySelector<HTMLElement>('.track-knob')?.style.getPropertyValue('--knob-y');
 afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ''; });
 
 it('passes the first node at the top of the page', () => {
@@ -57,11 +66,13 @@ it('travels down: passes the next node and lights its region', () => {
   expect(fills()).toEqual(['M6.0 294.0L6.0 450.0', 'M6.0 450.0L6.0 720.0']);
 });
 
-it('holds the fill when scrolling back up', () => {
-  const { scrollTo } = build();
+it('moves fill and knob up with the reading line while reached stations stay lit', () => {
+  const { entries, scrollTo } = build();
   scrollTo(200);
   scrollTo(0);
-  expect(fills().at(-1)).toMatch(/L6\.0 720\.0$/);
+  expect(fills()).toEqual(['M6.0 294.0L6.0 450.0', 'M6.0 450.0L6.0 520.0']);
+  expect(knobY()).toBe('520px');
+  expect(entries.slice(0, 2).every((entry) => entry.classList.contains('is-reached'))).toBe(true);
 });
 
 it('keeps reached station rings lit and pulses the terminal station only once', () => {
@@ -89,6 +100,7 @@ it('counts the page bottom as reaching the end, even on a short page', () => {
   scrollTo(100); // bottom: 100 + 800 >= 899; line only 620
   expect(entries[2]!.querySelector('.node')!.classList.contains('pulse')).toBe(true);
   expect(fills().at(-1)).toMatch(/L6\.0 900\.0$/);
+  expect(knobY()).toBe('900px');
 });
 
 it('keeps the terminal reached through a resize', () => {
@@ -96,16 +108,17 @@ it('keeps the terminal reached through a resize', () => {
   scrollTo(100);
   scrollTo(0);
   window.dispatchEvent(new Event('resize'));
-  expect(fills().at(-1)).toMatch(/L6\.0 900\.0$/);
+  expect(fills().at(-1)).toMatch(/L6\.0 520\.0$/);
+  expect(knobY()).toBe('520px');
   expect(entries[2]!.classList.contains('is-reached')).toBe(true);
 });
 
-it('hover lights a region and previews, but never passes a node', () => {
+it('hover lights a region without a route preview or passing a node', () => {
   const { entries, circles } = build();
   entries[2]!.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' }));
   expect(circles[3]!.classList.contains('path')).toBe(true);
   expect(entries[2]!.querySelector('.node')!.classList.contains('pulse')).toBe(false);
-  expect(document.querySelector('.lit.ahead')!.getAttribute('d')).toBe('M6.0 520.0L6.0 900.0');
+  expect(document.querySelector('.lit')).toBeNull();
   expect(fills()).toEqual(['M6.0 294.0L6.0 450.0', 'M6.0 450.0L6.0 520.0']);
 });
 

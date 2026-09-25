@@ -18,6 +18,15 @@ it('removes the terminal bar in the pill experiment', () => {
   expect(indexRules).not.toMatch(/\.entry[^{}]*::after\s*\{/);
 });
 
+it('sizes the knob by breakpoint and moves it without easing', () => {
+  expect(indexRules).toMatch(/:root\s*\{[^}]*--knob-d:\s*26px/);
+  expect(indexRules).toMatch(/@media\s*\(min-width:\s*900px\)\s*\{\s*:root\s*\{[^}]*--knob-d:\s*34px/s);
+  expect(indexRules).toMatch(/\.track-knob\s*\{[^}]*width:\s*var\(--knob-d\)[^}]*background:\s*var\(--fg\)[^}]*transform:\s*translate\(-50%,\s*var\(--knob-y,\s*0px\)\)/);
+  expect(indexRules).toMatch(/\.track-knob\s+span\s*\{[^}]*width:\s*12px[^}]*height:\s*12px[^}]*background:\s*var\(--bg\)/);
+  expect(indexRules).not.toMatch(/\.track-knob\s*\{[^}]*transition:/);
+  expect(indexRules).not.toMatch(/\.wire \.fill-band\s*\{[^}]*transition:/);
+});
+
 it('does not draw the landing route through the signature or onto the footer', () => {
   expect(indexRules).not.toMatch(/[^{}]*\.site-foot[^{}]*\{/);
   expect(rules(globalCss)).not.toMatch(/\.who-thread::before\s*\{/);
