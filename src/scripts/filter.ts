@@ -9,16 +9,14 @@
  * behind a control that does nothing. Hiding an entry hides its node on the thread with
  * it; the net keeps whatever it has already lit, because light is never taken away.
  */
-/** Below this many entries the box is noise; raise it if the list stays short. */
-const MIN_ENTRIES = 1;
-
 const fold = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 
 export function initFilter(): void {
+  const index = document.querySelector<HTMLElement>('.index[data-search]');
   const list = document.querySelector<HTMLElement>('[data-thread]');
   const entries = [...document.querySelectorAll<HTMLElement>('.entry')];
   const hero = document.querySelector<HTMLElement>('.hero');
-  if (!list || !hero || entries.length < MIN_ENTRIES) return;
+  if (!index || !list || !hero) return;
 
   const haystack = new Map(entries.map((e) => [e, fold(e.innerText)]));
 
@@ -62,7 +60,7 @@ export function initFilter(): void {
       : shown === 0
         ? 'Ningún escrito coincide'
         : `${shown} de ${entries.length} escritos`;
-    // The thread (netnav.ts) re-measures: hidden entries leave it, and their sections with them.
+    // The thread (netnav.ts) re-measures: hidden entries leave it and the terminal moves up.
     list.dispatchEvent(new CustomEvent('thread:filter'));
   };
 

@@ -2,6 +2,7 @@
    the net bleeds off the right edge behind the title (quiet enough that the title
    stays AA over it), a wire leaves its bottom-left node and becomes the thread
    down the left gutter, and every entry hangs on the thread by its hue node. */
+:root { --track-w: 4px; --track-r: 16px; --station-d: 14px; }
 .index { position: relative; overflow-x: clip; padding-top: 1rem; }
 /* Phone only: the net here is absolutely positioned and 96vw wide, so it is 64vw tall and
    stands outside the flow. The hero is given that height so nothing below it ever lands on
@@ -24,7 +25,7 @@
    that leaves the net for the thread down the left gutter -- on a phone too, where the net
    bleeds off the right. Filled rather than outlined, so it reads as a control and not as
    one more hairline in a page full of them. */
-.filter { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-end; margin: 0 0 1rem; }
+.filter { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-end; margin: 0 0 var(--filter-gap); }
 .filter input { -webkit-appearance: none; appearance: none; width: 100%; max-width: 20rem; padding: .7rem .9rem; min-height: 44px; font: 1rem/1.3 var(--ui); color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; transition: border-color var(--dur-ui) var(--ease), background-color var(--dur-ui) var(--ease); }
 .filter input::placeholder { color: var(--fg-2); opacity: 1; }
 .filter input:hover { border-color: var(--fg-2); }
@@ -32,17 +33,31 @@
 .filter input::-webkit-search-cancel-button { filter: grayscale(1) opacity(.6); cursor: pointer; }
 .filter-n { margin: .5rem 0 0; font-size: .875rem; color: var(--fg-2); text-align: right; }
 .filter-n:empty { display: none; }
+/* On phones the diagonal connector passes the left end of Buscar on its way to the gutter.
+   Move the box inward as that crossing moves right; it stays against the right edge. */
+@media (max-width: 430px) { .index[data-search] .filter { padding-inline-start: clamp(2.5rem, calc(80vw - 13.5rem), 8rem); } }
+/* Below 900px a little more drop under Buscar lets the phone connector be one 45° run. */
+.index[data-search] { --filter-gap: 2rem; --filter-h: calc(1.4rem + 1.3rem + 2px); /* the input: padding, line, border */ }
+/* filter.ts inserts the box after first paint. Where scripts run, hold its place until it
+   arrives, or the list jumps down by its height (CLS). Without JS nothing is held. */
+@media (scripting: enabled) { .index[data-search]:has(.entries):not(:has(.filter)) .hero { margin-bottom: calc(var(--filter-h) + var(--filter-gap)); } }
 /* A filtered list closes the gaps the hidden entries leave. */
-.entries.is-filtered .entry { padding-top: .6rem; }
+.entries.is-filtered .entry { --entry-pt: .6rem; padding-top: .6rem; }
 
-/* The thread: one line in the gutter; the wire from the net joins it (drawn by netnav). */
-.entries { position: relative; list-style: none; margin: 0; padding: 0 0 0 1.75rem; }
-.entries::before { content: ""; position: absolute; left: 5px; top: 0; bottom: 1.2rem; width: 1px; background: var(--net); opacity: var(--net-alpha); }
-.entry { position: relative; display: grid; gap: .2rem; padding: .85rem 0 1.25rem; }
+/* Entry segments meet edge to edge. The final visible entry ends its segment at the
+   station centre and draws the transverse terminal under the station disc. */
+.entries { --list-indent: 1.75rem; position: relative; list-style: none; margin: 0; padding: 0 0 0 var(--list-indent); }
+.entry { --entry-pt: .85rem; position: relative; display: grid; gap: .2rem; padding: .85rem 0 1.25rem; }
+.entry::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--track-w) / 2); top: 0; bottom: 0; width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
+.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::before { bottom: auto; height: calc(var(--entry-pt) + .7em); font-size: .875rem; }
+.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::after { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--station-d)); top: calc(var(--entry-pt) + .7em - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); font-size: .875rem; background: var(--net); opacity: var(--track-alpha); }
+.entry.is-reached:not([hidden]):not(:has(~ .entry:not([hidden])))::after { background: var(--fg); opacity: 1; }
 /* Buscar hides an entry with [hidden]; .entry sets display, so say it again louder. */
 .entry[hidden] { display: none; }
-/* The node sits on the thread, centred on its date line. */
-.node { position: absolute; left: calc(-1.75rem + 5.5px - 6px); top: calc(50% - 6px); width: 12px; height: 12px; border-radius: 50%; background: var(--hue-ui); box-shadow: 0 0 0 3px var(--bg); }
+/* A station: neutral ring on the track, with its post hue always visible at the centre. */
+.node { position: absolute; left: calc(-1.75rem + 6px - 7px); top: calc(50% - 7px); display: grid; place-items: center; box-sizing: border-box; width: 14px; height: 14px; border: 2.5px solid var(--fg); border-radius: 50%; background: var(--bg); transition: border-color var(--dur-ui) var(--ease); }
+.node .hue-dot { display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--hue-ui); }
+.entry.is-reached .node { border-color: var(--hue-ui); }
 /* Passing a node: one short pulse, never from nothing. */
 @keyframes node-pass { 50% { transform: scale(1.15); } }
 .entry .node.pulse { animation: node-pass var(--dur-draw) var(--ease) 1; }
@@ -60,41 +75,40 @@
    and marker are drawn by travel.ts. */
 .net-wrap .net .path { stroke-opacity: 1; transition: stroke var(--dur-ui) var(--ease), fill var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); transition-delay: calc(var(--i, 0) * 30ms); }
 .wire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
-.wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
-/* Travel (travel.ts): the fill runs down the thread in each post's hue, the tail in the
-   text colour; the ring is "here". Both sit under the entry nodes, which paint later. */
-.wire .fill path { fill: none; stroke: var(--sec); stroke-width: 2; stroke-linecap: round; }
-.wire .lit { fill: none; stroke: var(--trail, var(--hue-ui)); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
+.wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--track-alpha); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: butt; stroke-linejoin: round; } /* butt: a round cap would overlap the CSS line below and double its strength */
+/* The resting entry segments sit below this layer, leaving the progress colour unobscured.
+   The fill and hover preview use one text-colour line, beneath entry nodes, which paint later. */
+.wire .fill path { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; }
+.wire .lit { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
 /* A preview below reach is a look ahead, not travel. */
 .wire .lit.ahead { opacity: .5; }
-.wire .here .halo { fill: none; stroke: var(--bg); stroke-width: 6; }
-.wire .here .ring { fill: var(--bg); stroke: var(--here); stroke-width: 1.5; }
 
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */
 @media (min-width: 900px) {
+  :root { --track-w: 6px; --track-r: 24px; --station-d: 18px; }
   .index { padding-top: 4rem; overflow-x: visible; }
   /* The title column is as wide as the title; the net takes the rest. */
-  .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 5rem; min-height: 0; }
+  .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 7.5rem; min-height: 0; }
   .hero-title h1 { font-size: clamp(5rem, 9vw, 9rem); }
   .lede { font-size: 1.3125rem; max-width: 28ch; margin-top: 1.5rem; }
   .net-wrap { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .5; }
   .net-wrap .net circle { stroke-opacity: 1; }
-  .entries { padding-left: 2.25rem; max-width: 60rem; }
+  .entries { --list-indent: 2.25rem; padding-left: var(--list-indent); max-width: 60rem; }
   /* Flush with the net's right edge above it; the list below is narrower, so aligning
      the box to the list instead would leave a gap between it and everything else. */
-  .filter { margin-bottom: 1.5rem; }
-  .node { left: calc(-2.25rem + 5.5px - 6px); }
-  /* Date | text | "Leer". The third track is only as wide as "Leer * N min", so the text
-     keeps the room it had and the link fills the band that used to sit empty beside the
-     bullets. */
-  .entry { grid-template-columns: 13rem minmax(0, 1fr) auto; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
-  .entry .t, .entry .ex, .entry .tag { grid-column: 2 / -1; }
+  .index[data-search] { --filter-gap: 1.5rem; }
+  .node { left: calc(-2.25rem + 6px - 9px); top: calc(50% - 9px); width: 18px; height: 18px; border-width: 3px; }
+  .node .hue-dot { width: 6px; height: 6px; }
+  /* The date and title begin together after the station; Leer uses the second column
+     beside the first bullet rather than leaving a date-width gap after the thread. */
+  .entry { --entry-pt: 1rem; grid-template-columns: minmax(0, 1fr) auto; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
+  .entry .d, .entry .t, .entry .ex, .entry .tag { grid-column: 1 / -1; }
   .entry .t { font-size: clamp(1.9rem, 3.2vw, 2.9rem); }
 }
 
 /* Every post gets the room: near-display title, description, the three ideas and "Leer". */
-.entry.feature { padding: 1rem 0 2rem; }
+.entry.feature { --entry-pt: 1rem; padding: 1rem 0 2rem; }
 .entry.feature .t { font-weight: var(--display-weight); font-size: clamp(2.4rem, 9vw, 4.6rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); max-width: 14ch; }
 .entry.feature .ex { font-size: 1.25rem; color: var(--fg); max-width: 40ch; }
 .teaser { margin: .9rem 0 0; padding: 0 0 0 1.1rem; font: 500 1.0625rem/1.45 var(--ui); color: var(--fg-2); max-width: 44ch; }
@@ -104,44 +118,19 @@
 .teaser li:nth-child(1)::marker { color: var(--hu-amarillo); }
 .teaser li:nth-child(2)::marker { color: var(--hu-azul); }
 .teaser li:nth-child(3)::marker { color: var(--hu-rojo); }
-.more { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; margin-top: .8rem; font: 600 1rem/1 var(--ui); color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .22em; }
-.more:hover { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
-/* "Leer" is where you leave the thread: a ring and a short wire before the words. At rest
-   they are the net; on hover, on focus, or while the entry is current (netnav.ts) the wire
-   draws in its hue and the ring fills. Local to the link, so it never crosses the text. */
-.more .branch { flex: none; width: 1.875rem; height: .625rem; margin-right: .5rem; overflow: visible; }
-.more .branch :is(circle, line) { vector-effect: non-scaling-stroke; }
-.more .branch circle { fill: var(--bg); stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; transition: fill var(--dur-draw) var(--ease), stroke var(--dur-draw) var(--ease), stroke-opacity var(--dur-draw) var(--ease); }
-.more .branch .b-rest { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; }
-.more .branch .b-lit { stroke: var(--hue-ui); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
-.more:hover .branch .b-lit, .more:focus-visible .branch .b-lit, .entry.is-current .more .branch .b-lit { stroke-dashoffset: 0; }
-.more:hover .branch circle, .more:focus-visible .branch circle, .entry.is-current .more .branch circle { fill: var(--hue-ui); stroke: var(--hue-ui); stroke-opacity: 1; }
-.entry.is-current .more { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
-.more:focus-visible .branch :is(circle, .b-lit) { transition: none; }
-/* Quién escribe on the landing: the thread runs past it, down to the footer mark. The
-   block itself is shared with the post (Signature.astro, styled in global.css). */
-.index:has(.who) .entries::before { bottom: 0; }
-/* The thread ends at the footer mark's top-left node. */
-body:has(.index .who) .site-foot { position: relative; }
-/* Down to the mark's top-left node: the footer's padding, the mark's offset inside its
-   row (centred in --foot-row), and the node's own 2.4px inside the 29px mark. */
-body:has(.index .who) .site-foot::before { content: ""; position: absolute; left: calc(var(--gutter) + 5px); top: 0; height: calc(4rem + (var(--foot-row) - 29px) / 2 + 2.4px); width: 1px; background: var(--net); opacity: var(--net-alpha); }
-body:has(.index .who) .site-foot .net { margin-left: 3.1px; }
+.more { justify-self: start; display: inline-block; min-height: 44px; margin-top: .8rem; font: 600 1rem/1 var(--ui); color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
+.more:hover, .more:focus-visible { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
 /* Wide enough for two: the bullets keep their measure and "Leer" sits out at the right,
    on the first bullet's baseline, instead of stacking under a half-empty row. Below this
    there is no room for a second column and it goes back under the list. */
 @media (min-width: 700px) {
-  .entry.feature .teaser { grid-column: 2; }
-  .entry.feature .more { grid-column: 3; justify-self: end; margin-top: .9rem; }
-}
-@media (min-width: 700px) and (max-width: 899px) {
   .entry.feature { grid-template-columns: minmax(0, 1fr) auto; column-gap: 2rem; align-items: baseline; }
   .entry.feature .d, .entry.feature .t, .entry.feature .ex, .entry.feature .tag { grid-column: 1 / -1; }
   .entry.feature .teaser { grid-column: 1; }
-  .entry.feature .more { grid-column: 2; }
+  .entry.feature .more { grid-column: 2; justify-self: end; margin-top: .9rem; }
 }
 @media (min-width: 900px) {
-  .who { padding-left: calc(13rem + 2rem + 2.25rem); }
+  .who { padding-left: 2.25rem; }
 }
 
 /* Short landscape (a phone on its side): a compact two-column composition. The net stays
