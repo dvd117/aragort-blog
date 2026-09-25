@@ -25,7 +25,7 @@
    that leaves the net for the thread down the left gutter -- on a phone too, where the net
    bleeds off the right. Filled rather than outlined, so it reads as a control and not as
    one more hairline in a page full of them. */
-.filter { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-end; margin: 0 0 1rem; }
+.filter { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-end; margin: 0 0 var(--filter-gap); }
 .filter input { -webkit-appearance: none; appearance: none; width: 100%; max-width: 20rem; padding: .7rem .9rem; min-height: 44px; font: 1rem/1.3 var(--ui); color: var(--fg); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; transition: border-color var(--dur-ui) var(--ease), background-color var(--dur-ui) var(--ease); }
 .filter input::placeholder { color: var(--fg-2); opacity: 1; }
 .filter input:hover { border-color: var(--fg-2); }
@@ -37,7 +37,10 @@
    Move the box inward as that crossing moves right; it stays against the right edge. */
 @media (max-width: 430px) { .filter { padding-inline-start: clamp(2.5rem, calc(80vw - 13.5rem), 8rem); } }
 /* Below 900px a little more drop under Buscar lets the phone connector be one 45° run. */
-@media (max-width: 899px) { .filter { margin-bottom: 2rem; } }
+.index { --filter-gap: 2rem; --filter-h: calc(1.4rem + 1.3rem + 2px); /* the input: padding, line, border */ }
+/* filter.ts inserts the box after first paint. Where scripts run, hold its place until it
+   arrives, or the list jumps down by its height (CLS). Without JS nothing is held. */
+@media (scripting: enabled) { .index:has(.entries):not(:has(.filter)) .hero { margin-bottom: calc(var(--filter-h) + var(--filter-gap)); } }
 /* A filtered list closes the gaps the hidden entries leave. */
 .entries.is-filtered .entry { padding-top: .6rem; }
 
@@ -94,7 +97,7 @@
   .entries { padding-left: 2.25rem; max-width: 60rem; }
   /* Flush with the net's right edge above it; the list below is narrower, so aligning
      the box to the list instead would leave a gap between it and everything else. */
-  .filter { margin-bottom: 1.5rem; }
+  .index { --filter-gap: 1.5rem; }
   .node { left: calc(-2.25rem + 6px - 9px); top: calc(50% - 9px); width: 18px; height: 18px; border-width: 3px; }
   .node .hue-dot { width: 6px; height: 6px; }
   /* Date | text | "Leer". The third track is only as wide as "Leer * N min", so the text
