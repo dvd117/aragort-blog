@@ -1,39 +1,115 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { currentIndex, mountTravel, pointAt, polyline, sections, slice } from '../src/scripts/travel';
+import {
+  currentIndex,
+  mountTravel,
+  pointAtS,
+  pointAtY,
+  route,
+  sampleRoute,
+  sections,
+  slice,
+  yToS,
+} from '../src/scripts/travel';
 
 const rect = (x: number, y: number, w: number, h: number) =>
   ({ x, y, left: x, top: y, right: x + w, bottom: y + h, width: w, height: h, toJSON: () => ({}) }) as DOMRect;
 const box = (e: Element, x: number, y: number, w: number, h: number) =>
   Object.defineProperty(e, 'getBoundingClientRect', { configurable: true, value: () => rect(x, y, w, h) });
+const distance = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.hypot(a.x - b.x, a.y - b.y);
 
-describe('geometry', () => {
-  const poly = polyline({ x: 305, y: 100 }, { x: 5.5, y: 200 }, 1200);
+describe('corner route', () => {
+  it('uses the single diagonal and final vertical when dx <= D', () => {
+    expect(route({ x: 100, y: 20 }, 10, 120, 500, 16)).toEqual([
+      { x: 100, y: 20 }, { x: 10, y: 110 }, { x: 10, y: 500 },
+    ]);
+  });
 
-  it('runs from the exit node to the top of the list, then straight down', () => {
-    expect(poly).toEqual([{ x: 305, y: 100 }, { x: 5.5, y: 200 }, { x: 5.5, y: 1200 }]);
+  it('uses equal diagonal drops around a horizontal when dx > D', () => {
+    expect(route({ x: 200, y: 0 }, 0, 100, 500, 16)).toEqual([
+      { x: 200, y: 0 }, { x: 160, y: 40 }, { x: 40, y: 40 }, { x: 0, y: 80 }, { x: 0, y: 500 },
+    ]);
   });
-  it('drops the exit when it sits below the top of the list', () => {
-    expect(polyline({ x: 305, y: 250 }, { x: 5.5, y: 200 }, 1200)).toEqual([{ x: 5.5, y: 200 }, { x: 5.5, y: 1200 }]);
+
+  it('drops an exit that is already below the list top', () => {
+    expect(route({ x: 200, y: 200 }, 10, 100, 500, 16)).toEqual([
+      { x: 10, y: 100 }, { x: 10, y: 500 },
+    ]);
   });
-  it('finds the point at a height, along the diagonal wire too', () => {
-    expect(pointAt(poly, 150)).toEqual({ x: 155.25, y: 150 });
-    expect(pointAt(poly, 700)).toEqual({ x: 5.5, y: 700 });
-    expect(pointAt(poly, 50)).toEqual({ x: 305, y: 100 });
-    expect(pointAt(poly, 5000)).toEqual({ x: 5.5, y: 1200 });
+
+  it('keeps offsets below one pixel as a vertical route', () => {
+    expect(route({ x: 5.99, y: 10 }, 5.5, 100, 500, 16)).toEqual([
+      { x: 5.99, y: 10 }, { x: 5.99, y: 500 },
+    ]);
   });
-  it('slices the thread between two heights, corners included', () => {
-    expect(slice(poly, 100, 300)).toBe('M305.0 100.0L5.5 200.0L5.5 300.0');
-    expect(slice(poly, 300, 300)).toBe('');
+
+  it('uses only horizontal, vertical, or 45-degree segments and never rises', () => {
+    const routes = [
+      route({ x: 100, y: 20 }, 10, 120, 500, 16),
+      route({ x: 200, y: 0 }, 0, 100, 500, 16),
+      route({ x: 200, y: 200 }, 10, 100, 500, 16),
+      route({ x: 5.99, y: 10 }, 5.5, 100, 500, 16),
+    ];
+    for (const points of routes) for (let i = 1; i < points.length; i++) {
+      const a = points[i - 1]!, b = points[i]!;
+      const dx = Math.abs(b.x - a.x), dy = b.y - a.y;
+      expect(dy).toBeGreaterThanOrEqual(0);
+      expect(dx < 1e-6 || dy < 1e-6 || Math.abs(dx - dy) < 1e-6).toBe(true);
+    }
   });
-  it('gives each section the hue of the entry it leads to, and cuts at reach', () => {
-    const s = sections(poly, [{ y: 300, hue: 'amarillo' }, { y: 600, hue: 'azul' }, { y: 900, hue: 'rojo' }], 650);
+});
+
+describe('rounded route samples', () => {
+  it('samples a constant-radius quarter turn within the chord-error limit and keeps analytic length', () => {
+    const path = sampleRoute([{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 100 }], 10);
+    const arc = path.points.filter((p) => p.arcCenter);
+    expect(arc.length).toBeGreaterThan(2);
+    for (const p of arc) expect(distance(p, p.arcCenter!)).toBeCloseTo(10, 2);
+    for (let i = 1; i < arc.length; i++) {
+      const a = arc[i - 1]!, b = arc[i]!;
+      const theta = Math.acos(Math.min(1, ((a.x - pCenter(arc)!.x) * (b.x - pCenter(arc)!.x) + (a.y - pCenter(arc)!.y) * (b.y - pCenter(arc)!.y)) / 100));
+      expect(10 * (1 - Math.cos(theta / 2))).toBeLessThanOrEqual(0.25);
+    }
+    expect(path.length).toBeCloseTo(90 + 10 * Math.PI / 2 + 90, 1);
+    expect(path.points.map((p) => p.s)).toEqual([...path.points.map((p) => p.s)].sort((a, b) => a - b));
+  });
+
+  it('maps reading-line y continuously to monotone arc length and locates the final vertical', () => {
+    const path = sampleRoute(route({ x: 200, y: 0 }, 0, 100, 500, 16), 16);
+    const startY = path.points[0]!.y;
+    expect(pointAtY(path, path.verticalY)).toEqual(pointAtS(path.points, path.connectorS));
+    expect(pointAtY(path, path.verticalY)!.y).toBeCloseTo(path.verticalY, 6);
+    expect(yToS(path, path.verticalY)).toBeCloseTo(path.connectorS, 8);
+    expect(yToS(path, path.verticalY + 0.0001) - path.connectorS).toBeCloseTo(0.0001, 6);
+    expect(path.connectorS - yToS(path, path.verticalY - 0.0001)).toBeGreaterThan(0);
+    let last = yToS(path, startY);
+    for (let y = startY + 1; y <= 500; y++) {
+      const next = yToS(path, y);
+      expect(next).toBeGreaterThanOrEqual(last);
+      last = next;
+    }
+  });
+
+  it('keeps rounded points when a slice crosses a bend', () => {
+    const path = sampleRoute(route({ x: 200, y: 0 }, 0, 100, 500, 16), 16);
+    const arc = path.points.filter((p) => p.arcCenter);
+    const d = slice(path.points, arc[0]!.s - 1, arc.at(-1)!.s + 1);
+    expect((d.match(/L/g) ?? []).length).toBeGreaterThan(2);
+  });
+
+  it('assigns entry hues by arc length and cuts sections at the reached distance', () => {
+    const path = sampleRoute([{ x: 5.5, y: 100 }, { x: 5.5, y: 1200 }], 16);
+    const s = sections(path.points, [{ s: 200, hue: 'amarillo' }, { s: 500, hue: 'azul' }, { s: 800, hue: 'rojo' }], 550);
     expect(s.map((x) => x.hue)).toEqual(['amarillo', 'azul', 'rojo', null]);
-    expect(s[0]!.d).toBe('M305.0 100.0L5.5 200.0L5.5 300.0');
-    expect(s[1]!.d).toBe('M5.5 300.0L5.5 600.0');
-    expect(s[2]!.d).toBe('M5.5 600.0L5.5 650.0');
-    expect(s[3]!.d).toBe('');
+    expect(s.map((x) => x.d)).toEqual([
+      'M5.5 100.0L5.5 300.0', 'M5.5 300.0L5.5 600.0', 'M5.5 600.0L5.5 650.0', '',
+    ]);
   });
+});
+
+const pCenter = (arc: Array<{ arcCenter?: { x: number; y: number } }>) => arc[0]?.arcCenter;
+
+describe('other travel helpers', () => {
   it('picks the last node at or above the line, else the first', () => {
     expect(currentIndex([300, 600, 900], 100)).toBe(0);
     expect(currentIndex([300, 600, 900], 600)).toBe(1);
@@ -58,7 +134,7 @@ function build(hideSecond = false) {
   const root = document.querySelector<HTMLElement>('.index')!;
   const list = document.querySelector<HTMLElement>('[data-thread]')!;
   box(root, 0, 0, 1000, 1100);
-  box(document.getElementById('exit')!, 300, 95, 10, 10); // centre (305, 100)
+  box(document.getElementById('exit')!, 20, 95, 10, 10); // centre (25, 100)
   box(list, 0, 200, 800, 900); // thread at x 5.5, from y 200
   document.querySelectorAll('.node').forEach((n, i) => box(n, 0, 300 * (i + 1) - 6, 12, 12)); // 300, 600, 900
   box(document.getElementById('f1')!, 0, 1198, 4, 4); // top-left node: centre y 1200
@@ -71,16 +147,26 @@ function build(hideSecond = false) {
 afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ''; });
 
 describe('mountTravel', () => {
-  it('measures the thread from the exit node to the footer mark', () => {
+  it('keeps the geometry shape and measures nodes from the exit to the footer mark', () => {
     const { travel, entries } = build();
     const g = travel.layout();
+    expect(Object.keys(g)).toEqual(['top', 'start', 'end', 'nodes']);
     expect(g.start).toBe(100);
     expect(g.end).toBe(1200);
     expect(g.nodes.map((n) => n.y)).toEqual([300, 600, 900]);
     expect(g.nodes[0]!.entry).toBe(entries[0]);
   });
 
-  it('fills down to reach in section hues and never pulls back', () => {
+  it('clips the constant-width layers with exactly one user-space variable-width outline', () => {
+    const { root, travel } = build();
+    travel.layout();
+    const clips = root.querySelectorAll('svg.wire clipPath');
+    expect(clips).toHaveLength(1);
+    expect(clips[0]!.getAttribute('clipPathUnits')).toBe('userSpaceOnUse');
+    expect(clips[0]!.querySelector('path')!.getAttribute('d')).toContain('Z');
+  });
+
+  it('fills to the furthest reading-line distance in section hues without pulling back', () => {
     const { travel, fills } = build();
     travel.layout();
     travel.reach(650);
@@ -113,14 +199,15 @@ describe('mountTravel', () => {
     travel.layout();
     travel.reach(400);
     travel.preview(entries[2]!);
-    expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')).toBe('M305.0 100.0L5.5 200.0L5.5 400.0');
+    expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')).toMatch(/L5\.5 400\.0$/);
+    expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')!.match(/L/g)!.length).toBeGreaterThan(2);
     expect(root.querySelector('.lit.ahead')!.getAttribute('d')).toBe('M5.5 400.0L5.5 900.0');
     expect(fills()[1]!.getAttribute('d')).toBe('M5.5 300.0L5.5 400.0');
     travel.preview(null);
     expect(root.querySelector('.lit.ahead')!.hasAttribute('d')).toBe(false);
   });
 
-  it('puts the here-ring on the thread in the current hue', () => {
+  it('puts the here-ring on the mapped thread in the current hue', () => {
     const { root, travel } = build();
     travel.layout();
     travel.here(450, 'rojo');
