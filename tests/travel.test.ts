@@ -31,6 +31,14 @@ describe('corner route', () => {
     ]);
   });
 
+  it('never leaves a horizontal shorter than 4r: the diagonals shorten instead', () => {
+    const points = route({ x: 121, y: 0 }, 0, 112, 500, 16);
+    expect(points).toEqual([
+      { x: 121, y: 0 }, { x: 92.5, y: 28.5 }, { x: 28.5, y: 28.5 }, { x: 0, y: 57 }, { x: 0, y: 500 },
+    ]);
+    expect(points[1]!.x - points[2]!.x).toBe(64);
+  });
+
   it('drops an exit that is already below the list top', () => {
     expect(route({ x: 200, y: 200 }, 10, 100, 500, 16)).toEqual([
       { x: 10, y: 100 }, { x: 10, y: 500 },
@@ -47,6 +55,8 @@ describe('corner route', () => {
     const routes = [
       route({ x: 100, y: 20 }, 10, 120, 500, 16),
       route({ x: 200, y: 0 }, 0, 100, 500, 16),
+      route({ x: 121, y: 0 }, 0, 112, 500, 16),
+      route({ x: 70, y: 0 }, 0, 20, 500, 16),
       route({ x: 200, y: 200 }, 10, 100, 500, 16),
       route({ x: 5.99, y: 10 }, 5.5, 100, 500, 16),
     ];
@@ -135,7 +145,7 @@ function build(hideSecond = false) {
   const list = document.querySelector<HTMLElement>('[data-thread]')!;
   box(root, 0, 0, 1000, 1100);
   box(document.getElementById('exit')!, 20, 95, 10, 10); // centre (25, 100)
-  box(list, 0, 200, 800, 900); // thread at x 5.5, from y 200
+  box(list, 0, 200, 800, 900); // thread at x 6, from y 200
   document.querySelectorAll('.node').forEach((n, i) => box(n, 0, 300 * (i + 1) - 6, 12, 12)); // 300, 600, 900
   box(document.getElementById('f1')!, 0, 1198, 4, 4); // top-left node: centre y 1200
   box(document.getElementById('f2')!, 20, 1210, 4, 4);
@@ -147,6 +157,12 @@ function build(hideSecond = false) {
 afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ''; });
 
 describe('mountTravel', () => {
+  it('draws the resting connector down to the top of the list, where the CSS line begins', () => {
+    const { root, travel } = build();
+    travel.layout();
+    expect(root.querySelector('.base')!.getAttribute('d')).toMatch(/L6\.0 200\.0$/);
+  });
+
   it('keeps the geometry shape and measures nodes from the exit to the footer mark', () => {
     const { travel, entries } = build();
     const g = travel.layout();
@@ -173,7 +189,7 @@ describe('mountTravel', () => {
     travel.reach(400);
     const f = fills();
     expect(f).toHaveLength(4);
-    expect(f[2]!.getAttribute('d')).toBe('M5.5 600.0L5.5 650.0');
+    expect(f[2]!.getAttribute('d')).toBe('M6.0 600.0L6.0 650.0');
     expect((f[1] as SVGElement).style.getPropertyValue('--sec')).toBe('var(--hl-azul)');
     expect((f[3] as SVGElement).style.getPropertyValue('--sec')).toBe('var(--fg)');
     expect(f[3]!.hasAttribute('d')).toBe(false);
@@ -199,10 +215,10 @@ describe('mountTravel', () => {
     travel.layout();
     travel.reach(400);
     travel.preview(entries[2]!);
-    expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')).toMatch(/L5\.5 400\.0$/);
+    expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')).toMatch(/L6\.0 400\.0$/);
     expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')!.match(/L/g)!.length).toBeGreaterThan(2);
-    expect(root.querySelector('.lit.ahead')!.getAttribute('d')).toBe('M5.5 400.0L5.5 900.0');
-    expect(fills()[1]!.getAttribute('d')).toBe('M5.5 300.0L5.5 400.0');
+    expect(root.querySelector('.lit.ahead')!.getAttribute('d')).toBe('M6.0 400.0L6.0 900.0');
+    expect(fills()[1]!.getAttribute('d')).toBe('M6.0 300.0L6.0 400.0');
     travel.preview(null);
     expect(root.querySelector('.lit.ahead')!.hasAttribute('d')).toBe(false);
   });
@@ -212,7 +228,7 @@ describe('mountTravel', () => {
     travel.layout();
     travel.here(450, 'rojo');
     const ring = root.querySelector('.here .ring')!;
-    expect(ring.getAttribute('cx')).toBe('5.5');
+    expect(ring.getAttribute('cx')).toBe('6.0');
     expect(ring.getAttribute('cy')).toBe('450.0');
     expect((root.querySelector('.here') as SVGElement).style.getPropertyValue('--here')).toBe('var(--hl-rojo)');
   });

@@ -186,7 +186,7 @@ a { color: inherit; }
 .who a { color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
 .who a:hover { text-decoration-thickness: 2px; text-decoration-color: var(--hue); }
 .who-thread { margin-top: 0; }
-.who-thread::before { content: ""; position: absolute; left: calc(5.5px - var(--track-w) / 2); top: 0; bottom: 0; width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
+.who-thread::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--track-w) / 2); top: 0; bottom: 0; width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
 
 .net { display: block; overflow: visible; }
 .net line { stroke: var(--net); stroke-opacity: var(--net-alpha); stroke-width: 1; vector-effect: non-scaling-stroke; }

@@ -255,8 +255,9 @@ decoration that means nothing.
   post on a phone: mark · title and time left · Sobre mí · Aa. The nav is one short pill
   now, so it stays while reading -- it is the only way to "Sobre mí" from a post.
 - **Landing, phone:** the net bleeds off the right edge behind the title; a 1px wire leaves
-  its exit node and tapers through rounded bends into the 4px track (6px from 900px) down
-  the left gutter. Each date hangs from it on a 14px station (18px from 900px): a
+  its exit node and tapers into the 4px track (6px from 900px) down the left gutter, drawn
+  as a transit diagram: every segment horizontal, vertical or 45°, every bend one radius
+  (16px; 24px from 900px), and no horizontal run shorter than four radii. Each date hangs from it on a 14px station (18px from 900px): a
   page-colour disc, neutral ring and persistent dot in the post's hue. The static rail and
   stations remain without JS.
 - **Buscar:** one box between the hero and the list, hard against its right edge and below

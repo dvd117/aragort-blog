@@ -37,8 +37,8 @@ it('shows the keyboard state at once, with no transition', () => {
 it('sizes the landing track per breakpoint and uses the quiet resting-strength token', () => {
   expect(css).toMatch(/:root\s*\{[^}]*--track-w:\s*4px[^}]*--track-r:\s*16px/);
   expect(css).toMatch(/@media\s*\(min-width:\s*900px\)\s*\{\s*:root\s*\{[^}]*--track-w:\s*6px[^}]*--track-r:\s*24px/s);
-  expect(css).toMatch(/\.entries::before\s*\{[^}]*left:\s*calc\(5\.5px - var\(--track-w\) \/ 2\)[^}]*width:\s*var\(--track-w\)[^}]*opacity:\s*var\(--track-alpha\)/);
-  expect(globalCss).toMatch(/\.who-thread::before\s*\{[^}]*left:\s*calc\(5\.5px - var\(--track-w\) \/ 2\)[^}]*width:\s*var\(--track-w\)[^}]*opacity:\s*var\(--track-alpha\)/);
+  expect(css).toMatch(/\.entries::before\s*\{[^}]*left:\s*calc\(6px - var\(--track-w\) \/ 2\)[^}]*width:\s*var\(--track-w\)[^}]*opacity:\s*var\(--track-alpha\)/);
+  expect(globalCss).toMatch(/\.who-thread::before\s*\{[^}]*left:\s*calc\(6px - var\(--track-w\) \/ 2\)[^}]*width:\s*var\(--track-w\)[^}]*opacity:\s*var\(--track-alpha\)/);
 });
 
 it('insets the phone search box away from the curved connector', () => {

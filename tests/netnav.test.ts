@@ -60,7 +60,7 @@ it('travels down: passes the next node, lights its region, moves current', () =>
   scrollTo(200); // line 720
   expect(current()).toEqual([entries[1]]);
   expect(circles[2]!.classList.contains('path')).toBe(true);
-  expect(fills()[2]).toBe('M5.5 600.0L5.5 720.0');
+  expect(fills()[2]).toBe('M6.0 600.0L6.0 720.0');
 });
 
 it('holds the fill when scrolling back up, but current follows', () => {
@@ -68,7 +68,7 @@ it('holds the fill when scrolling back up, but current follows', () => {
   scrollTo(200);
   scrollTo(0);
   expect(current()).toEqual([entries[0]]);
-  expect(fills()[2]).toBe('M5.5 600.0L5.5 720.0');
+  expect(fills()[2]).toBe('M6.0 600.0L6.0 720.0');
 });
 
 it('keeps reached station rings lit and marks the footer terminus once reached', () => {
@@ -94,7 +94,7 @@ it('counts the page bottom as reaching the end, even on a short page', () => {
   expect(entries[2]!.querySelector('.node')!.classList.contains('pulse')).toBe(true);
   expect(current()).toEqual([entries[2]]);
   expect(document.querySelector('.site-foot .net')!.classList.contains('pulse')).toBe(true);
-  expect(fills().at(-1)).toBe('M5.5 900.0L5.5 1200.0');
+  expect(fills().at(-1)).toBe('M6.0 900.0L6.0 1200.0');
 });
 
 it('hover lights a region and previews, but never passes a node', () => {
@@ -102,9 +102,9 @@ it('hover lights a region and previews, but never passes a node', () => {
   entries[2]!.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' }));
   expect(circles[3]!.classList.contains('path')).toBe(true);
   expect(entries[2]!.querySelector('.node')!.classList.contains('pulse')).toBe(false);
-  expect(document.querySelector('.lit.ahead')!.getAttribute('d')).toBe('M5.5 520.0L5.5 900.0');
+  expect(document.querySelector('.lit.ahead')!.getAttribute('d')).toBe('M6.0 520.0L6.0 900.0');
   expect(fills()[2]).toBe(''); // the line is at 520: section 2 (600 -> 900) has not started
-  expect(fills()[1]).toBe('M5.5 300.0L5.5 520.0');
+  expect(fills()[1]).toBe('M6.0 300.0L6.0 520.0');
 });
 
 it('re-measures when Buscar filters, keeping what was already lit', () => {

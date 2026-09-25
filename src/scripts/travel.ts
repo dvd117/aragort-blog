@@ -32,7 +32,8 @@ export function route(exit: Pt, gutterX: number, topY: number, endY: number, r: 
   // 45-degree connection if an unusual layout reverses that relationship.
   if (dx < 0) return [exit, { x: gutterX, y: exit.y + Math.abs(dx) }, { x: gutterX, y: endY }];
   if (dx <= D) return [exit, { x: gutterX, y: exit.y + dx }, { x: gutterX, y: endY }];
-  const a = Math.min(dx / 2, Math.max(0.4 * D, 2 * r));
+  // A horizontal shorter than 4r reads as a kink, not a run: shorten the diagonals instead.
+  const a = Math.min(dx / 2, Math.max(r, Math.min(Math.max(0.4 * D, 2 * r), (dx - 4 * r) / 2)));
   const y = exit.y + a;
   return [exit, { x: exit.x - a, y }, { x: gutterX + a, y }, { x: gutterX, y: y + a }, { x: gutterX, y: endY }];
 }
@@ -275,7 +276,7 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     const r = root.getBoundingClientRect();
     const l = list.getBoundingClientRect();
     const e = centre(exit, r);
-    const topX = l.left + 5.5 - r.left;
+    const topX = l.left + 6 - r.left; // a whole pixel, so the CSS line (index.css) and the SVG stroke land on the same pixels
     const topY = l.top - r.top;
     const style = getComputedStyle(root);
     trackW = Number.parseFloat(style.getPropertyValue('--track-w')) || 4;
@@ -287,7 +288,7 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     const barY = endY - 12;
     const barS = yToS(path, barY);
     clipShape.setAttribute('d', outline(path, trackW, barS));
-    base.setAttribute('d', slice(path.points, 0, path.connectorS));
+    base.setAttribute('d', slice(path.points, 0, yToS(path, topY))); // down to the CSS line
     svg.style.setProperty('--wire-w', `${trackW}px`);
     const hereR = trackW / 2 + 3;
     for (const c of [halo, ring]) c.setAttribute('r', String(hereR));
