@@ -72,12 +72,11 @@
 .net-wrap .net .path { stroke-opacity: 1; transition: stroke var(--dur-ui) var(--ease), fill var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); transition-delay: calc(var(--i, 0) * 30ms); }
 .wire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
 .wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--track-alpha); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: butt; stroke-linejoin: round; } /* butt: a round cap would overlap the CSS line below and double its strength */
-/* The resting lines (.entries::before, .who-thread::before, .site-foot::before) sit at
-   z-index -1, under this layer, so the fill shows its own hue and not the rest colour over it. */
-/* Travel (travel.ts): the fill runs down the thread in each post's hue, the tail in the
-   text colour; the ring is "here". Both sit under the entry nodes, which paint later. */
-.wire .fill path { fill: none; stroke: var(--sec); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; }
-.wire .lit { fill: none; stroke: var(--trail, var(--hue-ui)); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
+/* The resting lines (.entries::before, .who-thread::before, .site-foot::before) sit below
+   this layer, leaving the progress colour unobscured. The fill and hover preview use one
+   text-colour line, beneath entry nodes, which paint later. */
+.wire .fill path { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; }
+.wire .lit { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
 /* A preview below reach is a look ahead, not travel. */
 .wire .lit.ahead { opacity: .5; }
 

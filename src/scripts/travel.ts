@@ -1,6 +1,6 @@
 /**
  * The travelled landing track. netnav.ts supplies the reading-line y; this module maps it
- * to distance along the rounded route and draws the resulting path sections.
+ * to distance along the rounded route and draws one progress path.
  */
 import { reduced } from './motion';
 
@@ -12,7 +12,6 @@ export interface TravelPath {
   connectorS: number;
   verticalY: number;
 }
-export interface Section { hue: string | null; d: string }
 export interface TravelGeometry { top: number; start: number; end: number; nodes: Array<{ entry: HTMLElement; y: number }> }
 export interface Travel {
   layout(): TravelGeometry;
@@ -136,18 +135,6 @@ export function slice(points: CurvePoint[], s0: number, s1: number): string {
   return [pointAtS(points, s0), ...points.filter((p) => p.s > s0 && p.s < s1), pointAtS(points, s1)].map(fmt).join('');
 }
 
-/** One hue section per entry (the stretch leading to its station), then the text-colour tail. */
-export function sections(points: CurvePoint[], nodes: Array<{ s: number; hue: string }>, reach: number): Section[] {
-  const out: Section[] = [];
-  let from = 0;
-  for (const n of nodes) {
-    out.push({ hue: n.hue, d: slice(points, from, Math.min(n.s, reach)) });
-    from = n.s;
-  }
-  out.push({ hue: null, d: slice(points, from, Math.min(points.at(-1)!.s, reach)) });
-  return out;
-}
-
 /** The last node at or above the line; the first when none is yet; -1 with no nodes. */
 export function currentIndex(ys: number[], line: number): number {
   let i = 0;
@@ -218,6 +205,8 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
   layers.setAttribute('clip-path', `url(#${clipId})`);
   const base = make('path', 'base');
   const fill = make('g', 'fill');
+  const fillPath = make('path');
+  fill.append(fillPath);
   const lit = make('path', 'lit');
   const ahead = make('path', 'lit ahead');
   for (const p of [lit, ahead]) p.setAttribute('pathLength', '1');
@@ -226,7 +215,7 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
   root.prepend(svg);
 
   let path: TravelPath = { points: [{ x: 0, y: 0, s: 0 }, { x: 0, y: 0, s: 0 }], length: 0, connectorS: 0, verticalY: 0 };
-  let nodes: Array<{ entry: HTMLElement; y: number; hue: string }> = [];
+  let nodes: Array<{ entry: HTMLElement; y: number }> = [];
   let reachS = 0;
   let trackW = 4;
 
@@ -244,15 +233,9 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
   };
 
   const render = () => {
-    const secs = sections(path.points, nodes.map((n) => ({ s: yToS(path, n.y), hue: n.hue })), reachS);
-    while (fill.children.length < secs.length) fill.append(make('path'));
-    while (fill.children.length > secs.length) fill.lastElementChild!.remove();
-    secs.forEach((section, i) => {
-      const p = fill.children[i] as SVGPathElement;
-      if (!section.d) p.removeAttribute('d');
-      else if (p.getAttribute('d') !== section.d) p.setAttribute('d', section.d);
-      p.style.setProperty('--sec', section.hue ? `var(--hl-${section.hue})` : 'var(--fg)');
-    });
+    const d = slice(path.points, 0, reachS);
+    if (!d) fillPath.removeAttribute('d');
+    else if (fillPath.getAttribute('d') !== d) fillPath.setAttribute('d', d);
   };
 
   const draw = (p: SVGPathElement, d: string) => {
@@ -286,7 +269,7 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     svg.style.setProperty('--wire-w', `${trackW}px`);
     nodes = [...list.querySelectorAll<HTMLElement>('.entry:not([hidden])')].flatMap((entry) => {
       const node = entry.querySelector('.node');
-      return node ? [{ entry, y: centre(node, r).y, hue: entry.dataset.postHue ?? 'amarillo' }] : [];
+      return node ? [{ entry, y: centre(node, r).y }] : [];
     });
     reachS = 0;
     lit.removeAttribute('d');
@@ -306,7 +289,6 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     preview(entry) {
       const n = entry ? nodes.find((x) => x.entry === entry) : undefined;
       if (!n) { lit.removeAttribute('d'); ahead.removeAttribute('d'); return; }
-      svg.style.setProperty('--trail', `var(--hl-${n.hue})`);
       const to = yToS(path, n.y);
       draw(lit, slice(path.points, 0, Math.min(to, reachS)));
       draw(ahead, slice(path.points, Math.min(reachS, to), to));

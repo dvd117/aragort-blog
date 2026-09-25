@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   currentIndex,
   mountTravel,
@@ -7,10 +8,11 @@ import {
   pointAtY,
   route,
   sampleRoute,
-  sections,
   slice,
   yToS,
 } from '../src/scripts/travel';
+
+const indexCss = readFileSync('src/styles/index.css', 'utf8');
 
 const rect = (x: number, y: number, w: number, h: number) =>
   ({ x, y, left: x, top: y, right: x + w, bottom: y + h, width: w, height: h, toJSON: () => ({}) }) as DOMRect;
@@ -106,15 +108,6 @@ describe('rounded route samples', () => {
     const d = slice(path.points, arc[0]!.s - 1, arc.at(-1)!.s + 1);
     expect((d.match(/L/g) ?? []).length).toBeGreaterThan(2);
   });
-
-  it('assigns entry hues by arc length and cuts sections at the reached distance', () => {
-    const path = sampleRoute([{ x: 5.5, y: 100 }, { x: 5.5, y: 1200 }], 16);
-    const s = sections(path.points, [{ s: 200, hue: 'amarillo' }, { s: 500, hue: 'azul' }, { s: 800, hue: 'rojo' }], 550);
-    expect(s.map((x) => x.hue)).toEqual(['amarillo', 'azul', 'rojo', null]);
-    expect(s.map((x) => x.d)).toEqual([
-      'M5.5 100.0L5.5 300.0', 'M5.5 300.0L5.5 600.0', 'M5.5 600.0L5.5 650.0', '',
-    ]);
-  });
 });
 
 const pCenter = (arc: Array<{ arcCenter?: { x: number; y: number } }>) => arc[0]?.arcCenter;
@@ -182,24 +175,23 @@ describe('mountTravel', () => {
     expect(clips[0]!.querySelector('path')!.getAttribute('d')).toContain('Z');
   });
 
-  it('fills to the furthest reading-line distance in section hues without pulling back', () => {
+  it('fills one text-colour path to the furthest reading-line distance without pulling back', () => {
     const { travel, fills } = build();
     travel.layout();
     travel.reach(650);
     travel.reach(400);
     const f = fills();
-    expect(f).toHaveLength(4);
-    expect(f[2]!.getAttribute('d')).toBe('M6.0 600.0L6.0 650.0');
-    expect((f[1] as SVGElement).style.getPropertyValue('--sec')).toBe('var(--hl-azul)');
-    expect((f[3] as SVGElement).style.getPropertyValue('--sec')).toBe('var(--fg)');
-    expect(f[3]!.hasAttribute('d')).toBe(false);
+    expect(f).toHaveLength(1);
+    expect(f[0]!.getAttribute('d')).toMatch(/L6\.0 650\.0$/);
+    expect(indexCss).toMatch(/\.wire \.fill path\s*\{[^}]*stroke:\s*var\(--fg\)/);
+    expect(indexCss).not.toContain('--sec');
   });
 
   it('leaves hidden entries out of the thread', () => {
     const { travel, fills } = build(true);
     const g = travel.layout();
     expect(g.nodes.map((n) => n.y)).toEqual([300, 900]);
-    expect((fills()[1] as SVGElement).style.getPropertyValue('--sec')).toBe('var(--hl-rojo)');
+    expect(fills()).toHaveLength(1);
   });
 
   it('resets reach on layout', () => {
@@ -218,7 +210,11 @@ describe('mountTravel', () => {
     expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')).toMatch(/L6\.0 400\.0$/);
     expect(root.querySelector('.lit:not(.ahead)')!.getAttribute('d')!.match(/L/g)!.length).toBeGreaterThan(2);
     expect(root.querySelector('.lit.ahead')!.getAttribute('d')).toBe('M6.0 400.0L6.0 900.0');
-    expect(fills()[1]!.getAttribute('d')).toBe('M6.0 300.0L6.0 400.0');
+    expect(fills()).toHaveLength(1);
+    expect(fills()[0]!.getAttribute('d')).toMatch(/L6\.0 400\.0$/);
+    expect(indexCss).toMatch(/\.wire \.lit\s*\{[^}]*stroke:\s*var\(--fg\)/);
+    expect(indexCss).toMatch(/\.wire \.lit\.ahead\s*\{\s*opacity:\s*\.5;?\s*\}/);
+    expect(indexCss).not.toContain('--trail');
     travel.preview(null);
     expect(root.querySelector('.lit.ahead')!.hasAttribute('d')).toBe(false);
   });
