@@ -14,3 +14,8 @@ it('keeps the desktop station gutter and aligns Quién escribe with the text col
   expect(css).toMatch(/\.entries\s*\{[^}]*--list-indent:\s*2\.25rem;\s*padding-left:\s*var\(--list-indent\)/);
   expect(css).toMatch(/\.who\s*\{\s*padding-left:\s*2\.25rem;/);
 });
+
+it('leaves no later rule sending the bullets or Leer to the old date-column grid', () => {
+  expect(css).not.toMatch(/\.entry\.feature \.teaser\s*\{\s*grid-column:\s*[2-9]/);
+  expect(css).not.toMatch(/\.entry\.feature \.more\s*\{\s*grid-column:\s*[3-9]/);
+});
