@@ -33,18 +33,19 @@ function build({ scroll = 0, height = 3000 } = {}) {
   const exitCircle = document.querySelector('[data-netnav] circle')!;
   const list = document.querySelector('[data-thread]')!;
   const nodes = [...document.querySelectorAll('.node')];
-  const setBoxes = (scrollY: number) => {
+  const setBoxes = (scrollY: number, shift = 0) => {
     const top = -scrollY;
     box(root, 0, top, 1000, 1100);
     box(exitCircle, 300, top + 95, 10, 10);
     box(list, 0, top + 200, 800, 900);
-    nodes.forEach((n, i) => box(n, 0, top + 300 * (i + 1) - 6, 12, 12));
+    nodes.forEach((n, i) => box(n, 0, top + 300 * (i + 1) - 6 + shift, 12, 12));
   };
   setBoxes(scroll);
   const entries = [...document.querySelectorAll<HTMLElement>('.entry')];
   const circles = [...document.querySelectorAll<SVGCircleElement>('[data-netnav] circle')];
   const scrollTo = (y: number) => { vi.stubGlobal('scrollY', y); setBoxes(y); window.dispatchEvent(new Event('scroll')); };
-  return { entries, circles, scrollTo, dispose: mountNetNav() };
+  const reflow = (shift: number) => { setBoxes(Number(scrollY), shift); window.dispatchEvent(new Event('resize')); };
+  return { entries, circles, scrollTo, reflow, dispose: mountNetNav() };
 }
 
 const fills = () => [...document.querySelectorAll('svg.wire .fill path')].flatMap((p) => p.getAttribute('d') ?? []);
@@ -131,6 +132,47 @@ it('moves the terminal up when Buscar hides the last station, keeping what was a
   expect(circles[2]!.classList.contains('path')).toBe(true);
   expect(entries.slice(0, 2).every((entry) => entry.classList.contains('is-reached'))).toBe(true);
   expect(fills().at(-1)).toMatch(/L6\.0 600\.0$/);
+  expect(entries[0]!.hasAttribute('data-track-first')).toBe(true);
+  expect(entries[1]!.hasAttribute('data-track-last')).toBe(true);
+});
+
+it('moves both CSS caps when Buscar hides the first and last stations', () => {
+  const { entries, scrollTo } = build();
+  scrollTo(0);
+  entries[0]!.hidden = true;
+  entries[2]!.hidden = true;
+  document.querySelector('[data-thread]')!.dispatchEvent(new CustomEvent('thread:filter'));
+  expect(entries[1]!.hasAttribute('data-track-first')).toBe(true);
+  expect(entries[1]!.hasAttribute('data-track-last')).toBe(true);
+  expect(entries[0]!.hasAttribute('data-track-first')).toBe(false);
+  expect(entries[2]!.hasAttribute('data-track-last')).toBe(false);
+  expect(knobY()).toBe('594px');
+});
+
+it('hides the slider for no matches and rebuilds it when results return', () => {
+  const { entries } = build();
+  for (const entry of entries) entry.hidden = true;
+  const list = document.querySelector('[data-thread]')!;
+  list.dispatchEvent(new CustomEvent('thread:filter'));
+  const knob = document.querySelector<HTMLElement>('.track-knob')!;
+  expect(knob.hidden).toBe(true);
+  expect(fills()).toHaveLength(0);
+  expect(entries.every((entry) => !entry.hasAttribute('data-track-first') && !entry.hasAttribute('data-track-last'))).toBe(true);
+
+  entries[1]!.hidden = false;
+  list.dispatchEvent(new CustomEvent('thread:filter'));
+  expect(knob.hidden).toBe(false);
+  expect(knobY()).toBe('594px');
+  expect(entries[1]!.hasAttribute('data-track-first')).toBe(true);
+  expect(entries[1]!.hasAttribute('data-track-last')).toBe(true);
+});
+
+it('re-measures station bounds on resize without losing reached state', () => {
+  const { entries, reflow } = build();
+  reflow(50);
+  expect(fills()).toEqual(['M6.0 344.0L6.0 500.0', 'M6.0 500.0L6.0 520.0']);
+  expect(knobY()).toBe('520px');
+  expect(entries[0]!.classList.contains('is-reached')).toBe(true);
 });
 
 it('cleans up on dispose', () => {

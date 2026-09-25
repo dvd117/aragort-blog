@@ -27,6 +27,14 @@ it('keeps a 6px stop and its named view-transition dot in the DOM', () => {
   expect(css).not.toMatch(/@media\s*\(min-width:\s*900px\)[\s\S]*?\.node\s*\{[^}]*width:\s*18px/);
 });
 
+it('keeps the pill and grey stops in server markup without JS-generated fill or knob', () => {
+  expect(page).toContain('<span class="node" aria-hidden="true">');
+  expect(page).not.toContain('track-knob');
+  expect(page).not.toContain('fill-band');
+  expect(css).toMatch(/\.node \.hue-dot\s*\{[^}]*background:\s*var\(--fg-2\)[^}]*opacity:\s*\.45/);
+  expect(css).toMatch(/\.entry::before\s*\{[^}]*background:\s*var\(--panel\)/);
+});
+
 it('sizes the landing track per breakpoint and uses the quiet resting-strength token', () => {
   expect(css).toMatch(/:root\s*\{[^}]*--track-w:\s*4px[^}]*--track-r:\s*16px/);
   expect(css).toMatch(/:root\s*\{[^}]*--pill-w:\s*12px/);

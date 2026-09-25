@@ -236,6 +236,12 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
       const node = entry.querySelector('.node');
       return node ? [{ entry, y: centre(node, r).y }] : [];
     });
+    for (const entry of list.querySelectorAll<HTMLElement>('.entry')) {
+      entry.removeAttribute('data-track-first');
+      entry.removeAttribute('data-track-last');
+    }
+    nodes[0]?.entry.setAttribute('data-track-first', '');
+    nodes.at(-1)?.entry.setAttribute('data-track-last', '');
     trackX = topX;
     endY = nodes.at(-1)?.y ?? l.bottom - r.top;
     pillTop = nodes[0] ? nodes[0].y - pillW / 2 : topY;
