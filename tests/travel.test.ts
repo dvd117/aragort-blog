@@ -2,7 +2,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import {
-  currentIndex,
   mountTravel,
   pointAtS,
   pointAtY,
@@ -112,15 +111,6 @@ describe('rounded route samples', () => {
 
 const pCenter = (arc: Array<{ arcCenter?: { x: number; y: number } }>) => arc[0]?.arcCenter;
 
-describe('other travel helpers', () => {
-  it('picks the last node at or above the line, else the first', () => {
-    expect(currentIndex([300, 600, 900], 100)).toBe(0);
-    expect(currentIndex([300, 600, 900], 600)).toBe(1);
-    expect(currentIndex([300, 600, 900], Infinity)).toBe(2);
-    expect(currentIndex([], 500)).toBe(-1);
-  });
-});
-
 function build(hideSecond = false) {
   vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
   vi.stubGlobal('scrollY', 0);
@@ -128,9 +118,9 @@ function build(hideSecond = false) {
     <div class="index">
       <svg><circle id="exit"></circle></svg>
       <ol class="entries" data-thread>
-        <li class="entry" data-post-hue="amarillo"><p class="d"><span class="node"></span></p></li>
-        <li class="entry" data-post-hue="azul"${hideSecond ? ' hidden' : ''}><p class="d"><span class="node"></span></p></li>
-        <li class="entry" data-post-hue="rojo"><p class="d"><span class="node"></span></p></li>
+        <li class="entry"><p class="d"><span class="node"></span></p></li>
+        <li class="entry"${hideSecond ? ' hidden' : ''}><p class="d"><span class="node"></span></p></li>
+        <li class="entry"><p class="d"><span class="node"></span></p></li>
       </ol>
     </div>
     <footer class="site-foot"><svg class="net"><circle id="f1"></circle><circle id="f2"></circle></svg></footer>`;

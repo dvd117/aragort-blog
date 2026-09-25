@@ -2,20 +2,18 @@
  * Net as navigation (landing). The hero net, a wire from its exit node and the thread down
  * the list are one line, and moving down the page travels along it (travel.ts draws it).
  * On every width:
- * - the reading line (65% of the viewport, as on a post) is "here"; the lowest point it
- *   has reached this visit is reach, and the thread stays lit down to it;
+ * - the reading line (65% of the viewport, as on a post) sets the high-water reach; the
+ *   thread stays lit down to the furthest point reached this visit;
  * - passing an entry's node pulses it once and lights the entry's region of the net: its
  *   route through its own node to the exit, plus the nodes one wire away (data-region).
  *   The net only ever gains light, and a wire lights once both of its nodes are lit;
- * - the last entry at or above the reading line is current: it carries .is-current (its
- *   "Leer" draws its branch) and its hue colours the here-ring;
  * - reaching the footer mark pulses it once. A page too short to scroll that far counts
  *   as reached at its bottom, or its last nodes could never light.
  * Desktop hover or keyboard focus previews an entry's trail and lights its region, but
  * never moves reach: only travel does.
  */
 import { reduced } from './motion';
-import { currentIndex, mountTravel, type TravelGeometry } from './travel';
+import { mountTravel, type TravelGeometry } from './travel';
 
 const LINE = 0.65;
 
@@ -70,15 +68,7 @@ export function mountNetNav(): () => void {
 
   let geo: TravelGeometry;
   const passed = new Set<HTMLElement>();
-  let current: HTMLElement | null = null;
   let ended = false;
-
-  const setCurrent = (entry: HTMLElement | null) => {
-    if (entry === current) return;
-    current?.classList.remove('is-current');
-    current = entry;
-    entry?.classList.add('is-current');
-  };
 
   const tick = () => {
     const line = scrollY + innerHeight * LINE - geo.top;
@@ -94,8 +84,6 @@ export function mountNetNav(): () => void {
       pulse(n.entry.querySelector('.node'));
     }
     if (reach >= geo.end && !ended) { ended = true; foot?.closest('.site-foot')?.classList.add('is-reached'); pulse(foot); }
-    const cur = geo.nodes[currentIndex(geo.nodes.map((n) => n.y), bottom ? Infinity : line)]?.entry ?? null;
-    setCurrent(cur);
   };
 
   // Layout resets reach; put it back at the furthest node already passed (or the end, once
@@ -135,7 +123,6 @@ export function mountNetNav(): () => void {
   return () => {
     disposed = true;
     for (const off of offs.splice(0)) off();
-    setCurrent(null);
     travel.destroy();
   };
 }

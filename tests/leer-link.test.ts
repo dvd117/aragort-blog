@@ -5,9 +5,16 @@ const page = readFileSync('src/pages/index.astro', 'utf8');
 const css = readFileSync('src/styles/index.css', 'utf8');
 const globalCss = readFileSync('src/styles/global.css', 'utf8');
 
-it('builds the branch into the markup, hidden from screen readers', () => {
-  expect(page).toMatch(/<a class="more"[^>]*><svg class="branch"[^>]*aria-hidden="true"/);
-  expect(page).toMatch(/class="b-lit"[^>]*pathLength="1"/);
+it('keeps Leer as a plain text link with no spur markup or styles', () => {
+  expect(page).toMatch(/<a class="more"[^>]*>Leer · \{p\.minutes\} min<\/a>/);
+  expect(page).not.toContain('branch');
+  expect(css).not.toContain('.branch');
+});
+
+it('uses the post hue and the same subtle underline as the signature link', () => {
+  expect(css).toMatch(/\.more\s*\{[^}]*display:\s*inline-block[^}]*min-height:\s*44px[^}]*color:\s*var\(--hue\)[^}]*text-decoration:\s*underline 1px color-mix\(in srgb, var\(--hue\) 45%, transparent\)[^}]*text-underline-offset:\s*\.2em/);
+  expect(css).toMatch(/\.more:hover,\s*\.more:focus-visible\s*\{[^}]*text-decoration-color:\s*var\(--hue\)[^}]*text-decoration-thickness:\s*2px/);
+  expect(globalCss).toMatch(/\.who a\s*\{[^}]*text-decoration:\s*underline 1px color-mix\(in srgb, var\(--hue\) 45%, transparent\)[^}]*text-underline-offset:\s*\.2em/);
 });
 
 it('keeps each date station neutral around a persistent, hue-bearing view-transition dot', () => {
@@ -20,20 +27,6 @@ it('keeps each date station neutral around a persistent, hue-bearing view-transi
   expect(css).toMatch(/\.node\s*\{[^}]*width:\s*14px[^}]*height:\s*14px[^}]*border:\s*2\.5px solid var\(--fg\)/);
 });
 
-it('draws the branch on hover, on focus and for the current entry', () => {
-  for (const sel of ['.more:hover .branch .b-lit', '.more:focus-visible .branch .b-lit', '.entry.is-current .more .branch .b-lit']) {
-    expect(css).toContain(sel);
-  }
-  expect(css).toMatch(/\.more \.branch \.b-rest\s*\{[^}]*stroke-width:\s*2\.5[^}]*linecap:\s*round/);
-  expect(css).toMatch(/\.more \.branch circle\s*\{[^}]*fill:\s*var\(--bg\)[^}]*stroke-width:\s*1\.5/);
-  expect(css).toMatch(/\.more:hover \.branch circle[^}]*stroke:\s*var\(--hue-ui\)/);
-  expect(css).not.toMatch(/\.more:hover \.branch circle[^}]*fill:\s*var\(--hue-ui\)/);
-});
-
-it('shows the keyboard state at once, with no transition', () => {
-  expect(css).toMatch(/\.more:focus-visible \.branch :is\(circle, \.b-lit\) \{ transition: none; \}/);
-});
-
 it('sizes the landing track per breakpoint and uses the quiet resting-strength token', () => {
   expect(css).toMatch(/:root\s*\{[^}]*--track-w:\s*4px[^}]*--track-r:\s*16px/);
   expect(css).toMatch(/@media\s*\(min-width:\s*900px\)\s*\{\s*:root\s*\{[^}]*--track-w:\s*6px[^}]*--track-r:\s*24px/s);
@@ -43,10 +36,4 @@ it('sizes the landing track per breakpoint and uses the quiet resting-strength t
 
 it('insets the phone search box away from the curved connector', () => {
   expect(css).toMatch(/@media\s*\(max-width:\s*430px\)\s*\{\s*\.filter\s*\{[^}]*padding-inline-start:\s*clamp\(2\.5rem,\s*calc\(80vw - 13\.5rem\),\s*8rem\)/);
-});
-
-it('draws the footer terminus bar and thin tail without JavaScript', () => {
-  expect(css).toMatch(/body:has\(\.index \.who\) \.site-foot::before[^}]*width:\s*var\(--track-w\)[^}]*1px 12px/);
-  expect(css).toMatch(/body:has\(\.index \.who\) \.site-foot::after[^}]*width:\s*var\(--station-d\)[^}]*height:\s*var\(--track-w\)/);
-  expect(css).toMatch(/body:has\(\.index \.who\) \.site-foot\.is-reached::after[^}]*background:\s*var\(--fg\)/);
 });

@@ -135,13 +135,6 @@ export function slice(points: CurvePoint[], s0: number, s1: number): string {
   return [pointAtS(points, s0), ...points.filter((p) => p.s > s0 && p.s < s1), pointAtS(points, s1)].map(fmt).join('');
 }
 
-/** The last node at or above the line; the first when none is yet; -1 with no nodes. */
-export function currentIndex(ys: number[], line: number): number {
-  let i = 0;
-  ys.forEach((y, k) => { if (y <= line) i = k; });
-  return ys.length ? i : -1;
-}
-
 const ns = 'http://www.w3.org/2000/svg';
 const make = <K extends keyof SVGElementTagNameMap>(tag: K, cls?: string): SVGElementTagNameMap[K] => {
   const el = document.createElementNS(ns, tag);

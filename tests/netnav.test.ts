@@ -21,9 +21,9 @@ function build({ scroll = 0, height = 3000 } = {}) {
         <line data-a="0" data-b="1"></line><line data-a="0" data-b="2"></line><line data-a="0" data-b="3"></line>
       </svg></div>
       <ol class="entries" data-thread>
-        <li class="entry" data-post-hue="amarillo" data-region="0,1"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
-        <li class="entry" data-post-hue="azul" data-region="0,2"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
-        <li class="entry" data-post-hue="rojo" data-region="0,3"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
+        <li class="entry" data-region="0,1"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
+        <li class="entry" data-region="0,2"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
+        <li class="entry" data-region="0,3"><p class="d"><span class="node"></span></p><a class="more" href="#">Leer</a></li>
       </ol>
     </div>
     <footer class="site-foot"><svg class="net"><circle id="f1"></circle></svg></footer>`;
@@ -42,33 +42,28 @@ function build({ scroll = 0, height = 3000 } = {}) {
 }
 
 const fills = () => [...document.querySelectorAll('svg.wire .fill path')].map((p) => p.getAttribute('d') ?? '');
-const current = () => [...document.querySelectorAll('.entry.is-current')];
-
 afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ''; });
 
-it('passes the first node at the top of the page and makes it current', () => {
+it('passes the first node at the top of the page', () => {
   const { entries, circles } = build();
-  expect(current()).toEqual([entries[0]]);
   expect(entries[0]!.querySelector('.node')!.classList.contains('pulse')).toBe(true);
   expect(entries[0]!.classList.contains('is-reached')).toBe(true);
   expect(circles[1]!.classList.contains('path')).toBe(true);
   expect(circles[2]!.classList.contains('path')).toBe(false);
 });
 
-it('travels down: passes the next node, lights its region, moves current', () => {
+it('travels down: passes the next node and lights its region', () => {
   const { entries, circles, scrollTo } = build();
   scrollTo(200); // line 720
-  expect(current()).toEqual([entries[1]]);
   expect(circles[2]!.classList.contains('path')).toBe(true);
   expect(fills()).toHaveLength(1);
   expect(fills()[0]).toMatch(/L6\.0 720\.0$/);
 });
 
-it('holds the fill when scrolling back up, but current follows', () => {
-  const { entries, scrollTo } = build();
+it('holds the fill when scrolling back up', () => {
+  const { scrollTo } = build();
   scrollTo(200);
   scrollTo(0);
-  expect(current()).toEqual([entries[0]]);
   expect(fills()[0]).toMatch(/L6\.0 720\.0$/);
 });
 
@@ -86,14 +81,12 @@ it('keeps reached station rings lit and marks the footer terminus once reached',
 it('opens mid-page with everything above the reading line already passed', () => {
   const { entries } = build({ scroll: 500 }); // line 1020
   expect(entries.every((e) => e.querySelector('.node')!.classList.contains('pulse'))).toBe(true);
-  expect(current()).toEqual([entries[2]]);
 });
 
 it('counts the page bottom as reaching the end, even on a short page', () => {
   const { entries, scrollTo } = build({ height: 900 });
   scrollTo(100); // bottom: 100 + 800 >= 899; line only 620
   expect(entries[2]!.querySelector('.node')!.classList.contains('pulse')).toBe(true);
-  expect(current()).toEqual([entries[2]]);
   expect(document.querySelector('.site-foot .net')!.classList.contains('pulse')).toBe(true);
   expect(fills().at(-1)).toMatch(/L6\.0 1200\.0$/);
 });
@@ -124,12 +117,11 @@ it('re-measures when Buscar filters, keeping what was already lit', () => {
   document.querySelector('[data-thread]')!.dispatchEvent(new CustomEvent('thread:filter'));
   expect(fills()).toHaveLength(1);
   expect(circles[2]!.classList.contains('path')).toBe(true);
-  expect(current()).toEqual([entries[0]]);
+  expect(entries.slice(0, 2).every((entry) => entry.classList.contains('is-reached'))).toBe(true);
 });
 
 it('cleans up on dispose', () => {
   const { dispose } = build();
   dispose();
   expect(document.querySelector('svg.wire')).toBeNull();
-  expect(current()).toEqual([]);
 });
