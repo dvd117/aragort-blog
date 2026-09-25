@@ -97,6 +97,15 @@ it('counts the page bottom as reaching the end, even on a short page', () => {
   expect(fills().at(-1)).toBe('M6.0 900.0L6.0 1200.0');
 });
 
+it('keeps the tail filled after a resize once the terminus is reached', () => {
+  const { scrollTo } = build({ height: 900 });
+  scrollTo(100);
+  scrollTo(0);
+  window.dispatchEvent(new Event('resize'));
+  expect(fills().at(-1)).toBe('M6.0 900.0L6.0 1200.0');
+  expect(document.querySelector('.site-foot')!.classList.contains('is-reached')).toBe(true);
+});
+
 it('hover lights a region and previews, but never passes a node', () => {
   const { entries, circles } = build();
   entries[2]!.dispatchEvent(new PointerEvent('pointerenter', { pointerType: 'mouse' }));

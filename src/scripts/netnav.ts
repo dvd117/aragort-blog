@@ -99,11 +99,12 @@ export function mountNetNav(): () => void {
     travel.here(y, cur?.dataset.postHue ?? 'amarillo');
   };
 
-  // Layout resets reach; put it back at the furthest node already passed, so a resize or
-  // a filter never unlights anything, then let the reading line take it from there.
+  // Layout resets reach; put it back at the furthest node already passed (or the end, once
+  // the terminus is lit), so a resize or a filter never unlights anything, then let the
+  // reading line take it from there.
   const relayout = () => {
     geo = travel.layout();
-    travel.reach(Math.max(geo.start, ...geo.nodes.filter((n) => passed.has(n.entry)).map((n) => n.y)));
+    travel.reach(ended ? geo.end : Math.max(geo.start, ...geo.nodes.filter((n) => passed.has(n.entry)).map((n) => n.y)));
     tick();
   };
 
