@@ -100,12 +100,13 @@
   .index[data-search] { --filter-gap: 1.5rem; }
   .node { left: calc(-2.25rem + 6px - 9px); top: calc(50% - 9px); width: 18px; height: 18px; border-width: 3px; }
   .node .hue-dot { width: 6px; height: 6px; }
-  /* Date | text | "Leer". The third track is only as wide as "Leer * N min", so the text
-     keeps the room it had and the link fills the band that used to sit empty beside the
-     bullets. */
-  .entry { --entry-pt: 1rem; grid-template-columns: 13rem minmax(0, 1fr) auto; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
-  .entry .t, .entry .ex, .entry .tag { grid-column: 2 / -1; }
+  /* The date and title begin together after the station; Leer uses the second column
+     beside the first bullet rather than leaving a date-width gap after the thread. */
+  .entry { --entry-pt: 1rem; grid-template-columns: minmax(0, 1fr) auto; column-gap: 2rem; align-items: baseline; padding: 1rem 0 1.4rem; }
+  .entry .d, .entry .t, .entry .ex, .entry .tag { grid-column: 1 / -1; }
   .entry .t { font-size: clamp(1.9rem, 3.2vw, 2.9rem); }
+  .entry.feature .teaser { grid-column: 1; }
+  .entry.feature .more { grid-column: 2; justify-self: end; margin-top: .9rem; }
 }
 
 /* Every post gets the room: near-display title, description, the three ideas and "Leer". */
@@ -135,7 +136,7 @@
   .entry.feature .more { grid-column: 2; }
 }
 @media (min-width: 900px) {
-  .who { padding-left: calc(13rem + 2rem + 2.25rem); }
+  .who { padding-left: 2.25rem; }
 }
 
 /* Short landscape (a phone on its side): a compact two-column composition. The net stays
