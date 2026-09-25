@@ -80,8 +80,6 @@
 .wire .lit { fill: none; stroke: var(--trail, var(--hue-ui)); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
 /* A preview below reach is a look ahead, not travel. */
 .wire .lit.ahead { opacity: .5; }
-.wire .here .halo { fill: none; stroke: var(--bg); stroke-width: 6; }
-.wire .here .ring { fill: var(--bg); stroke: var(--here); stroke-width: 2; }
 
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */

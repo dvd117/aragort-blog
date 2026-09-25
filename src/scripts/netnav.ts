@@ -96,7 +96,6 @@ export function mountNetNav(): () => void {
     if (reach >= geo.end && !ended) { ended = true; foot?.closest('.site-foot')?.classList.add('is-reached'); pulse(foot); }
     const cur = geo.nodes[currentIndex(geo.nodes.map((n) => n.y), bottom ? Infinity : line)]?.entry ?? null;
     setCurrent(cur);
-    travel.here(y, cur?.dataset.postHue ?? 'amarillo');
   };
 
   // Layout resets reach; put it back at the furthest node already passed (or the end, once

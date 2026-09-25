@@ -17,7 +17,6 @@ export interface TravelGeometry { top: number; start: number; end: number; nodes
 export interface Travel {
   layout(): TravelGeometry;
   reach(y: number): void;
-  here(y: number, hue: string): void;
   preview(entry: HTMLElement | null): void;
   destroy(): void;
 }
@@ -223,12 +222,7 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
   const ahead = make('path', 'lit ahead');
   for (const p of [lit, ahead]) p.setAttribute('pathLength', '1');
   layers.append(base, fill, lit, ahead);
-  const mark = make('g', 'here');
-  mark.setAttribute('visibility', 'hidden');
-  const halo = make('circle', 'halo');
-  const ring = make('circle', 'ring');
-  mark.append(halo, ring);
-  svg.append(defs, layers, mark);
+  svg.append(defs, layers);
   root.prepend(svg);
 
   let path: TravelPath = { points: [{ x: 0, y: 0, s: 0 }, { x: 0, y: 0, s: 0 }], length: 0, connectorS: 0, verticalY: 0 };
@@ -290,8 +284,6 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
     clipShape.setAttribute('d', outline(path, trackW, barS));
     base.setAttribute('d', slice(path.points, 0, yToS(path, topY))); // down to the CSS line
     svg.style.setProperty('--wire-w', `${trackW}px`);
-    const hereR = trackW / 2 + 3;
-    for (const c of [halo, ring]) c.setAttribute('r', String(hereR));
     nodes = [...list.querySelectorAll<HTMLElement>('.entry:not([hidden])')].flatMap((entry) => {
       const node = entry.querySelector('.node');
       return node ? [{ entry, y: centre(node, r).y, hue: entry.dataset.postHue ?? 'amarillo' }] : [];
@@ -310,12 +302,6 @@ export function mountTravel(root: HTMLElement, list: HTMLElement, exit: SVGCircl
       if (next <= reachS) return;
       reachS = next;
       render();
-    },
-    here(y, hue) {
-      const p = pointAtY(path, y);
-      for (const c of [halo, ring]) { c.setAttribute('cx', p.x.toFixed(1)); c.setAttribute('cy', p.y.toFixed(1)); }
-      mark.style.setProperty('--here', `var(--hl-${hue})`);
-      mark.removeAttribute('visibility');
     },
     preview(entry) {
       const n = entry ? nodes.find((x) => x.entry === entry) : undefined;

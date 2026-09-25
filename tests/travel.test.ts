@@ -223,14 +223,10 @@ describe('mountTravel', () => {
     expect(root.querySelector('.lit.ahead')!.hasAttribute('d')).toBe(false);
   });
 
-  it('puts the here-ring on the mapped thread in the current hue', () => {
+  it('does not add a reading-line marker to the thread', () => {
     const { root, travel } = build();
     travel.layout();
-    travel.here(450, 'rojo');
-    const ring = root.querySelector('.here .ring')!;
-    expect(ring.getAttribute('cx')).toBe('6.0');
-    expect(ring.getAttribute('cy')).toBe('450.0');
-    expect((root.querySelector('.here') as SVGElement).style.getPropertyValue('--here')).toBe('var(--hl-rojo)');
+    expect(root.querySelector('.here')).toBeNull();
   });
 
   it('removes its svg on destroy', () => {
