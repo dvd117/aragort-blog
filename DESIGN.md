@@ -294,14 +294,21 @@ decoration that means nothing.
   the current one in the hue with a dot beside its node; hovering or focusing the rail opens
   a dock: each number grows into a pill with its title, the ones near the pointer magnified. From 1100px, footnotes
   move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
-- **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
-  sticky on the left and the thread runs on the right. The thread follows the landing's
-  rules: the same track and `--fg` fill, moved by the reading line (of the panel, in the
-  drawer) and held at the furthest point reached; ring stations with a coloured centre
-  that pulse once and take their ring colour when passed; and the terminal bar under the
-  contacts' station. The flag is in the stations, amarillo -> azul -> rojo by the third of
-  the thread each hangs in, not in the line. The same content is also the panel
-  the header opens (below); in the panel it stays one column at every width.
+- **Sobre mí:** most readers see it as the panel the header opens (below), but a search
+  for David's name lands on the page, so the page is a first impression and opens the way
+  the landing does. Its hero is the landing's at every width: title and the first
+  paragraph as the lede over the net (bleeding off the right on a phone, beside them from
+  900px), and a wire from the net's pinned exit node into the thread, which runs down one
+  column below. At rest the fill reaches at least the first station. The panel has a
+  column's width, so it stays stacked -- title, net, then the thread, with the first
+  paragraph as its first station -- and fills the thread's own line instead of a wire.
+  Either way the thread follows the landing's rules: the same track and `--fg` fill, moved
+  by the reading line (of the panel, in the drawer) and held at the furthest point
+  reached; ring stations with a coloured centre that pulse once and take their ring
+  colour when passed; and the terminal bar under the contacts' station. The flag is in
+  the stations, not the line: amarillo at the top, rojo at the contacts, azul between.
+  The credentials are two quiet lines under their paragraph, a step down in size and
+  colour.
 - **Nav:** one item. The post's Formato/Markdown toggle with a single segment -- a pill on
   a panel that raises while "Sobre mí" is open or is the page you are on, with no
   transition: it swaps the way the toggle's buttons do, at once. "Escritos" is gone from

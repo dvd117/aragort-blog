@@ -11,7 +11,7 @@ import {
   yToS,
 } from '../src/scripts/travel';
 
-const indexCss = readFileSync('src/styles/index.css', 'utf8');
+const indexCss = readFileSync('src/styles/track.css', 'utf8');
 
 const rect = (x: number, y: number, w: number, h: number) =>
   ({ x, y, left: x, top: y, right: x + w, bottom: y + h, width: w, height: h, toJSON: () => ({}) }) as DOMRect;

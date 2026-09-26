@@ -2,7 +2,6 @@
    the net bleeds off the right edge behind the title (quiet enough that the title
    stays AA over it), a wire leaves its bottom-left node and becomes the thread
    down the left gutter, and every entry hangs on the thread by its hue node. */
-:root { --track-w: 4px; --track-r: 16px; --station-d: 14px; }
 .index { position: relative; overflow-x: clip; padding-top: 1rem; }
 /* Phone only: the net here is absolutely positioned and 96vw wide, so it is 64vw tall and
    stands outside the flow. The hero is given that height so nothing below it ever lands on
@@ -82,19 +81,10 @@
    30ms apart, so the light reads as travelling rather than switching on. The wire, fill
    and marker are drawn by travel.ts. */
 .net-wrap .net .path { stroke-opacity: 1; transition: stroke var(--dur-ui) var(--ease), fill var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); transition-delay: calc(var(--i, 0) * 30ms); }
-.wire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
-.wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--track-alpha); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: butt; stroke-linejoin: round; } /* butt: a round cap would overlap the CSS line below and double its strength */
-/* The resting entry segments sit below this layer, leaving the progress colour unobscured.
-   The fill and hover preview use one text-colour line, beneath entry nodes, which paint later. */
-.wire .fill path { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; }
-.wire .lit { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
-/* A preview below reach is a look ahead, not travel. */
-.wire .lit.ahead { opacity: .5; }
 
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */
 @media (min-width: 900px) {
-  :root { --track-w: 6px; --track-r: 24px; --station-d: 18px; }
   .index { padding-top: 4rem; overflow-x: visible; }
   /* The title column is as wide as the title; the net takes the rest. */
   .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 7.5rem; min-height: 0; }
