@@ -2,11 +2,16 @@
 /*
  * "Sobre mí", word for word. It is rendered twice over the site: as its own page, and as
  * the panel the header's button slides in over whatever you are reading.
+ *
+ * The page is where a search for David's name lands, so it opens the way the landing
+ * does: title and lede over the net, and a wire from the net's exit node into the thread.
+ * The panel has a column's width, so it stays stacked -- title, net, then the thread --
+ * with the first paragraph as the thread's first station instead of the lede.
  */
 import Net from './Net.astro';
 import ExtLink from './ExtLink.astro';
 import { nets } from '../assets/net/geometry';
-import { exitPath } from '../lib/netpath';
+import { exitNode, exitPath } from '../lib/netpath';
 
 interface Props {
   /** The drawer's copy: one column at every width, since it has a column's worth of room. */
@@ -16,29 +21,47 @@ const { compact = false } = Astro.props;
 
 // The portrait lights the path from the net's lit node to where the thread begins.
 const path = exitPath(nets.hero);
+const hello = 'Hola, me llamo David. Soy caraqueño. Desde 2019 trabajo en seguridad digital, casi siempre con periodistas y organizaciones, aquí y en otros países de la región.';
 ---
   <div class:list={['about', { wrap: !compact, compact }]}>
-    <header class="portrait">
-      <h1>Sobre mí</h1>
-      <div class="portrait-net" data-path={path.join(',')}><Net name="hero" respond flag /></div>
-    </header>
+    {compact ? (
+      <header class="portrait">
+        <h1>Sobre mí</h1>
+        <div class="portrait-net" data-path={path.join(',')}><Net name="hero" respond flag /></div>
+      </header>
+    ) : (
+      <header class="about-hero">
+        <div class="about-hero-title">
+          <h1>Sobre mí</h1>
+          <p class="lede">{hello}</p>
+        </div>
+        <!-- The exit node is pinned so the wire leaving it holds still while the net drifts. -->
+        <div class="portrait-net" data-path={path.join(',')}><Net name="hero" respond flag pin={[exitNode(nets.hero)]} /></div>
+      </header>
+    )}
 
     <ol class="about-thread" data-about-thread>
+      {compact && (
+        <li class="about-node-item">
+          <span class="about-node" aria-hidden="true"><span class="hue-dot"></span></span>
+          <p>{hello}</p>
+        </li>
+      )}
       <li class="about-node-item">
-        <span class="about-node" aria-hidden="true"></span>
-        <p>Hola, me llamo David. Soy caraqueño. Desde 2019 trabajo en seguridad digital, casi siempre con periodistas y organizaciones, aquí y en otros países de la región.</p>
-      </li>
-      <li class="about-node-item">
-        <span class="about-node" aria-hidden="true"></span>
+        <span class="about-node" aria-hidden="true"><span class="hue-dot"></span></span>
         <p>Hoy quiero aportar lo que sé y lo que he vivido para reconstruir Venezuela, y <ExtLink href="https://ateneo-abierto.org">Ateneo Abierto</ExtLink> es mi forma de hacerlo.</p>
-        <p class="cred"><span>Fui <ExtLink href="https://youtu.be/oS2N8cz7p4w">Freedom Fellow</ExtLink> de la Human Rights Foundation</span> <span>y formo parte del Leadership Council de la <ExtLink href="https://youthdemocracynetwork.org/leadershipcouncil">Youth Democracy Network</ExtLink>.</span></p>
+      </li>
+      <!-- The credentials are a paragraph like the others, on a station of their own. -->
+      <li class="about-node-item">
+        <span class="about-node" aria-hidden="true"><span class="hue-dot"></span></span>
+        <p>Fui <ExtLink href="https://youtu.be/oS2N8cz7p4w">Freedom Fellow</ExtLink> de la Human Rights Foundation y formo parte del Leadership Council de la <ExtLink href="https://youthdemocracynetwork.org/leadershipcouncil">Youth Democracy Network</ExtLink>.</p>
       </li>
       <li class="about-node-item">
-        <span class="about-node" aria-hidden="true"></span>
+        <span class="about-node" aria-hidden="true"><span class="hue-dot"></span></span>
         <p>Siempre estoy buscando colaborar con personas que compartan objetivos y valores. Escríbeme y hablemos.</p>
       </li>
       <li class="about-node-item contact-item">
-        <span class="about-node" aria-hidden="true"></span>
+        <span class="about-node" aria-hidden="true"><span class="hue-dot"></span></span>
         <dl class="contact">
           <div><dt>Correo</dt><dd><a href="mailto:hola@aragort.com">hola@aragort.com</a></dd></div>
           <div><dt>GitHub</dt><dd><ExtLink href="https://github.com/dvd117" rel="me">github.com/dvd117</ExtLink></dd></div>
@@ -54,6 +77,9 @@ const path = exitPath(nets.hero);
      it comes into view. Desktop: the portrait stays in a left column, the thread runs
      on the right. */
   .about { padding-top: 1.5rem; padding-bottom: 3rem; }
+  /* The page's thread is the landing's track (track.css sizes it per breakpoint); the
+     panel is a column wide at every width, so it keeps the phone's sizes. */
+  .about.compact { --track-w: 4px; --station-d: 14px; }
   /* In the drawer the title is a heading, not the page's own name. */
   .about.compact { padding-top: .25rem; }
   .about.compact h1 { font-size: clamp(2.4rem, 9vw, 3.4rem); }
@@ -66,36 +92,42 @@ const path = exitPath(nets.hero);
      its full strength. */
   .portrait-net :global(.path) { stroke-opacity: 1; }
 
-  .about-thread { position: relative; list-style: none; margin: .5rem 0 0; padding: 0 0 0 1.75rem; }
-  .about-thread::before { content: ""; position: absolute; left: 5px; top: 0; bottom: 2rem; width: 1px; background: var(--net); opacity: var(--net-alpha); }
-  /* The thread is the flag, and reading down the page paints it. The gradient is drawn at
-     full height and uncovered to the last lit node -- a clip, not a growing box, so the
-     three bands stay where they are instead of being squashed into the lit part. The same
-     move as the header's progress line, and the same as the rail: this page is about
-     David, so the arc through the three colours is his. */
-  .about-thread::after { content: ""; position: absolute; left: 4.5px; top: 0; bottom: 2rem; width: 2px; background: linear-gradient(180deg, var(--hu-amarillo) 0 33.333%, var(--hu-azul) 33.333% 66.667%, var(--hu-rojo) 66.667% 100%); clip-path: inset(0 0 calc(100% - var(--lit, 0px)) 0); transition: clip-path var(--dur-draw) var(--ease); }
-  /* The node is on the thread, so it takes the band it hangs in (about.ts measures it).
-     The words beside it do not: the paragraph's links are the page's one hue, like a
-     post's. The flag belongs to the drawing -- the net and the thread -- and a column of
-     four paragraphs whose every accent changed colour on the way down read as bunting. */
+  /* The thread is drawn the way the landing draws its track (index.css): a track in the
+     net colour, filled in --fg down to the reading line and held at the furthest point
+     reached (about.ts sets --lit), ending at the centre of the contacts' station. One
+     text-colour line, as on the landing; the flag is in the stations instead. */
+  .about-thread { --indent: 1.75rem; position: relative; list-style: none; margin: .5rem 0 0; padding: 0 0 0 var(--indent); }
+  .about-thread::before, .about-thread::after { content: ""; position: absolute; left: calc(6px - var(--track-w) / 2); top: 0; width: var(--track-w); height: var(--end, calc(100% - 2rem)); }
+  .about-thread::before { background: var(--net); opacity: var(--track-alpha); }
+  .about-thread::after { background: var(--fg); clip-path: inset(0 0 calc(100% - var(--lit, 0px)) 0); }
+  /* On the page the fill is the wire's (travel.ts), which runs on down the thread. */
+  .about-thread.has-wire::after { display: none; }
+  /* A station: a neutral ring on the track with its band's colour at the centre. Passing
+     it pulses it once and turns the ring to its band (about.ts: amarillo at the top, rojo
+     at the contacts, azul between). The words beside it do not change colour: the paragraph's
+     links are the page's one hue, like a post's. */
   .about-node-item { --node: var(--hue-ui); }
   .about-node-item[data-band="0"] { --node: var(--hu-amarillo); }
   .about-node-item[data-band="1"] { --node: var(--hu-azul); }
   .about-node-item[data-band="2"] { --node: var(--hu-rojo); }
   .about-node-item { position: relative; padding: 0 0 2rem; }
-  .about-node { position: absolute; left: calc(-1.75rem + 5.5px - 7px); top: .35em; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); box-shadow: inset 0 0 0 2px var(--node), 0 0 0 3px var(--bg); transition: background-color var(--dur-draw) var(--ease); }
-  .about-node-item.is-lit .about-node { background: var(--node); }
+  /* The station's centre sits on the first line of its paragraph. */
+  .about-node-item { --cy: calc(.35em + 7px); }
+  .about-node { position: absolute; z-index: 1; left: calc(6px - var(--indent) - var(--station-d) / 2); top: calc(var(--cy) - var(--station-d) / 2); display: grid; place-items: center; box-sizing: border-box; width: var(--station-d); height: var(--station-d); border: 2.5px solid var(--fg); border-radius: 50%; background: var(--bg); transition: border-color var(--dur-ui) var(--ease); }
+  .about-node .hue-dot { display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--node); }
+  .about-node-item.is-lit .about-node { border-color: var(--node); }
+  @keyframes about-pass { 50% { transform: scale(1.15); } }
+  .about-node.pulse { animation: about-pass var(--dur-draw) var(--ease) 1; }
+  /* The contacts are the terminal: a bar twice the station's width under its disc, resting
+     with the track and turning to --fg when reached. */
+  .contact-item::before { content: ""; position: absolute; left: calc(6px - var(--indent) - var(--station-d)); top: calc(var(--cy) - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
+  .about-thread.is-ended .contact-item::before { background: var(--fg); opacity: 1; }
+  /* The contacts' station centres on the first 44px row. */
+  .contact-item { --cy: 22px; }
   .about-node-item p { font-family: var(--read-font); font-size: calc(clamp(1.125rem, 1rem + .45vw, 1.25rem) * var(--scale)); line-height: var(--leading); letter-spacing: var(--tracking); color: var(--fg-read); max-width: var(--measure); margin: 0; }
   .about-node-item p + p { margin-top: 1rem; }
   .about-node-item :global(a) { color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
   .about-node-item :global(a:hover) { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
-  /* Credentials: the same sentence, set as its own element. A quiet aside, one step above
-     the body -- it was a three-band pull quote in display type, which made the loudest
-     thing on the page the one paragraph that is only a list of names. One rule, one
-     colour, the page's hue. */
-  .cred { font-family: var(--display) !important; font-weight: 600; font-size: calc(clamp(1.125rem, 1.05rem + .35vw, 1.3rem) * var(--scale)) !important; line-height: 1.3 !important; letter-spacing: -.015em !important; color: var(--fg) !important; padding-left: .9rem; border-left: 2px solid var(--hue-ui); }
-  .cred span { display: block; }
-  .cred span + span { color: var(--fg-2); }
 
   /* Three ways to reach him. They were amarillo, azul and rojo, one per row -- the flag
      again, a third time on the same screen, and here it made three addresses look like
@@ -106,19 +138,40 @@ const path = exitPath(nets.hero);
   .contact dd { margin: 0; overflow-wrap: anywhere; }
   .contact :global(a) { font-weight: 500; }
 
+  /* The page's hero is the landing's (index.css .hero): phone first, the net bleeds off
+     the right edge behind the title and lede, quiet enough that both stay AA over it, and
+     the hero is as tall as the net so the thread never lands on a node or a wire. */
+  .about:not(.compact) { position: relative; overflow-x: clip; }
+  .about-hero { position: relative; isolation: isolate; padding: 0 0 3rem; min-height: max(15rem, calc(64vw + 1rem)); }
+  .about-hero-title { position: relative; z-index: 1; }
+  .about-hero h1, .about-hero .lede { text-shadow: 0 0 2px var(--bg), 0 0 4px var(--bg), 0 0 8px var(--bg); }
+  .about-hero h1 { font-size: clamp(3.6rem, 18vw, 9rem); }
+  .about-hero .lede { font-family: var(--read); font-size: 1.125rem; line-height: 1.5; color: var(--fg-2); max-width: 24ch; margin: 1rem 0 0; }
+  .about-hero .portrait-net { position: absolute; z-index: 0; top: -.5rem; right: calc(-1 * var(--gutter) - 24vw); width: 96vw; margin: 0; pointer-events: none; --net-alpha: .26; }
+  .about-hero .portrait-net :global(.net circle) { stroke-opacity: .5; }
+  .about-hero .portrait-net :global(.net .path) { stroke-opacity: 1; }
+
   @media (min-width: 900px) {
-    .about:not(.compact) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); column-gap: 5rem; padding-top: 4rem; padding-bottom: 5rem; align-items: start; }
-    .about:not(.compact) .portrait { position: sticky; top: 76px; }
-    .about:not(.compact) .portrait-net { margin: -2rem 0 0 8%; }
-    .about:not(.compact) .portrait-net { --net-alpha: .45; }
-    .about:not(.compact) .about-thread { margin-top: 1rem; padding-left: 2.25rem; }
-    .about:not(.compact) .about-node { left: calc(-2.25rem + 5.5px - 7px); }
+    .about:not(.compact) { padding-top: 4rem; padding-bottom: 5rem; overflow-x: visible; }
+    /* The title column is as wide as the title; the net takes the rest. */
+    .about-hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 7.5rem; min-height: 0; }
+    .about-hero h1 { font-size: clamp(5rem, 9vw, 9rem); }
+    .about-hero .lede { font-size: 1.3125rem; max-width: 28ch; margin-top: 1.5rem; }
+    .about-hero .portrait-net { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .5; }
+    .about-hero .portrait-net :global(.net circle) { stroke-opacity: 1; }
+    .about:not(.compact) .about-thread { --indent: 2.25rem; }
+    .about:not(.compact) .about-node { border-width: 3px; }
+    .about:not(.compact) .about-node .hue-dot { width: 6px; height: 6px; }
     .about:not(.compact) .about-node-item { padding-bottom: 2.5rem; }
   }
+  /* Short landscape (a phone on its side): the landing's compact two columns. The net stays
+     in its column, so its exit node sits above the thread. */
   @media (max-width: 899px) and (max-height: 500px) and (orientation: landscape) {
-    .about:not(.compact) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); column-gap: 2rem; align-items: start; }
-    .about:not(.compact) .portrait { position: sticky; top: 64px; }
-    .about:not(.compact) h1 { font-size: clamp(2.6rem, 14vh, 4.5rem); }
-    .about:not(.compact) .portrait-net { margin: -1rem 0 0; }
+    .about-hero { display: grid; grid-template-columns: 1.2fr 1fr; column-gap: 2rem; align-items: center; min-height: 0; padding: 1rem 0 2rem; }
+    .about-hero h1 { font-size: clamp(3rem, 16vh, 5rem); }
+    .about-hero .lede { font-size: 1rem; max-width: 30ch; }
+    .about-hero .portrait-net { position: relative; top: auto; right: auto; width: 100%; --net-alpha: .45; }
+    .about-hero .portrait-net :global(.net) { max-height: 62vh; }
+    .about-hero .portrait-net :global(.net circle) { stroke-opacity: 1; }
   }
 </style>

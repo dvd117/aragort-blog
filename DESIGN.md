@@ -216,9 +216,9 @@ decoration that means nothing.
   shares it -- links, dots, rules, and the small marks (header mark, rail, footer mark). No
   mark keeps a colour of its own. On a post it is the post's. On the landing and Sobre mí
   it is the hue of the last post read on this device, so leaving a post does not lose its
-  colour. Two things show all three hues, and both are the flag rather than decoration:
-  the big nets' bands, and the travelled thread on the landing, where each section belongs
-  to its post.
+  colour. Three things show all three hues, and all are the flag rather than decoration:
+  the big nets' bands, the travelled thread on the landing, where each section belongs
+  to its post, and the stations on Sobre mí, which take the band they hang in.
 - **The order never shuffles.** Down the list the hues run amarillo -> azul -> rojo ->
   amarillo, by position: the newest post is amarillo, the one under it azul, then rojo, and
   round again. Nothing is hashed and nothing is rolled -- the flag's order is the point, so
@@ -261,9 +261,11 @@ decoration that means nothing.
   as a transit diagram: every segment horizontal, vertical or 45°, every bend one radius
   (16px; 24px from 900px), and no horizontal run shorter than four radii. Each date hangs from it on a 14px station (18px from 900px): a
   page-colour disc, neutral ring and persistent dot in the post's hue, centered on the date
-  line. The static rail and stations remain without JS. The track ends at the last visible
-  station; its horizontal terminal bar sits under the disc and shows on either side of the
-  ring. The bar rests in the low-alpha net colour and turns to full `--fg` when reached.
+  line. The static rail and stations remain without JS. The track runs past the last
+  visible post and ends at a station on the "quién escribe" rule; its horizontal terminal
+  bar sits under that disc and shows on either side of the ring. The bar rests in the
+  low-alpha net colour and turns to full `--fg` when reached. The terminal station's centre
+  is the site's amarillo, not a post hue.
 - **Buscar:** only when there are at least eight published posts, one box sits between the
   hero and the list, hard against its right edge and below the net's reach on every width,
   so it never sits on a node or a wire; on phones its inline-start is inset to clear the
@@ -278,21 +280,35 @@ decoration that means nothing.
 - **Landing, desktop (≥900px):** two columns, the title and lede on the left (as wide as
   they need) and the net taking the rest of the width on the right, at fuller strength.
 - **Every post is expanded on the landing:** date, near-display title, description and the
-  three ideas as a teaser. From 900px the date sits above the title in the text column just
-  after the station; "Leer · N min" is a plain post-hue link in the right column beside the
-  first teaser line, with a 1px 45% hue underline that becomes full hue and 2px on hover or
-  focus. It has no spur. After the posts, a "quién escribe" strip carries the name, one
+  three ideas as a teaser. From 900px each post is two columns under its date, which sits
+  just after the station: the title and description on the left (7fr), the three ideas and
+  "Leer · N min" on the right (5fr) behind a 1px `--rule`, with 5.5rem between posts.
+  "Leer" is a plain post-hue link with a 1px 45% hue underline that becomes full hue and
+  2px on hover or focus. It has no spur. Below 900px the two groups are transparent to the
+  entry's grid, so the phone list is unchanged. After the posts, a "quién escribe" strip carries the name, one
   sentence and a link to Sobre mí without another mark; the footer keeps its independent
-  mark. The track ends at the oldest visible station and does not run through the strip or
-  into the footer.
+  mark. The track ends on the strip's rule, the thread's last stop, and never runs into the
+  footer.
 - **Post:** a single column on a phone, with a progress hairline and a closed "En este
   texto". From 1000px, a 150px sticky rail. At rest the chapter numbers sit beside their nodes,
   the current one in the hue with a dot beside its node; hovering or focusing the rail opens
   a dock: each number grows into a pill with its title, the ones near the pointer magnified. From 1100px, footnotes
   move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
-- **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
-  sticky on the left and the thread runs on the right. The same content is also the panel
-  the header opens (below); in the panel it stays one column at every width.
+- **Sobre mí:** most readers see it as the panel the header opens (below), but a search
+  for David's name lands on the page, so the page is a first impression and opens the way
+  the landing does. Its hero is the landing's at every width: title and the first
+  paragraph as the lede over the net (bleeding off the right on a phone, beside them from
+  900px), and a wire from the net's pinned exit node into the thread, which runs down one
+  column below. At rest the fill reaches at least the first station. The panel has a
+  column's width, so it stays stacked -- title, net, then the thread, with the first
+  paragraph as its first station -- and fills the thread's own line instead of a wire.
+  Either way the thread follows the landing's rules: the same track and `--fg` fill, moved
+  by the reading line (of the panel, in the drawer) and held at the furthest point
+  reached; ring stations with a coloured centre that pulse once and take their ring
+  colour when passed; and the terminal bar under the contacts' station. The flag is in
+  the stations, not the line: amarillo at the top, rojo at the contacts, azul between.
+  Every paragraph is a station set in the story's type, the credentials included: a
+  sentence of names gets no size, colour or rule of its own.
 - **Nav:** one item. The post's Formato/Markdown toggle with a single segment -- a pill on
   a panel that raises while "Sobre mí" is open or is the page you are on, with no
   transition: it swaps the way the toggle's buttons do, at once. "Escritos" is gone from
@@ -305,9 +321,11 @@ decoration that means nothing.
   Escape, the focus trap and the backdrop are the browser's; Back closes it too. Without JS
   the header's link goes to /sobre-mi/, which is still a real page for direct links,
   sharing and search.
-- **Quién escribe:** the landing strip carries David's sentence and the way through to
-  "Sobre mí" without another mark; the footer keeps the landing's mark. Post pages retain
-  the mark beside the same signature block.
+- **Quién escribe:** one block ends the landing and every post: a hairline `--rule` as wide
+  as the sentence's measure, a small mono "Quién escribe" label, the name in display type,
+  then the sentence and the way through to "Sobre mí". No mark on either page: the header
+  and footer carry it. On posts it sits flush with the text column; on the landing it
+  lines up with the post titles and carries the thread's terminal station on its rule.
 - **Footer:** the mark, "David Aragort" and three icon links, all on one centre line (the
   mark sits in a box the height of an icon link and pinned to the top of the row) —
   GitHub (the source of this site), CC BY-SA (the licence, as the three canonical glyphs)
@@ -346,15 +364,22 @@ or Ajustes' "Reducir movimiento".
 - **Landing:** moving down the page travels the rounded route by arc length. It leaves the
   net as a 1px wire and tapers through the connector into the 4px gutter track (6px from
   900px), which rests in `--net` at `--track-alpha`. Its fill is one `--fg` colour in every
-  theme and holds at the furthest point reached; nothing runs past the center of the last
-  visible station. A horizontal bar, twice the station diameter and beneath its disc, is the
-  terminus: it rests with the track and turns to full `--fg` when reached. A page too short
+  theme and holds at the furthest point reached; it runs through every visible station and
+  stops at the center of the "quién escribe" station, never past it. A horizontal bar,
+  twice the station diameter and beneath that disc, is the terminus: it rests with the
+  track and turns to full `--fg` when reached. A page too short
   to scroll there counts as reached at its bottom. Passing a station pulses it once and
   turns its ring to the post's hue; its centre dot keeps that hue visible at rest. Reaching
-  the terminal pulses that last station once, not a second time, and keeps the bar in `--fg`;
-  resize and Buscar remeasure the last visible station without unlighting what was reached.
+  the terminal pulses the "quién escribe" station once, not a second time, turns its ring
+  amarillo and keeps the bar in `--fg`; resize and Buscar remeasure without unlighting what
+  was reached.
   The reading line (65% of the viewport, as on a post) moves the fill; it has no separate
-  marker. On desktop, hovering or focusing an entry previews the trail in `--fg` (the look
+  marker. At rest the fill never stops short of the first station, so it never hangs
+  halfway between the net and the list. On the first landing of a session it **arrives**:
+  350ms in, alongside the net's first-page pulse, it draws from the exit to that station
+  over 600ms on `--ease`, and the station passes as usual. Later visits open already
+  there; reduced motion skips the draw. On desktop, hovering or focusing an entry
+  previews the trail in `--fg` (the look
   ahead is half strength) and lights its region, but only scrolling travels. Passing an
   entry also lights its **region** of the net: its route (the net's lit node → the post's
   node → exit) plus the nodes one wire away from its own node. A wire lights once both of
@@ -401,4 +426,5 @@ Ambient motion is allowed for the net only, for impact. It is bounded:
    the pointer; a ring kick of 9px within 280px; nothing strays more than 30px from its
    drifting place. Those figures are for the hero; smaller nets get them in proportion to
    their width (the 42px mark moves under 2px). Wires never enter the text halo.
-4. Everything else stays functional: 120–360ms, no loops.
+4. Everything else stays functional: 120–360ms, no loops. The one exception is the
+   landing's arrival (600ms, once per session, see Landing above).

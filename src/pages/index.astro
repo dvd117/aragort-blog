@@ -8,6 +8,7 @@ import { exitNode, exitPath, regionsFor } from '../lib/netpath';
 import Signature from '../components/Signature.astro';
 import { LEDE } from '../lib/site';
 import { hasSearch } from '../lib/search';
+import '../styles/track.css';
 import '../styles/index.css';
 
 const posts = await getPosts();
@@ -37,15 +38,19 @@ const regions = new Map(regionsFor(nets.hero, oldest.map((p) => p.slug)).map((r,
           {posts.map((p) => (
               <li class:list={['entry', 'feature', { draft: p.draft }]} data-hue={p.hue} data-region={regions.get(p.slug)}>
                 <p class="d"><span class="node" aria-hidden="true"><span class="hue-dot" style={`view-transition-name: dot-${p.slug}`}></span></span><time datetime={p.date}>{formatDateEs(p.date)}</time></p>
-                <a class="t" href={`/escritos/${p.slug}/`}>{p.title}</a>
-                {p.description && <p class="ex">{p.description}</p>}
-                {p.resumen && <ul class="teaser">{p.resumen.map((r) => <li>{r}</li>)}</ul>}
-                <a class="more" href={`/escritos/${p.slug}/`}>Leer · {p.minutes} min</a>
+                <div class="lhs">
+                  <a class="t" href={`/escritos/${p.slug}/`}>{p.title}</a>
+                  {p.description && <p class="ex">{p.description}</p>}
+                </div>
+                <div class="rhs">
+                  {p.resumen && <ul class="teaser">{p.resumen.map((r) => <li>{r}</li>)}</ul>}
+                  <a class="more" href={`/escritos/${p.slug}/`}>Leer · {p.minutes} min</a>
+                </div>
                 {p.draft && <span class="tag">borrador</span>}
               </li>
           ))}
         </ol>
-        <Signature mark={false} />
+        <Signature stop />
       </>
     )}
   </div>

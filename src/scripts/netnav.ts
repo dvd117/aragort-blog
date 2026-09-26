@@ -7,8 +7,13 @@
  * - passing an entry's node pulses it once and lights the entry's region of the net: its
  *   route through its own node to the exit, plus the nodes one wire away (data-region).
  *   The net only ever gains light, and a wire lights once both of its nodes are lit;
- * - the last visible station is the terminal. A page too short to scroll to it counts as
- *   reached at the bottom, or its last nodes could never light.
+ * - the terminal is the station on "Quién escribe" after the list (the last visible
+ *   station if there is none). Reaching it pulses that station once and lights the
+ *   terminal bar. A page too short to scroll to it counts as reached at the bottom, or
+ *   its last nodes could never light.
+ * - at rest the fill never stops short of the first station, so it never hangs halfway
+ *   between the net and the list. On the first landing of a session it arrives there:
+ *   it draws from the exit to that station, which then passes as usual.
  * Desktop hover or keyboard focus previews an entry's trail and lights its region, but
  * never moves reach: only travel does.
  */
@@ -16,6 +21,22 @@ import { reduced } from './motion';
 import { mountTravel, type TravelGeometry } from './travel';
 
 const LINE = 0.65;
+const ARRIVE_KEY = 'aragort-track-arrived';
+const ARRIVE_DELAY = 350; // with the net's first-page pulse (netlive.ts)
+const ARRIVE_MS = 600;
+
+/** The site's one curve, cubic-bezier(.2, 0, 0, 1) (--ease), solved for x by bisection. */
+export function ease(x: number): number {
+  if (x <= 0) return 0;
+  if (x >= 1) return 1;
+  let lo = 0, hi = 1;
+  for (let i = 0; i < 24; i++) {
+    const t = (lo + hi) / 2;
+    if (0.6 * (1 - t) ** 2 * t + t ** 3 < x) lo = t; else hi = t;
+  }
+  const t = (lo + hi) / 2;
+  return 3 * (1 - t) * t * t + t ** 3;
+}
 
 export function mountNetNav(): () => void {
   const root = document.querySelector<HTMLElement>('[data-netnav-root]');
@@ -30,7 +51,8 @@ export function mountNetNav(): () => void {
   const lines = [...net.querySelectorAll<SVGLineElement>('line')];
   const exitCircle = circles[exit.at(-1) ?? 0];
   if (!exitCircle) return () => {};
-  const travel = mountTravel(root, list, exitCircle);
+  const stop = root.querySelector<HTMLElement>('.who .node');
+  const travel = mountTravel(root, list, exitCircle, stop);
 
   const offs: Array<() => void> = [];
   const on = (target: EventTarget, type: string, fn: EventListener, options?: AddEventListenerOptions) => {
@@ -68,12 +90,16 @@ export function mountNetNav(): () => void {
   let geo: TravelGeometry;
   const passed = new Set<HTMLElement>();
   let ended = false;
+  // While the arrival draws, the fill is held to it; undefined once it has arrived.
+  let arrival: number | undefined;
 
-  const tick = () => {
+  const target = () => {
     const line = scrollY + innerHeight * LINE - geo.top;
     const bottom = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
-    const y = Math.min(Math.max(line, geo.start), geo.end);
-    const reach = bottom ? geo.end : y;
+    return bottom ? geo.end : Math.min(Math.max(line, geo.nodes[0]?.y ?? geo.start), geo.end);
+  };
+  const tick = () => {
+    const reach = Math.min(target(), arrival ?? Infinity);
     travel.reach(reach);
     for (const n of geo.nodes) {
       if (n.y > reach || passed.has(n.entry)) continue;
@@ -82,7 +108,10 @@ export function mountNetNav(): () => void {
       lightRegion(n.entry);
       pulse(n.entry.querySelector('.node'));
     }
-    if (reach >= geo.end) ended = true;
+    if (reach >= geo.end && !ended) {
+      ended = true;
+      if (stop) { stop.closest('.who')?.classList.add('is-reached'); pulse(stop); }
+    }
   };
 
   // Layout resets reach; put it back at the furthest node already passed (or the end, once
@@ -116,8 +145,23 @@ export function mountNetNav(): () => void {
   on(window, 'resize', relayout);
   on(list, 'thread:filter', relayout);
   let disposed = false;
+  let arrived = true;
+  try { arrived = sessionStorage.getItem(ARRIVE_KEY) === '1'; sessionStorage.setItem(ARRIVE_KEY, '1'); } catch { /* storage off: skip it */ }
+  if (!arrived && !reduced()) arrival = -Infinity;
   document.fonts?.ready.then(() => { if (!disposed) relayout(); });
   relayout();
+  if (arrival !== undefined) {
+    let t0: number | undefined;
+    const step = (now: number) => {
+      if (disposed) return;
+      t0 ??= now + ARRIVE_DELAY;
+      const p = (now - t0) / ARRIVE_MS;
+      arrival = p >= 1 ? undefined : p <= 0 ? -Infinity : geo.start + (target() - geo.start) * ease(p);
+      tick();
+      if (arrival !== undefined) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
 
   return () => {
     disposed = true;

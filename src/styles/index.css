@@ -2,7 +2,6 @@
    the net bleeds off the right edge behind the title (quiet enough that the title
    stays AA over it), a wire leaves its bottom-left node and becomes the thread
    down the left gutter, and every entry hangs on the thread by its hue node. */
-:root { --track-w: 4px; --track-r: 16px; --station-d: 14px; }
 .index { position: relative; overflow-x: clip; padding-top: 1rem; }
 /* Phone only: the net here is absolutely positioned and 96vw wide, so it is 64vw tall and
    stands outside the flow. The hero is given that height so nothing below it ever lands on
@@ -44,14 +43,10 @@
 /* A filtered list closes the gaps the hidden entries leave. */
 .entries.is-filtered .entry { --entry-pt: .6rem; padding-top: .6rem; }
 
-/* Entry segments meet edge to edge. The final visible entry ends its segment at the
-   station centre and draws the transverse terminal under the station disc. */
+/* Entry segments meet edge to edge, and the last one carries on to "Quién escribe". */
 .entries { --list-indent: 1.75rem; position: relative; list-style: none; margin: 0; padding: 0 0 0 var(--list-indent); }
 .entry { --entry-pt: .85rem; position: relative; display: grid; gap: .2rem; padding: .85rem 0 1.25rem; }
 .entry::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--track-w) / 2); top: 0; bottom: 0; width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
-.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::before { bottom: auto; height: calc(var(--entry-pt) + .7em); font-size: .875rem; }
-.entry:not([hidden]):not(:has(~ .entry:not([hidden])))::after { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--list-indent) - var(--station-d)); top: calc(var(--entry-pt) + .7em - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); font-size: .875rem; background: var(--net); opacity: var(--track-alpha); }
-.entry.is-reached:not([hidden]):not(:has(~ .entry:not([hidden])))::after { background: var(--fg); opacity: 1; }
 /* Buscar hides an entry with [hidden]; .entry sets display, so say it again louder. */
 .entry[hidden] { display: none; }
 /* A station: neutral ring on the track, with its post hue always visible at the centre. */
@@ -60,7 +55,19 @@
 .entry.is-reached .node { border-color: var(--hue-ui); }
 /* Passing a node: one short pulse, never from nothing. */
 @keyframes node-pass { 50% { transform: scale(1.15); } }
-.entry .node.pulse { animation: node-pass var(--dur-draw) var(--ease) 1; }
+.entry .node.pulse, .who .node.pulse { animation: node-pass var(--dur-draw) var(--ease) 1; }
+/* Quién escribe is the thread's last stop. The track crosses the gap above it and ends in
+   a station on its rule, with the transverse terminal bar under the station disc. Both
+   rest in the net colour and turn to full --fg when reached (netnav.ts). The bar sits
+   over the aside's own border-top (z 0) and the disc over the bar (z 1). The station's
+   centre is the site's amarillo, not a post hue: it belongs to no post. */
+.index .who { --who-indent: 1.75rem; }
+.index .who::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--track-w) / 2); bottom: 100%; height: calc(2.5rem + 1px); width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
+.index .who::after { content: ""; position: absolute; z-index: 0; left: calc(6px - var(--station-d)); top: calc(-.5px - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
+.index .who.is-reached::after { background: var(--fg); opacity: 1; }
+.who .node { z-index: 1; left: calc(6px - var(--station-d) / 2); top: calc(-.5px - var(--station-d) / 2); width: var(--station-d); height: var(--station-d); }
+.who .node .hue-dot { background: var(--hu-amarillo); }
+.who.is-reached .node { border-color: var(--hu-amarillo); }
 .entry .d { position: relative; font-size: .875rem; color: var(--fg-2); margin: 0; line-height: 1.4; }
 .entry .t { font-family: var(--display); font-weight: var(--title-weight); font-size: clamp(1.6rem, 6.4vw, 2.6rem); line-height: var(--title-leading); letter-spacing: var(--title-tracking); text-decoration: none; }
 .entry .t:hover { text-decoration: underline; text-decoration-color: var(--hue-ui); text-decoration-thickness: 2px; text-underline-offset: .12em; }
@@ -74,19 +81,10 @@
    30ms apart, so the light reads as travelling rather than switching on. The wire, fill
    and marker are drawn by travel.ts. */
 .net-wrap .net .path { stroke-opacity: 1; transition: stroke var(--dur-ui) var(--ease), fill var(--dur-ui) var(--ease), stroke-opacity var(--dur-ui) var(--ease); transition-delay: calc(var(--i, 0) * 30ms); }
-.wire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
-.wire .base { fill: none; stroke: var(--net); stroke-opacity: var(--track-alpha); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: butt; stroke-linejoin: round; } /* butt: a round cap would overlap the CSS line below and double its strength */
-/* The resting entry segments sit below this layer, leaving the progress colour unobscured.
-   The fill and hover preview use one text-colour line, beneath entry nodes, which paint later. */
-.wire .fill path { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; }
-.wire .lit { fill: none; stroke: var(--fg); stroke-width: var(--wire-w, var(--track-w)); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; transition: stroke-dashoffset var(--dur-draw) var(--ease); }
-/* A preview below reach is a look ahead, not travel. */
-.wire .lit.ahead { opacity: .5; }
 
 /* Desktop: its own composition. Two columns: title and lede left, the net right at
    fuller strength; the thread runs down the left column and the wire crosses to it. */
 @media (min-width: 900px) {
-  :root { --track-w: 6px; --track-r: 24px; --station-d: 18px; }
   .index { padding-top: 4rem; overflow-x: visible; }
   /* The title column is as wide as the title; the net takes the rest. */
   .hero { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 3rem; align-items: end; padding: 3rem 0 7.5rem; min-height: 0; }
@@ -107,7 +105,10 @@
   .entry .t { font-size: clamp(1.9rem, 3.2vw, 2.9rem); }
 }
 
-/* Every post gets the room: near-display title, description, the three ideas and "Leer". */
+/* Every post gets the room: near-display title, description, the three ideas and "Leer".
+   Title and description are one group, the ideas and "Leer" another; below 900px the
+   groups are transparent to the entry's grid, so the phone layout is the flat list. */
+.entry .lhs, .entry .rhs { display: contents; }
 .entry.feature { --entry-pt: 1rem; padding: 1rem 0 2rem; }
 .entry.feature .t { font-weight: var(--display-weight); font-size: clamp(2.4rem, 9vw, 4.6rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); max-width: 14ch; }
 .entry.feature .ex { font-size: 1.25rem; color: var(--fg); max-width: 40ch; }
@@ -130,7 +131,19 @@
   .entry.feature .more { grid-column: 2; justify-self: end; margin-top: .9rem; }
 }
 @media (min-width: 900px) {
-  .who { padding-left: 2.25rem; }
+  .index .who { --who-indent: 2.25rem; }
+  /* Desktop: each post is two columns under its date -- title and description on the
+     left, the three ideas and "Leer" on the right behind a 1px rule -- so the list uses
+     the width instead of hugging the thread. */
+  .entry.feature { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: 4rem; align-items: start; padding: 1rem 0 5.5rem; }
+  .entry.feature .lhs, .entry.feature .rhs { display: grid; align-content: start; gap: 1rem; }
+  .entry.feature .lhs { grid-column: 1; padding-top: .6rem; }
+  .entry.feature .rhs { grid-column: 2; margin-top: 1.1rem; padding-left: 1.5rem; border-left: 1px solid var(--rule); }
+  .entry.feature .t { font-size: clamp(2.8rem, 4.6vw, 4rem); max-width: none; text-wrap: balance; }
+  .entry.feature .ex { margin: 0; font-size: 1.1875rem; line-height: 1.5; color: var(--fg-read); max-width: 36ch; }
+  /* Inside the groups, not the entry's grid: undo the 700px placement beside the bullets. */
+  .entry.feature .teaser { grid-column: auto; margin: 0; color: var(--fg-read); max-width: none; }
+  .entry.feature .more { grid-column: auto; justify-self: start; margin-top: 0; }
 }
 
 /* Short landscape (a phone on its side): a compact two-column composition. The net stays
