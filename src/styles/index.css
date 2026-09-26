@@ -59,13 +59,14 @@
 .entry .node.pulse, .who .node.pulse { animation: node-pass var(--dur-draw) var(--ease) 1; }
 /* Quién escribe is the thread's last stop. The track crosses the gap above it and ends in
    a station on its rule, with the transverse terminal bar under the station disc. Both
-   rest in the net colour and turn to full --fg when reached (netnav.ts). The station's
+   rest in the net colour and turn to full --fg when reached (netnav.ts). The bar sits
+   over the aside's own border-top (z 0) and the disc over the bar (z 1). The station's
    centre is the site's amarillo, not a post hue: it belongs to no post. */
 .index .who { --who-indent: 1.75rem; }
 .index .who::before { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--track-w) / 2); bottom: 100%; height: calc(2.5rem + 1px); width: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
-.index .who::after { content: ""; position: absolute; z-index: -1; left: calc(6px - var(--station-d)); top: calc(-.5px - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
+.index .who::after { content: ""; position: absolute; z-index: 0; left: calc(6px - var(--station-d)); top: calc(-.5px - var(--track-w) / 2); width: calc(2 * var(--station-d)); height: var(--track-w); background: var(--net); opacity: var(--track-alpha); }
 .index .who.is-reached::after { background: var(--fg); opacity: 1; }
-.who .node { left: calc(6px - var(--station-d) / 2); top: calc(-.5px - var(--station-d) / 2); width: var(--station-d); height: var(--station-d); }
+.who .node { z-index: 1; left: calc(6px - var(--station-d) / 2); top: calc(-.5px - var(--station-d) / 2); width: var(--station-d); height: var(--station-d); }
 .who .node .hue-dot { background: var(--hu-amarillo); }
 .who.is-reached .node { border-color: var(--hu-amarillo); }
 .entry .d { position: relative; font-size: .875rem; color: var(--fg-2); margin: 0; line-height: 1.4; }

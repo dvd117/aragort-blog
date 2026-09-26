@@ -18,6 +18,12 @@ it('centres a quiet terminal bar on the Quién escribe station and turns it to i
   expect(indexRules).toMatch(/\.who \.node\s*\{[^}]*left:\s*calc\(6px - var\(--station-d\) \/ 2\)/);
 });
 
+it('stacks the terminal bar over the aside rule and under the station disc', () => {
+  // The aside's border-top paints above z-index -1, which split the bar into "=".
+  expect(indexRules).toMatch(/\.index \.who::after\s*\{[^}]*z-index:\s*0/);
+  expect(indexRules).toMatch(/\.who \.node\s*\{[^}]*z-index:\s*1/);
+});
+
 it('ends the landing route at the signature, never onto the footer', () => {
   expect(indexRules).not.toMatch(/[^{}]*\.site-foot[^{}]*\{/);
   expect(rules(globalCss)).not.toMatch(/\.who-thread::before\s*\{/);
