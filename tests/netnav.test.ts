@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { afterEach, expect, it, vi } from 'vitest';
-import { mountNetNav } from '../src/scripts/netnav';
+import { ease, mountNetNav } from '../src/scripts/netnav';
 
 const rect = (x: number, y: number, w: number, h: number) =>
   ({ x, y, left: x, top: y, right: x + w, bottom: y + h, width: w, height: h, toJSON: () => ({}) }) as DOMRect;
@@ -8,10 +8,13 @@ const box = (e: Element, x: number, y: number, w: number, h: number) =>
   Object.defineProperty(e, 'getBoundingClientRect', { configurable: true, value: () => rect(x, y, w, h) });
 
 /** Hero net: circle 0 is the exit; entries' regions are nodes 1, 2, 3 (each wired to 0). */
-function build({ scroll = 0, height = 3000, stop = false } = {}) {
-  vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
-  vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => { cb(0); return 0; });
-  vi.stubGlobal('innerHeight', 800); // reading line at 520 + scrollY
+function build({ scroll = 0, height = 3000, stop = false, vh = 800, arrive = false, reduce = false, frames = undefined as FrameRequestCallback[] | undefined } = {}) {
+  vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: reduce, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
+  // Frames run at once, unless the test queues them to drive them by hand.
+  vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => { if (frames) frames.push(cb); else cb(0); return 0; });
+  vi.stubGlobal('innerHeight', vh); // default: reading line at 520 + scrollY
+  // The arrival plays once per session; most tests open on a landing already arrived.
+  if (arrive) sessionStorage.removeItem('aragort-track-arrived'); else sessionStorage.setItem('aragort-track-arrived', '1');
   vi.stubGlobal('scrollY', scroll);
   Object.defineProperty(document.documentElement, 'scrollHeight', { configurable: true, value: height });
   document.body.innerHTML = `
@@ -149,6 +152,47 @@ it('counts the page bottom as reaching the Quién escribe station', () => {
   window.dispatchEvent(new Event('scroll'));
   expect(fills().at(-1)).toMatch(/L6\.0 1000\.0$/);
   expect(document.querySelector('.who')!.classList.contains('is-reached')).toBe(true);
+});
+
+it('rests at the first station when the reading line is above it, never between the net and the list', () => {
+  const { entries } = build({ vh: 400 }); // line 260, first station at 300
+  expect(fills()[0]).toMatch(/L6\.0 300\.0$/);
+  expect(entries[0]!.classList.contains('is-reached')).toBe(true);
+  expect(entries[1]!.classList.contains('is-reached')).toBe(false);
+});
+
+it('arrives once per session: draws from the exit to the first station, then passes it', () => {
+  const frames: FrameRequestCallback[] = [];
+  const { entries } = build({ vh: 400, arrive: true, frames });
+  const run = (now: number) => frames.splice(0).forEach((cb) => cb(now));
+  run(0); // first frame: the arrival starts after its delay
+  expect(fills()).toEqual(['']);
+  expect(entries[0]!.classList.contains('is-reached')).toBe(false);
+  run(350 + 300); // halfway in time, most of the way by the curve
+  const mid = Number(fills()[0]!.match(/ ([\d.]+)$/)![1]);
+  expect(mid).toBeGreaterThan(100);
+  expect(mid).toBeLessThan(300);
+  expect(entries[0]!.classList.contains('is-reached')).toBe(false);
+  run(350 + 600);
+  expect(fills()[0]).toMatch(/L6\.0 300\.0$/);
+  expect(entries[0]!.classList.contains('is-reached')).toBe(true);
+  expect(frames).toHaveLength(0);
+  expect(sessionStorage.getItem('aragort-track-arrived')).toBe('1');
+});
+
+it('skips the arrival under reduced motion', () => {
+  const frames: FrameRequestCallback[] = [];
+  const { entries } = build({ vh: 400, arrive: true, reduce: true, frames });
+  expect(frames).toHaveLength(0);
+  expect(fills()[0]).toMatch(/L6\.0 300\.0$/);
+  expect(entries[0]!.classList.contains('is-reached')).toBe(true);
+});
+
+it('eases on the site curve', () => {
+  expect(ease(0)).toBe(0);
+  expect(ease(1)).toBe(1);
+  expect(ease(0.5)).toBeGreaterThan(0.8);
+  expect(ease(0.25)).toBeLessThan(ease(0.5));
 });
 
 it('cleans up on dispose', () => {

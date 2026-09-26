@@ -360,7 +360,12 @@ or Ajustes' "Reducir movimiento".
   amarillo and keeps the bar in `--fg`; resize and Buscar remeasure without unlighting what
   was reached.
   The reading line (65% of the viewport, as on a post) moves the fill; it has no separate
-  marker. On desktop, hovering or focusing an entry previews the trail in `--fg` (the look
+  marker. At rest the fill never stops short of the first station, so it never hangs
+  halfway between the net and the list. On the first landing of a session it **arrives**:
+  350ms in, alongside the net's first-page pulse, it draws from the exit to that station
+  over 600ms on `--ease`, and the station passes as usual. Later visits open already
+  there; reduced motion skips the draw. On desktop, hovering or focusing an entry
+  previews the trail in `--fg` (the look
   ahead is half strength) and lights its region, but only scrolling travels. Passing an
   entry also lights its **region** of the net: its route (the net's lit node → the post's
   node → exit) plus the nodes one wire away from its own node. A wire lights once both of
@@ -407,4 +412,5 @@ Ambient motion is allowed for the net only, for impact. It is bounded:
    the pointer; a ring kick of 9px within 280px; nothing strays more than 30px from its
    drifting place. Those figures are for the hero; smaller nets get them in proportion to
    their width (the 42px mark moves under 2px). Wires never enter the text halo.
-4. Everything else stays functional: 120–360ms, no loops.
+4. Everything else stays functional: 120–360ms, no loops. The one exception is the
+   landing's arrival (600ms, once per session, see Landing above).
