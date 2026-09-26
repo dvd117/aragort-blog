@@ -280,10 +280,12 @@ decoration that means nothing.
 - **Landing, desktop (≥900px):** two columns, the title and lede on the left (as wide as
   they need) and the net taking the rest of the width on the right, at fuller strength.
 - **Every post is expanded on the landing:** date, near-display title, description and the
-  three ideas as a teaser. From 900px the date sits above the title in the text column just
-  after the station; "Leer · N min" is a plain post-hue link in the right column beside the
-  first teaser line, with a 1px 45% hue underline that becomes full hue and 2px on hover or
-  focus. It has no spur. After the posts, a "quién escribe" strip carries the name, one
+  three ideas as a teaser. From 900px each post is two columns under its date, which sits
+  just after the station: the title and description on the left (7fr), the three ideas and
+  "Leer · N min" on the right (5fr) behind a 1px `--rule`, with 5.5rem between posts.
+  "Leer" is a plain post-hue link with a 1px 45% hue underline that becomes full hue and
+  2px on hover or focus. It has no spur. Below 900px the two groups are transparent to the
+  entry's grid, so the phone list is unchanged. After the posts, a "quién escribe" strip carries the name, one
   sentence and a link to Sobre mí without another mark; the footer keeps its independent
   mark. The track ends on the strip's rule, the thread's last stop, and never runs into the
   footer.

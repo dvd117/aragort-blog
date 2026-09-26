@@ -115,7 +115,10 @@
   .entry .t { font-size: clamp(1.9rem, 3.2vw, 2.9rem); }
 }
 
-/* Every post gets the room: near-display title, description, the three ideas and "Leer". */
+/* Every post gets the room: near-display title, description, the three ideas and "Leer".
+   Title and description are one group, the ideas and "Leer" another; below 900px the
+   groups are transparent to the entry's grid, so the phone layout is the flat list. */
+.entry .lhs, .entry .rhs { display: contents; }
 .entry.feature { --entry-pt: 1rem; padding: 1rem 0 2rem; }
 .entry.feature .t { font-weight: var(--display-weight); font-size: clamp(2.4rem, 9vw, 4.6rem); line-height: var(--display-leading); letter-spacing: var(--display-tracking); max-width: 14ch; }
 .entry.feature .ex { font-size: 1.25rem; color: var(--fg); max-width: 40ch; }
@@ -139,6 +142,18 @@
 }
 @media (min-width: 900px) {
   .index .who { --who-indent: 2.25rem; }
+  /* Desktop: each post is two columns under its date -- title and description on the
+     left, the three ideas and "Leer" on the right behind a 1px rule -- so the list uses
+     the width instead of hugging the thread. */
+  .entry.feature { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: 4rem; align-items: start; padding: 1rem 0 5.5rem; }
+  .entry.feature .lhs, .entry.feature .rhs { display: grid; align-content: start; gap: 1rem; }
+  .entry.feature .lhs { grid-column: 1; padding-top: .6rem; }
+  .entry.feature .rhs { grid-column: 2; margin-top: 1.1rem; padding-left: 1.5rem; border-left: 1px solid var(--rule); }
+  .entry.feature .t { font-size: clamp(2.8rem, 4.6vw, 4rem); max-width: none; text-wrap: balance; }
+  .entry.feature .ex { margin: 0; font-size: 1.1875rem; line-height: 1.5; color: var(--fg-read); max-width: 36ch; }
+  /* Inside the groups, not the entry's grid: undo the 700px placement beside the bullets. */
+  .entry.feature .teaser { grid-column: auto; margin: 0; color: var(--fg-read); max-width: none; }
+  .entry.feature .more { grid-column: auto; justify-self: start; margin-top: 0; }
 }
 
 /* Short landscape (a phone on its side): a compact two-column composition. The net stays
