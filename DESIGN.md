@@ -216,9 +216,9 @@ decoration that means nothing.
   shares it -- links, dots, rules, and the small marks (header mark, rail, footer mark). No
   mark keeps a colour of its own. On a post it is the post's. On the landing and Sobre mí
   it is the hue of the last post read on this device, so leaving a post does not lose its
-  colour. Two things show all three hues, and both are the flag rather than decoration:
-  the big nets' bands, and the travelled thread on the landing, where each section belongs
-  to its post.
+  colour. Three things show all three hues, and all are the flag rather than decoration:
+  the big nets' bands, the travelled thread on the landing, where each section belongs
+  to its post, and the stations on Sobre mí, which take the band they hang in.
 - **The order never shuffles.** Down the list the hues run amarillo -> azul -> rojo ->
   amarillo, by position: the newest post is amarillo, the one under it azul, then rojo, and
   round again. Nothing is hashed and nothing is rolled -- the flag's order is the point, so
@@ -293,7 +293,12 @@ decoration that means nothing.
   a dock: each number grows into a pill with its title, the ones near the pointer magnified. From 1100px, footnotes
   move into a 14rem margin column. The Markdown view has "Copiar" beside the file link.
 - **Sobre mí:** a portrait net over a thread of paragraphs. From 900px, the portrait is
-  sticky on the left and the thread runs on the right. The same content is also the panel
+  sticky on the left and the thread runs on the right. The thread follows the landing's
+  rules: the same track and `--fg` fill, moved by the reading line (of the panel, in the
+  drawer) and held at the furthest point reached; ring stations with a coloured centre
+  that pulse once and take their ring colour when passed; and the terminal bar under the
+  contacts' station. The flag is in the stations, amarillo -> azul -> rojo by the third of
+  the thread each hangs in, not in the line. The same content is also the panel
   the header opens (below); in the panel it stays one column at every width.
 - **Nav:** one item. The post's Formato/Markdown toggle with a single segment -- a pill on
   a panel that raises while "Sobre mí" is open or is the page you are on, with no
