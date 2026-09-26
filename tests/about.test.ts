@@ -67,10 +67,9 @@ it('counts the page bottom as reaching the contacts', () => {
   expect(thread.classList.contains('is-ended')).toBe(true);
 });
 
-it('ends the flag on the contacts, however few stations the thread has', () => {
+it('runs the flag once: amarillo first, rojo at the contacts, azul between', () => {
   const { items } = build();
-  expect(items.at(-1)!.dataset.band).toBe('2');
-  expect(items[0]!.dataset.band).toBe('0');
+  expect(items.map((i) => i.dataset.band)).toEqual(['0', '1', '1', '2']);
 });
 
 it('lights everything at once under reduced motion, with no pulse', () => {
@@ -144,4 +143,10 @@ it('in the panel, keeps the thread line and draws no wire', () => {
   initAbout(document.querySelector('#sobre-mi')!);
   expect(document.querySelector('svg.wire')).toBeNull();
   expect(document.querySelector('.about-thread')!.classList.contains('has-wire')).toBe(false);
+});
+
+it('sets the credentials as a paragraph on their own station, in the story type', () => {
+  const src = readFileSync('src/components/AboutContent.astro', 'utf8');
+  expect(src).not.toMatch(/class="cred"|\.cred\b/);
+  expect(src).toMatch(/<li class="about-node-item">\s*<span class="about-node"[^>]*>[\s\S]*?<\/span>\s*<p>Fui <ExtLink[^>]*>Freedom Fellow<\/ExtLink> de la Human Rights Foundation y formo parte/);
 });

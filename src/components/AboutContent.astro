@@ -50,7 +50,11 @@ const hello = 'Hola, me llamo David. Soy caraqueño. Desde 2019 trabajo en segur
       <li class="about-node-item">
         <span class="about-node" aria-hidden="true"><span class="hue-dot"></span></span>
         <p>Hoy quiero aportar lo que sé y lo que he vivido para reconstruir Venezuela, y <ExtLink href="https://ateneo-abierto.org">Ateneo Abierto</ExtLink> es mi forma de hacerlo.</p>
-        <p class="cred"><span>Fui <ExtLink href="https://youtu.be/oS2N8cz7p4w">Freedom Fellow</ExtLink> de la Human Rights Foundation</span> <span>y formo parte del Leadership Council de la <ExtLink href="https://youthdemocracynetwork.org/leadershipcouncil">Youth Democracy Network</ExtLink>.</span></p>
+      </li>
+      <!-- The credentials are a paragraph like the others, on a station of their own. -->
+      <li class="about-node-item">
+        <span class="about-node" aria-hidden="true"><span class="hue-dot"></span></span>
+        <p>Fui <ExtLink href="https://youtu.be/oS2N8cz7p4w">Freedom Fellow</ExtLink> de la Human Rights Foundation y formo parte del Leadership Council de la <ExtLink href="https://youthdemocracynetwork.org/leadershipcouncil">Youth Democracy Network</ExtLink>.</p>
       </li>
       <li class="about-node-item">
         <span class="about-node" aria-hidden="true"><span class="hue-dot"></span></span>
@@ -99,8 +103,8 @@ const hello = 'Hola, me llamo David. Soy caraqueño. Desde 2019 trabajo en segur
   /* On the page the fill is the wire's (travel.ts), which runs on down the thread. */
   .about-thread.has-wire::after { display: none; }
   /* A station: a neutral ring on the track with its band's colour at the centre. Passing
-     it pulses it once and turns the ring to the band (about.ts measures where on the line
-     it hangs: amarillo at the top, azul, rojo at the contacts). The words beside it do not change colour: the paragraph's
+     it pulses it once and turns the ring to its band (about.ts: amarillo at the top, rojo
+     at the contacts, azul between). The words beside it do not change colour: the paragraph's
      links are the page's one hue, like a post's. */
   .about-node-item { --node: var(--hue-ui); }
   .about-node-item[data-band="0"] { --node: var(--hu-amarillo); }
@@ -124,13 +128,6 @@ const hello = 'Hola, me llamo David. Soy caraqueño. Desde 2019 trabajo en segur
   .about-node-item p + p { margin-top: 1rem; }
   .about-node-item :global(a) { color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
   .about-node-item :global(a:hover) { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
-  /* Credentials: the same sentence, set as its own element. Quieter than the story, not
-     louder: two plain lines a step down in size and colour, no bar -- a bold block with a
-     rule beside it was the heaviest thing on the page, for a sentence that is a list of
-     names. The links keep the page's one hue. */
-  .about-node-item p.cred { font-family: var(--read-font); font-size: calc(1.0625rem * var(--scale)); line-height: 1.5; letter-spacing: 0; color: var(--fg-2); }
-  .cred span { display: block; }
-  .cred span + span { margin-top: .25rem; }
 
   /* Three ways to reach him. They were amarillo, azul and rojo, one per row -- the flag
      again, a third time on the same screen, and here it made three addresses look like

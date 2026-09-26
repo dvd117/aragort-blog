@@ -54,9 +54,8 @@ export function initAbout(root: ParentNode = document): void {
   }
   let top = 0; // the root's page y: travel.ts measures from it
 
-  // Station centres from the top of the thread, and which band of the flag each takes.
-  // Measured, not counted: the paragraphs are different lengths and the reader's own
-  // type size moves them.
+  // Station centres from the top of the thread. Measured, not counted: the paragraphs
+  // are different lengths and the reader's own type size moves them.
   let ys: number[] = [];
   const measure = () => {
     const t = thread.getBoundingClientRect();
@@ -65,11 +64,9 @@ export function initAbout(root: ParentNode = document): void {
       const n = item.querySelector<HTMLElement>('.about-node')!.getBoundingClientRect();
       return n.top + n.height / 2 - t.top;
     });
-    // The nearest of the line's top, middle and bottom. The line ends at the contacts'
-    // station, so the first is always amarillo, the last rojo, and those between azul
-    // unless they sit near an end -- with three stations or four.
-    const end = ys.at(-1)! || 1;
-    items.forEach((item, i) => { item.dataset.band = String(Math.min(2, Math.max(0, Math.round((ys[i]! / end) * 2)))); });
+    // The flag once down the line: amarillo at the top, rojo at the contacts, azul between,
+    // however many paragraphs the page or the panel has.
+    items.forEach((item, i) => { item.dataset.band = String(i === 0 ? 0 : i === items.length - 1 ? 2 : 1); });
     thread.style.setProperty('--end', `${Math.round(ys.at(-1)!)}px`);
     return true;
   };

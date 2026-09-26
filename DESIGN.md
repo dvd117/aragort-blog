@@ -307,8 +307,8 @@ decoration that means nothing.
   reached; ring stations with a coloured centre that pulse once and take their ring
   colour when passed; and the terminal bar under the contacts' station. The flag is in
   the stations, not the line: amarillo at the top, rojo at the contacts, azul between.
-  The credentials are two quiet lines under their paragraph, a step down in size and
-  colour.
+  Every paragraph is a station set in the story's type, the credentials included: a
+  sentence of names gets no size, colour or rule of its own.
 - **Nav:** one item. The post's Formato/Markdown toggle with a single segment -- a pill on
   a panel that raises while "Sobre mí" is open or is the page you are on, with no
   transition: it swaps the way the toggle's buttons do, at once. "Escritos" is gone from
