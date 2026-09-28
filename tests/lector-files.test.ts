@@ -92,6 +92,6 @@ it('does not mark a new document copied when an old clipboard write resolves', a
   await Promise.resolve();
   await Promise.resolve();
 
-  expect(document.querySelector('[data-copy]')!.dataset.state).toBeUndefined();
+  expect(document.querySelector<HTMLElement>('[data-copy]')!.dataset.state).toBeUndefined();
   expect(document.querySelector('[data-copy] span')!.textContent).toBe('Copiar');
 });
