@@ -57,7 +57,7 @@ const el = (type: string, style: Record<string, unknown>, children?: unknown, ex
 export const OG_SIZE = { width: 1200, height: 630 } as const;
 
 /** A 1200x630 card: the net mark, a title, an optional line under it, and the site. */
-export async function renderOgImage(title: string, subtitle?: string): Promise<Uint8Array> {
+export async function renderOgImage(title: string, subtitle?: string): Promise<Uint8Array<ArrayBuffer>> {
   const { bold, regular } = await loadFonts();
   const mark = `data:image/svg+xml;base64,${Buffer.from(markSvg()).toString('base64')}`;
   const size = title.length > 60 ? 84 : title.length > 36 ? 104 : 124;
@@ -82,5 +82,5 @@ export async function renderOgImage(title: string, subtitle?: string): Promise<U
       { name: 'Geist', data: regular, weight: 400, style: 'normal' },
     ],
   });
-  return new Resvg(svg, { fitTo: { mode: 'width', value: OG_SIZE.width } }).render().asPng();
+  return new Uint8Array(new Resvg(svg, { fitTo: { mode: 'width', value: OG_SIZE.width } }).render().asPng());
 }

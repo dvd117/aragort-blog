@@ -64,6 +64,6 @@ export function faviconSvg(): string {
 }
 
 /** Render the full-bleed 180px icon used by iOS, which rounds the corners itself. */
-export function touchIconPng(): Buffer {
+export function touchIconPng(): Buffer<ArrayBuffer> {
   return Buffer.from(new Resvg(iconSvg(TOUCH_ICON_SIZE, 0), { fitTo: { mode: 'width', value: TOUCH_ICON_SIZE } }).render().asPng());
 }
