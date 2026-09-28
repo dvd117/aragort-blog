@@ -56,7 +56,7 @@ it('passes the first node at the top of the page', () => {
 });
 
 it('travels down: passes the next node and lights its region', () => {
-  const { entries, circles, scrollTo } = build();
+  const { circles, scrollTo } = build();
   scrollTo(200); // line 720
   expect(circles[2]!.classList.contains('path')).toBe(true);
   expect(fills()).toHaveLength(1);
