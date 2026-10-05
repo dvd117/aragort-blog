@@ -1,0 +1,12 @@
+[
+  {
+    "id": "GHSA-px8p-9vwx-vf98",
+    "expires": "2026-11-05",
+    "reason": "fflate via satori; satori runs at build time over our own fonts, never over attacker-supplied archives; npm's only fix downgrades satori."
+  },
+  {
+    "id": "GHSA-ch52-4w7c-c8xp",
+    "expires": "2026-11-05",
+    "reason": "http-cache-semantics has no patched release; reached through astro@7.3.5, its direct parent (npm ls http-cache-semantics)."
+  }
+]
