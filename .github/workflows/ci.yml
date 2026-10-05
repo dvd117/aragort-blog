@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Sent by dependabot-auto-merge.yml after it merges; see the note there.
+  workflow_dispatch:
   # A new advisory lands on a day nobody writes a post.
   schedule:
     - cron: "0 6 * * 1"
@@ -95,7 +97,7 @@ jobs:
   # overwriting what is live.
   ship:
     needs: [verify, image]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     permissions:
       contents: write
