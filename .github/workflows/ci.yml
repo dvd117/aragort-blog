@@ -37,13 +37,11 @@ jobs:
       # then prompts interactively, which would hang a runner. Add the step
       # once @astrojs/check supports TypeScript 7.
 
-      # `high`, not `moderate`, and only because of one advisory that cannot be
-      # fixed forward: fflate's malformed-ZIP64 infinite loop reaches us through
-      # satori, and npm's only offered fix is to DOWNGRADE satori 0.33.4 → 0.32.0.
-      # satori runs at build time in src/lib/og.ts over our own fonts, never over
-      # attacker-supplied archives. Put this back to moderate the moment satori
-      # ships a release carrying a patched fflate.
-      - run: npm audit --audit-level=high
+      # Unfixable advisories live in .audit-allowlist.json with an expiry
+      # and a reason; all other moderate-or-higher findings still fail.
+      - uses: dvd117/ci/audit-gate@v1
+        with:
+          audit-level: moderate
 
   # `npm run build` is not `docker build`. This image builds Astro and then
   # generates the CSP from the built pages, so a change that alters an inline
