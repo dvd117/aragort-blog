@@ -29,8 +29,8 @@
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
     "@types/hast": "^3.0.5",
-    "happy-dom": "^20.14.5",
-    "satori": "^0.35.0",
+    "happy-dom": "^20.14.6",
+    "satori": "^0.44.0",
     "typescript": "^7.0.2",
     "vitest": "^5.0.3"
   }
