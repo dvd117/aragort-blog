@@ -25,6 +25,13 @@ updates:
     ignore:
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # satori 0.60 drops the OG cards' footer row and lets long titles overrun
+      # the margin; tests stay green because nothing compares the PNGs (#24).
+      # It runs only at build time and never ships in the Caddy image. The audit
+      # gate still fails CI on any satori advisory. Revisit by 2027-01-31: adapt
+      # the template in src/lib/og.ts to the new engine, then drop this rule.
+      - dependency-name: "satori"
+        versions: [">=0.36.0"]
 
   - package-ecosystem: github-actions
     directory: /
