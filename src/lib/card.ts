@@ -10,6 +10,8 @@ export const card = {
   signal: { name: 'david.212', href: 'https://signal.me/#eu/HYYZw08LbQ7QK7askiGHW5_ufvdwcJZOQe0gYAGOHQNReaYiDqdGFJpYKP6TMxZJ' },
   linkedin: { name: 'linkedin.com/in/davidaragort', href: 'https://www.linkedin.com/in/davidaragort' },
   web: { name: 'aragort.com', href: 'https://aragort.com' },
+  /** Linked where the role names it: the English page for funders, as on the printed card. */
+  ateneo: { name: 'Ateneo Abierto', href: 'https://ateneo-abierto.org/funders' },
 } as const;
 
 /** RFC 6350 text escaping: backslash, comma, semicolon and newline. */
@@ -20,7 +22,7 @@ const esc = (s: string) => s.replace(/[\\,;]/g, (c) => `\\${c}`).replace(/\n/g, 
  * without complaint. The item.X-ABLabel pairs name each link in Apple Contacts.
  */
 export function vcard(): string {
-  const { given, family, role, email, signal, linkedin, web } = card;
+  const { given, family, role, email, signal, linkedin, web, ateneo } = card;
   return [
     'BEGIN:VCARD',
     'VERSION:3.0',
@@ -34,6 +36,8 @@ export function vcard(): string {
     'item2.X-ABLabel:LinkedIn',
     `item3.URL:${signal.href}`,
     'item3.X-ABLabel:Signal',
+    `item4.URL:${ateneo.href}`,
+    `item4.X-ABLabel:${esc(ateneo.name)}`,
     `NOTE:${esc(`Signal: ${signal.name}`)}`,
     'END:VCARD',
     '',

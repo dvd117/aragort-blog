@@ -20,6 +20,11 @@ describe('the /card vCard', () => {
     expect(v).toContain(`EMAIL;TYPE=INTERNET:${card.email}\r\n`);
     expect(v).toContain(`URL:${card.linkedin.href}\r\n`);
     expect(v).toContain(`URL:${card.signal.href}\r\n`);
+    expect(v).toContain('URL:https://ateneo-abierto.org/funders\r\n');
+  });
+
+  it('names Ateneo Abierto in the role, so the page can link it', () => {
+    expect(card.role).toContain(card.ateneo.name);
   });
 
   it('escapes the commas in the role', () => {

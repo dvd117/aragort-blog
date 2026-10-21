@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import { card } from '../lib/card';
 
 const name = `${card.given} ${card.family}`;
+// The role names Ateneo Abierto; that name becomes the link.
+const [roleHead, roleTail] = card.role.split(card.ateneo.name);
 ---
 <!-- The virtual business card a QR code points to at events. In English for international
      rooms, so the card is marked lang="en" inside the Spanish site. Not indexed: the page a
@@ -10,7 +12,7 @@ const name = `${card.given} ${card.family}`;
 <Base title="Card" description={`${name}: ${card.role}.`} noindex>
   <section class="wrap card" lang="en" aria-labelledby="card-name">
     <h1 id="card-name">{name}</h1>
-    <p class="role">{card.role}</p>
+    <p class="role">{roleHead}<a href={card.ateneo.href} rel="noopener noreferrer">{card.ateneo.name}</a>{roleTail}</p>
     <dl class="contact">
       <div><dt>Email</dt><dd><a href={`mailto:${card.email}`}>{card.email}</a></dd></div>
       <div><dt>Signal</dt><dd><a href={card.signal.href} rel="noopener noreferrer">{card.signal.name}</a></dd></div>
@@ -30,8 +32,8 @@ const name = `${card.given} ${card.family}`;
   .contact div { display: grid; grid-template-columns: 5.5rem 1fr; align-items: center; min-height: 44px; border-bottom: 1px solid var(--rule); }
   .contact dt { color: var(--fg-2); font-size: .875rem; }
   .contact dd { margin: 0; overflow-wrap: anywhere; }
-  .contact a { font-weight: 500; color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
-  .contact a:hover { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
+  .contact a, .role a { font-weight: 500; color: var(--hue); text-decoration: underline 1px color-mix(in srgb, var(--hue) 45%, transparent); text-underline-offset: .2em; }
+  .contact a:hover, .role a:hover { text-decoration-color: var(--hue); text-decoration-thickness: 2px; }
   /* The one action: a solid block in the text colour, full width on a phone. */
   .save { display: flex; align-items: center; justify-content: center; min-height: 52px; margin-top: 2rem; border-radius: 6px; background: var(--fg); color: var(--bg); font: 600 1.0625rem/1 var(--ui); text-decoration: none; transition: opacity var(--dur-ui) var(--ease); }
   .save:hover { opacity: .88; }
