@@ -23,6 +23,10 @@ updates:
     # and tsc still goes green — a failure with no signal until production.
     # Raise this pin in the same commit that raises the runtime, never before.
     ignore:
+      # satori 0.35.2 ships an ESM build that references __dirname and breaks the OG image
+      # prerender (ReferenceError at build). Drop this once a fixed release is out.
+      - dependency-name: "satori"
+        versions: ["0.35.2"]
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
       # satori 0.60 drops the OG cards' footer row and lets long titles overrun
